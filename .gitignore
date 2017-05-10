@@ -1,3 +1,4 @@
 *.iso
 *.iso.old
 _site/
+*.swp
