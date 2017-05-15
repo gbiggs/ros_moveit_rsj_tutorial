@@ -297,6 +297,7 @@ $ rosrun rsj_tutorial_2017_ros_basics greeter
 $ cd ~/catkin_ws/
 $ source devel/setup.bash
 $ rosrun rsj_tutorial_2017_ros_basics displayer
+```
 
 「hello world」と表示されれば成功です。
 
