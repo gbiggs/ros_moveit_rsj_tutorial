@@ -1,6 +1,6 @@
 title: 第106回 ロボットの作り方
 description: ROSを使用した画像処理とマニピュレータ制御
-theme: jekyll-theme-minimal
+theme: jekyll-theme-dinky
 
 baseurl: "/ros_moveit_rsj_tutorial"
 url: "https://gbiggs.github.io"
