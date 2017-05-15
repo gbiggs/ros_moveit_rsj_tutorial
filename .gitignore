@@ -2,3 +2,4 @@
 *.iso.old
 _site/
 *.swp
+Gemfile.lock
