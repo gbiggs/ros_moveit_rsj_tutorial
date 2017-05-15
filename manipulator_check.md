@@ -1,5 +1,5 @@
 ---
-layout: article
+layout: page
 title: マニピュレータの動作確認
 date: 2017-05-09
 ---

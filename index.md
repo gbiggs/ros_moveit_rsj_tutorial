@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: page
 title: 日本ロボット学会　第106回 ロボットの作り方 ～ROSを使用した画像処理とマニピュレータ制御～
 ---
 

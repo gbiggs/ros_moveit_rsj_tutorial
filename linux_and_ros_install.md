@@ -1,5 +1,5 @@
 ---
-layout: article
+layout: page
 title: Ubuntu LinuxとROSのインストール
 date: 2017-05-09
 ---
