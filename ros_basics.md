@@ -30,47 +30,54 @@ date: 2017-05-09
 
 ROSでは、プログラムをビルドする際に、catkin というシステムを使用しています。また、catkin は、 cmake というシステムを使っており、ROS用のプログラムのパッケージ毎に、cmakeの設定ファイルを作成することで、ビルドに必要な設定を行います。
 
-セミナー用のLive USBでは、ワークスペースは既に作ってありますので、中身を確認します。
+以下の手順で本作業用の新しいワークスペースを作ります。
 
 ```
-$ cd ~/catkin_ws/
-$ ls
-build  devel  src
-$ cd src/
+$ mkdir -p ~/catkin_ws/src
+$ cd ~/catkin_ws/src
+$ catkin_init_workspace
+Creating symlink "/home/[ユーザーダイレクトリー]/catkin/src/CMakeLists.txt" pointing to "/opt/ros/kinetic/share/catkin/cmake/toplevel.cmake"
 $ ls
 CMakeLists.txt
+$ cd ..
+$ ls
+src
 $
 ```
 
-catkin_wsディレクトリの中にある、build、develは、catkinシステムがプログラムをビルドする際に使用するものなので、ユーザが触る必要はありません。catkin_ws/srcディレクトリは、ROSパッケージのソースコードを置く場所で、中にあるCMakeLists.txt は、ワークスペース全体をビルドするためのルールが書かれているファイルです。
+`catkin_ws`ディレクトリの中にある、`build`、`devel`は、catkinシステムがプログラムをビルドする際に使用するものなので、ユーザが触る必要はありません。`catkin_ws/src`ディレクトリは、ROSパッケージのソースコードを置く場所で、中にある`CMakeLists.txt` は、ワークスペース全体をビルドするためのルールが書かれているファイルです。
 
-このディレクトリに、ypspur-coordinatorをROSに接続するためのパッケージypspur_rosをダウンロードします。
+このディレクトリに、本作業ようのパッケージをダウンロードします。
 
 ```
-$ git clone https://github.com/openspur/ypspur_ros.git
+$ git clone https://github.com/gbiggs/rsj_tutorial_2017_ros_intro.git
 $ ls
-CMakeLists.txt  ypspur_ros
+CMakeLists.txt  rsj_tutorial_2017_ros_intro
 $
 ```
 
 gitは、ソースコードなどの変更履歴を記録して管理する、分散型バージョン管理システムと呼ばれるものです。今回のセミナーでは詳細は触れませんが、研究開発を行う上では非常に有用なシステムですので、利用をお勧めします。公式の解説書、[Pro Git](https://git-scm.com/book/ja/v2")などを参考にして下さい。
 
-次にパッケージのディレクトリ構成を確認します。ダウンロードしているパッケージがバージョンアップされている場合などには、下記の実行例とファイル名が異なったり、ファイルが追加・削除されているが場合があります。
+GitHubは、ソースコードなどのリポジトリーサービスです。オープンソースソフトウェアの開発、共同作業及び配布を行うためによく利用されて、ROSではソースコードの保存と配布する場所としてもっとも人気なサービスです。バイナリーパッケージとして配布されているROSパッケージ以外の利用をする場合、GitHubを利用します。URLが分かれば上の手順だけで簡単にROSのパッケージが自分のワークスペースにインポートし利用することができます。
+
+では、次にパッケージのディレクトリ構成を確認します。ダウンロードしているパッケージがバージョンアップされている場合などには、下記の実行例とファイル名が異なったり、ファイルが追加・削除されているが場合があります。
 
 ```
-$ cd ypspur_ros/
+$ cd rsj_tutorial_2017_ros_intro/
 $ ls
-CMakeLists.txt  msg  package.xml  src
+CMakeLists.txt  launch  msg  package.xml  src
+$ ls launch/
+say_hello.launch
 $ ls msg/
-ControlMode.msg  DigitalOutput.msg  JointPositionControl.msg
+Greeting.msg
 $ ls src/
-getID.sh  joint_tf_publisher.cpp  ypspur_ros.cpp
+greeter.cpp
 $
 ```
 
-CMakeLists.txtとpackage.xmlには、使っているライブラリの一覧や、生成する実行ファイルとC++のソースコードの対応など、このパッケージをビルドするために必要な情報が書かれています。msgディレクトリには、このパッケージ独自のデータ形式の定義が、srcディレクトリには、このパッケージに含まれるプログラム(ノード)のソースコードが含まれています。
+`CMakeLists.txt`と`package.xml`には、使っているライブラリの一覧や、生成する実行ファイルとC++のソースコードの対応など、このパッケージをビルドするために必要な情報が書かれています。`launch`ディレクトリには、複数のノードでできたシステムの定義が、`msg`ディレクトリには、このパッケージ独自のデータ形式の定義が、`src`ディレクトリには、このパッケージに含まれるプログラム(ノード)のソースコードが含まれています。
 
-以下のように、catkin_makeコマンドで、ダウンとロードしたypspur_rosパッケージを含む、ワークスペース全体をビルドします。catkin_makeは、ワークスペースの最上位ディレクトリ(~/catkin_ws/)で行います。
+以下のように、`catkin_make`コマンドで、ダウンとロードした`rsj_tutorial_2017_ros_intro`パッケージを含む、ワークスペース全体をビルドします。`catkin_make`は、ワークスペースの最上位ディレクトリ(`~/catkin_ws/`)で行います。
 
 ```
 $ cd ~/catkin_ws/
@@ -78,34 +85,21 @@ $ cd ~/catkin_ws/
 
 ## ROSノードの理解とビルド・実行
 
-端末を開き、ひな形をダウンロードします。
+先作成したワークスペースを利用します。端末を開き、パッケージが正しくあるか確認します。
 
 ```
 $ cd ~/catkin_ws/src/
-$ git clone https://github.com/at-wat/rsj_robot_test.git
+$ ls
+CMakeLists.txt  rsj_tutorial_2017_ros_intro
+$ cd ..
+$
 ```
 
-### 統合開発環境
+ソースファイルの編集にはお好みのテキストエディターが利用可能です。Linuxがはじめの方に`gedit`はおすすめです。
 
-QtCreator (統合開発環境)を使って、rsj_robot_testプロジェクトのソースコードを開きます。まず、画面左のランチャーにある、Qtと書かれたアイコンをクリックします。
+お好みのテキストエディターで`~/catkin_ws/src/rsj_tutorial_2017_ros_intro/src/greeter.cpp`を開きます。
 
-![QtCreator icon](images/qtcreator-icon.png)
-
-画面上のメニューバー(カーソルを重ねるとメニューが表示される)から、「ファイル」「プロジェクトを開く」を選択します。
-
-![QtCreator open project](images/qtcreator-openproject.png)
-
-ubuntu/catkin_ws/src/rsj_robot_test内にある、CMakeLists.txtを開きます。
-
-![QtCreator open project CMake](images/qtcreator-openproject-cmake.png)
-
-Configure Projectボタンをクリックします。
-
-![QtCreator configure project](images/qtcreator-configure-project.png)
-
-少し待つと、左側のプロジェクト欄にファイルツリーが表示されます。この中から、srcディレクトリの、rsj_robot_test.cppを開きます。
-
-![QtCreator open source code](images/qtcreator-open-sourcecode.png)
+![greeter.cpp](images/greeter_cpp_in_editor.png)
 
 ### 基本的なコードを読み解く
 
@@ -117,59 +111,75 @@ Configure Projectボタンをクリックします。
 #include <ros/ros.h>
 ```
 
-続いて、rsj_robot_test_nodeクラスを定義します。ROSプログラミングの際には、基本的にノードの持つ機能を、クラスとして定義し、これを呼び出す形式を取ることが標準的です。(クラスを使用せずに書く事も可能ですが、気をつけなければならない点が多くなるため、本セミナーではクラスでの書き方のみを解説します。)
+続いて、本ノードが利用するメッセージのヘッダファイルをインクルードしています。
 
 ```
-class rsj_robot_test_node
-{
-  // (略)
-public:
-  // (略)
-  void mainloop()
-  {
-    ROS_INFO("Hello ROS World!");
+#include <rsj_tutorial_2017_ros_basics/Greeting.h>
+```
 
-    ros::Rate rate(10.0);
-    while(ros::ok())
-    {
-      ros::spinOnce();
-      // ここに速度指令の出力コード
-      rate.sleep();
-    }
+`std::string`が利用されるので、ヘッダファイルをインクルードします。
+
+```
+#include <string>
+```
+
+続いて、C++のmain関数が定義されています。本ノードは非常に簡単なのですべての機能がmain関数に入れられました。ただし、複雑な機能や色々なデータを持つノードにはクラスとしての実装がおすすめします。
+
+```
+int main(int argc, char **argv) {
+  ros::init(argc, argv, "Greeter");
+  ros::NodeHandle node;
+
+  std::string hello_text;
+  std::string world_name;
+  ros::param::param<std::string>("~hello_text", hello_text, "hello");
+  ros::param::param<std::string>("~world_name", world_name, "world");
+
+  ros::Publisher pub = node.advertise<rsj_tutorial_2017_ros_basics::Greeting>("greeting", 1);
+
+  ros::Rate rate(1);
+
+  while (ros::ok()) {
+    ros::spinOnce();
+
+    ROS_INFO("Publishing greeting '%s %s'", hello_text, world_name);
+    rsj_tutorial_2017_ros_basics::Greeting greeting;
+    greeting.hello_text = hello_text;
+    greeting.world_name = world_name;
+    pub.publish(greeting);
+
+    rate.sleep();
   }
-};
-```
 
-rsj_robot_test_nodeクラスのメンバ関数であるmainloop関数の中では、ROSで情報を画面などに出力する際に用いる、ROS_INFO関数を呼び出して、"Hello ROS World!"と表示しています。ほかにも、ROS_DEBUG、ROS_WARN、ROS_ERROR、ROS_FATAL関数が用意されています。
-
-ros::Rate rate(10.0)で、周期実行のためのクラスを初期化しています。初期化時の引数で実行周波数(この例では10Hz)を指定します。
-
-while(ros::ok())で、メインの無限ループを回します。ros::ok()をwhileの条件にすることで、ノードの終了指示が与えられたとき(Ctrl+Cが押された場合も含む)には、ループを抜けて終了処理などが行えるようになっています。
-
-ループ中では、まず、_`ros::spinOnce()`を呼び出して、ROSのメッセージを受け取る_{: style="color: red" } といった処理を行います。spinOnceは、その時点で届いているメッセージの受け取り処理を済ませた後、すぐに処理を返します。rate.sleep()は、先ほど初期化した実行周波数を維持するようにsleepします。
-
-なお、ここでは、クラスを定義しただけなので、中身が呼び出されることはありません。後ほど実体化されたときに、初めて中身が実行されます。
-
-続いて、C++のmain関数が定義されています。ノードの実行時には、ここから処理がスタートします。
-
-```
-int main(int argc, char *argv[])
-{
-  ros::init(argc, argv, "rsj_robot_test_node");
-
-  rsj_robot_test_node robot_test;
-
-  robot_test.mainloop();
+  return 0;
 }
 ```
 
-はじめに、ros::init関数を呼び出して、ROSノードの初期化を行います。1、2番目の引数には、main関数の引数をそのまま渡し、3番目の引数には、このノードの名前(この例では"rsj_robot_test_node")を与えます。
+`main`関数は、まずはノードのセットアップを行います。
 
-次に、rsj_robot_test_nodeクラスの実体を作成します。ここでは、robot_testと名前をつけています。
+`ros::init`はROSのインフラストラクチャの初期設定を行いノードを初期化します。1、2番目の引数には、main関数の引数をそのまま渡し、3番目の引数には、このノードの名前(この例では"Greeter")を与えます。
 
-最後に、実体化したrobot_testのメンバ関数、mainloopを呼び出します。mainloop関数の中は無限ループになっているため、終了するまでの間、ros::spinOnce()、rate.sleep()が呼び出され続けます。
+その次にある`ros::NodeHandle node`は、ノードを操るための変数を初期化します。
 
-つまり、rsj_robot_testは特に仕事をせず、"Hello ROS World!"と画面に表示します。
+次の４行はパラメータの初期化です。ROSでは、純粋コマンドラインを利用するよりROSのパラメータ機能を利用することが標準的です。こうすると、コマンドラインだけではなくて、roslaunch（複数のノードを起動するためのツール）やGUIツールからもパラメータの設定が簡単にできます。
+
+パラメータの初期化が終わったら、データ送信のためのパブリッシャーを初期化します。この変数の作成によりトピックが作成され、このノードからデータの送信が可能になります。
+
+セットアップの最後として、`ros::Rate rate(1)`で周期実行のためのクラスを初期化しています。初期化時の引数で実行周波数(この例では1 Hz)を指定します。
+
+`while(ros::ok())`で、メインの無限ループを回します（すなわちこのノードのメーンプロセッシングループです）。`ros::ok()`を`while`の条件にすることで、ノードの終了指示が与えられたとき(__Ctrl+c__{: style="border: 1px solid black" } が押された場合も含む)には、ループを抜けて終了処理などが行えるようになっています。
+
+ループ中では、まず、_`ros::spinOnce()`を呼び出して、ROSのメッセージを受け取る_{: style="color: red" } といった処理を行います。`spinOnce`は、その時点で届いているメッセージの受け取り処理を済ませた後、すぐに処理を返します。`rate.sleep()`は、先ほど初期化した実行周波数を維持するように`sleep`します。
+
+`ros::spinOnce()`と`rate.sleep()`の間に本ノードの処理を入れました。
+
+最初は、ROSで情報を画面などに出力する際に用いる、ROS_INFO関数を呼び出してメッセージを表示しています。ほかにも、ROS_DEBUG、ROS_WARN、ROS_ERROR、ROS_FATAL関数が用意されています。
+
+その後、データを送信します。まずは送信するデータ型（`rsj_tutorial_2017_ros_basics::Greeting`）を初期化し、値を設定します。先のセットアップで作成したパラメータの値を利用します。こうすると送信されるデータの内容は実行するときに自由に変更できます。
+
+そして、`pub.publish(greeting)`によってデータを送信します。この行でデータはバッファーに入れられ、別のスレッドが自動的にサブスクライバに送信します(ROSのディフォルトはアシンクロナス送信です）。
+
+メーンループが終了すると作成した変数は自動的にクリーンアップを実行しノードのシャットダウンを行います。
 
 ### ビルド＆実行
 
@@ -187,11 +197,210 @@ $ roscore
 ```
 
 ```
-$ rosrun rsj_robot_test rsj_robot_test_node
-[ INFO] [1466002781.136800000]: Hello ROS World!
+$ cd ~/catkin_ws/
+$ source devel/setup.bash
+$ rosrun rsj_tutorial_2017_ros_basics greeter
+[ INFO] [1494840089.900580884]: Publishing greeting 'hello world'
 ```
 
-「Hello ROS World!」と表示されれば成功です。以上の手順で、ROSパッケージに含まれるノードのソースコードを編集し、ビルドして、実行できるようになりました。
+上述が表示されれば成功です。
+
+ソースコードにパラメータを利用したので、コマンドラインからパラメータの設定をためして見ましょう。ノードの端末（__注意：`roscore`の端末ではなくて__{: style="color: red" } ）に__Ctrl+c__{: style="border: 1px solid black" } を入力してノードを終了します。そして以下を実行してください。
+
+```
+$ rosrun rsj_tutorial_2017_ros_basics greeter _hello_tex=gidday _world_name:=planet
+[ INFO] [1494840247.644756809]: Publishing greeting 'gidday planet'
+```
+
+### データを取得
+
+以上のノードはデータを送信します。取得することももちろん可能です。
+
+以下のソースは`rsj_tutorial_2017_ros_basics/src/displayer.cpp`ファイルにあります。
+
+```
+#include <ros/ros.h>
+#include <rsj_tutorial_2017_ros_basics/Greeting.h>
+
+#include <iostream>
+
+void callback(const rsj_tutorial_2017_ros_basics::Greeting::ConstPtr &msg) {
+  std::cout << msg->hello_text << " " << msg->world_name << '\n';
+}
+
+int main(int argc, char **argv) {
+  ros::init(argc, argv, "Displayer");
+  ros::NodeHandle node;
+
+  ros::Subscriber sub = node.subscribe("greeting", 10, callback);
+
+  ros::spin();
+
+  return 0;
+}
+```
+
+本ノードは`greeting`というトピックから取得したデータを端末に表示します。`greeter`からの差は以下のようです。
+
+まずは`callback`関数です。この関数はトピックのデータ型に合っているポインターを引数としてもらいます。トピックにデータが届いたら、`callback`関数は呼ばれます。そのデータを`std::cout`に出力し終了します。
+
+`main`関数内にパラメータの初期化はなくなりました。本ノードはパラメータを利用しません。
+
+`ros::Publisher`の初期化もなくなり、代わりに`ros::Subscriber`を初期化します。この行はトピックへのアクセスを初期化し、データが取得したらの対応を示します。１番目の引数はトピック名で、２番目はバッファーサイズで、３番目はデータが届くと呼ぶ関数です。
+
+最後に、メーンループはもういりません。本ノードはデータが届くとき以外何もしないので、無限ループになる`ros::spin()`を呼びます。`ros::spin()`は`greeter`の`while(...)`とros::spinOnce()`と類似の機能を中で持つので、ノードがシャットダウンされるまでに戻りません。
+
+### ビルド＆実行
+
+もう一回、このパッケージをビルドするためにcatkin_makeコマンドを実行します。
+
+```
+$ cd ~/catkin_ws/
+$ catkin_make
+```
+
+実行してみましょう。また端末で以下を実行します。
+
+```
+$ roscore
+```
+
+```
+$ cd ~/catkin_ws/
+$ source devel/setup.bash
+$ rosrun rsj_tutorial_2017_ros_basics greeter
+[ INFO] [1494840089.900580884]: Publishing greeting 'hello world'
+```
+
+そしてもう一つの端末を開いて、以下を実行します。
+
+```
+$ cd ~/catkin_ws/
+$ source devel/setup.bash
+$ rosrun rsj_tutorial_2017_ros_basics displayer
+
+「hello world」と表示されれば成功です。
+
+以上の手順で、ROSパッケージに含まれるノードのソースコードを編集し、ビルドして、実行できるようになりました。
+
+## システムとして扱おう
+
+`roslaunch`を利用して、複数のノードでできたシステムをスタート・ストップします。
+
+いつも手でノードを一つづつ起動することは面倒だけではなくて、エラーがちです。そのためにROSに`roslaunch`というツールがあります。`roslaunch`を利用するとシステム全体を一発で起動し、状況をモニターし、そして一発で泊めることが可能です。
+
+### launchファイルを読み解く
+
+launchファイルは、ノードやパラメータの組み合わせを定義するためのファイルです。 フォーマットはXMLです。システムに含まれるノードとそのノードの起動方法をを一つづつ定義します。
+
+`rsj_tutorial_2017_ros_basics`パッケージに以下のファイルが`launch/say_hello.launch`として存在します。本ファイルは前セクションに手動で起動したシステムを定義します。
+
+```
+<launch>
+  <node name="greeter" pkg="rsj_tutorial_2017_ros_basics" type="greeter">
+    <param name="hello_text" value="allo"/>
+    <param name="world_name" value="earth"/>
+  </node>
+
+  <node name="displayer" pkg="rsj_tutorial_2017_ros_basics" type="displayer" output="screen"/>
+</launch>
+```
+
+`node`エレメントは２つあります。アトリビュートは以下です。
+
+`name`
+: ノードインスタンスの名
+
+`pkg`
+: ノードを定義するパッケージ
+
+`type`
+: ノードの実行ファイル名
+
+`output`
+: `stdout`の先：定義しないと`stdout`（`ROS_INFO`や`std::cout`への出力等）は端末で表示されず、`~/.ros/log/`に保存されるログファイルだけに出力される。
+
+１番目の`<node>`は`greeter`ノードの定義です。本エレメントの中にパラメータの設定も行っています。パラメータの設定を行わない場合はノードのソースに定義したディフォルト値が利用されるので、必須ではありません。
+
+２番目の`<node>`は`displayer`ノードの定義です。パラメータはありませんが、出力されることを端末で表示するようにします。
+
+### roslaunchでシステムを起動
+
+開いている端末に`roscore`や起動中のノードをすべて __Ctrl+c__{: style="border: 1px solid black" } で止めます。それから一つの端末で以下を実行します。
+
+```
+$ roslaunch rsj_tutorial_2017_ros_basics say_hello.launch
+... logging to /home/geoff/.ros/log/40887b56-395c-11e7-b868-d8cb8ae35bff/roslaunch-alnilam-11087.log
+Checking log directory for disk usage. This may take awhile.
+Press Ctrl-C to interrupt
+Done checking log file disk usage. Usage is <1GB.
+
+started roslaunch server http://alnilam:40672/
+
+SUMMARY
+========
+
+PARAMETERS
+ * /greeter/hello_text: allo
+ * /greeter/world_name: earth
+ * /rosdistro: kinetic
+ * /rosversion: 1.12.7
+
+NODES
+  /
+    displayer (rsj_tutorial_2017_ros_basics/displayer)
+    greeter (rsj_tutorial_2017_ros_basics/greeter)
+
+auto-starting new master
+process[master]: started with pid [11098]
+ROS_MASTER_URI=http://localhost:11311
+
+setting /run_id to 40887b56-395c-11e7-b868-d8cb8ae35bff
+process[rosout-1]: started with pid [11111]
+started core service [/rosout]
+process[greeter-2]: started with pid [11118]
+process[displayer-3]: started with pid [11126]
+allo earth
+allo earth
+```
+
+「allo earth」が繰り返して表示されたら成功です。
+
+__Ctrl+c__{: style="border: 1px solid black" } でシステムを止めます。
+
+```
+[Ctrl+c]
+allo earth
+allo earth
+allo earth
+^C[displayer-3] killing on exit
+[greeter-2] killing on exit
+[rosout-1] killing on exit
+[master] killing on exit
+shutting down processing monitor...
+... shutting down processing monitor complete
+done
+$
+```
+
+これでシステムのスタート・ストップが簡単になりました。
+
+## ROSノードの作成
+
+パッケージとソースコードを自分で作成してノードを作成し、マニピュレータのサーボを操作します。
+
+### パッケージを作成
+
+まずは、ワークスペースにマニピュレータのハードウェアとインターフェースするソフトウェアを含めます。
+
+ワークスペースに新しいパッケージを作成するために、以下を実行してください。
+
+$ cd ~/catkin_ws/src
+$ catkin_create_pkg servo_control roscpp 
+
+### ノードを作成
+
+### ビルド＆実行
 
 ## ロボットに速度指令を与える
 
@@ -253,7 +462,7 @@ $ rosrun rsj_robot_test rsj_robot_test_node
 Hello ROS World!
 ```
 
-ゆっくりとホイールが回れば、正しく動作しています。__Ctrl+c__{: style="border: 1px solid black" }で終了します。
+ゆっくりとホイールが回れば、正しく動作しています。__Ctrl+c__{: style="border: 1px solid black" } で終了します。
 
 ### 小課題
 
