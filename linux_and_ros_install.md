@@ -92,5 +92,6 @@ LinuxとROSのインストール方法を示します。
 最後に、本セミナーに必要なパッケージをインストールします。以下のコマンドの実行によってインストールを行ってください。
 
     sudo apt-get install ros-kinetic-moveit-*
+    sudo apt-get install ros-kinetic-dynamixel-motor
 
 以上、開発環境の構築が完了しました。

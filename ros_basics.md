@@ -163,7 +163,15 @@ int main(int argc, char **argv) {
 
 次の４行はパラメータの初期化です。ROSでは、純粋コマンドラインを利用するよりROSのパラメータ機能を利用することが標準的です。こうすると、コマンドラインだけではなくて、roslaunch（複数のノードを起動するためのツール）やGUIツールからもパラメータの設定が簡単にできます。
 
-パラメータの初期化が終わったら、データ送信のためのパブリッシャーを初期化します。この変数の作成によりトピックが作成され、このノードからデータの送信が可能になります。
+パラメータの初期化が終わったら、データ送信のためのパブリッシャーを初期化します。この変数の作成によりトピックが作成され、__このノードからデータの送信が可能になります。__{: style="color: red" } 以下の引数を与えています。
+
+`"greeting"`
+: トピック名：データをこのトピックに送信する
+
+`1`
+: メッセージのバッファリング量を指定 (大きくすると、処理が一時的に重くなったときなどに受け取り側の読み飛ばしを減らせる)
+
+advertise関数についている、`<rsj_tutorial_2017_ros_basics::Greeting>`の部分は、メッセージの型を指定しています。これは、幾何的・運動学的な値を扱うメッセージを定義している`rsj_tutorial_2017_ros_basics`パッケージの、並進・回転速度を表す`Greeting`型です。(この指定方法は、C++のテンプレートという機能を利用していますが、ここでは、「`advertise`のときはメッセージの型指定を`<>`の中に書く、とだけ覚えておけば問題ありません。)
 
 セットアップの最後として、`ros::Rate rate(1)`で周期実行のためのクラスを初期化しています。初期化時の引数で実行周波数(この例では1 Hz)を指定します。
 
@@ -242,11 +250,22 @@ int main(int argc, char **argv) {
 
 本ノードは`greeting`というトピックから取得したデータを端末に表示します。`greeter`からの差は以下のようです。
 
-まずは`callback`関数です。この関数はトピックのデータ型に合っているポインターを引数としてもらいます。トピックにデータが届いたら、`callback`関数は呼ばれます。そのデータを`std::cout`に出力し終了します。
+まずは`callback`関数です。この関数はトピックのデータ型に合っているポインターを引数としてもらいます。トピックからデータを受け取ったら、`callback`関数は呼ばれます。そのデータを`std::cout`に出力し終了します。
+
+`const rsj_tutorial_2017_ros_basics::Greeting::ConstPtr` は、const型(内容を書き換えられない)、`rsj_tutorial_2017_ros_basics`パッケージに含まれる、`Greeting`型のメッセージの、const型ポインタを表しています。`&msg`の`&`は、参照型(内容を書き換えられるように変数を渡すことができる)という意味ですが、(const型なので)ここでは特に気にする必要はありません。msgはクラスへのポインタなので「-&gt;」を用い、以降はクラスのメンバ変数へのアクセスなので「.」を用いてアクセスしています。
 
 `main`関数内にパラメータの初期化はなくなりました。本ノードはパラメータを利用しません。
 
-`ros::Publisher`の初期化もなくなり、代わりに`ros::Subscriber`を初期化します。この行はトピックへのアクセスを初期化し、データが取得したらの対応を示します。１番目の引数はトピック名で、２番目はバッファーサイズで、３番目はデータが届くと呼ぶ関数です。
+`ros::Publisher`の初期化もなくなり、代わりに`ros::Subscriber`を初期化します。この行はトピックへのアクセスを初期化し、データが取得したらの対応を示します。引数は以下です。
+
+`"greeting"`
+: トピック名
+
+`10`
+: バッファーサイズ
+
+`callback`
+: メッセージを受け取ったときに呼び出す関数を指定 (`callback`関数)
 
 最後に、メーンループはもういりません。本ノードはデータが届くとき以外何もしないので、無限ループになる`ros::spin()`を呼びます。`ros::spin()`は`greeter`の`while(...)`とros::spinOnce()`と類似の機能を中で持つので、ノードがシャットダウンされるまでに戻りません。
 
@@ -326,7 +345,7 @@ launchファイルは、ノードやパラメータの組み合わせを定義�
 
 ### roslaunchでシステムを起動
 
-開いている端末に`roscore`や起動中のノードをすべて __Ctrl+c__{: style="border: 1px solid black" } で止めます。それから一つの端末で以下を実行します。
+開いている端末に`roscore`や起動中のノードをすべて __Ctrl+c__{: style="border: 1px solid black" } で停止します。それから一つの端末で以下を実行します。
 
 ```
 $ roslaunch rsj_tutorial_2017_ros_basics say_hello.launch
@@ -385,323 +404,372 @@ $
 
 これでシステムのスタート・ストップが簡単になりました。
 
+`roslaunch`を利用する場合は、別の端末で`roscore`の実行は不用です。`roslaunch`は中で`roscore`を起動したり停止したりします。
+
 ## ROSノードの作成
 
-パッケージとソースコードを自分で作成してノードを作成し、マニピュレータのサーボを操作します。
+パッケージとノードを自分で作成しマニピュレータのサーボを操作します。
 
 ### パッケージを作成
 
-まずは、ワークスペースにマニピュレータのハードウェアとインターフェースするソフトウェアを含めます。
-
 ワークスペースに新しいパッケージを作成するために、以下を実行してください。
 
+```
 $ cd ~/catkin_ws/src
-$ catkin_create_pkg servo_control roscpp 
+$ catkin_create_pkg servo_control roscpp dynamixel_controllers dynamixel_msgs
+Created file servo_control/CMakeLists.txt
+Created file servo_control/package.xml
+Created folder servo_control/include/servo_control
+Created folder servo_control/src
+Successfully created files in /home/geoff/catkin_ws/src/servo_control. Please adjust the values in package.xml.
+```
+
+引数の１番目はパッケージ名です。２番目と３番目は依存パッケージの定義です。今回はC++で記述するため、`roscpp`に依存します。そしてDynamixelのサーボを利用するのでハードウェアとインターフェースする`dynamixel-controllers`に依存します。最後に、サーボコントローラにコマンドを送るためにDynamixel用のメッセージタイプの利用が必要ので、`dynamixel-msgs`に依存します。
+
+生成されたパッケージの中身を確認します。
+
+```
+$ cd servo_control/
+$ ls
+CMakeLists.txt  include  package.xml  src
+```
+
+以前と同様に、`package.xml`はパッケージの情報を定義し、CMakeLists.txtはパッケージのビルド方法を定義します。
+
+`package.xml`をエディターで開くと以下の行が含まれていると見えます。
+
+```
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>dynamixel_controllers</build_depend>
+  <build_depend>dynamixel_msgs</build_depend>
+  <build_depend>roscpp</build_depend>
+  <run_depend>dynamixel_controllers</run_depend>
+  <run_depend>dynamixel_msgs</run_depend>
+  <run_depend>roscpp</run_depend>
+```
+
+これらはパッケージの依存を定義します。ROSとcatkinはこれらの利用によってパッケージのビルド順番等を決めます。
+
+普段は`package.xml`のメール等を編集しますが、今回は時間のために省略します。
+
+以上、パッケージの作成ができました。
 
 ### ノードを作成
 
-### ビルド＆実行
+作成したパッケージにノードを作成します。
 
-## ロボットに速度指令を与える
+ノードを作成するために以下の手順を行います。
 
-先ほどのひな形を編集して、ロボットを動かします。以下の作業は、QtCreator上でソースコードを編集します。
+1. `CMakeLists.txt`にノードのコンパイル方法を追加する
 
-### ロボットに速度指令を与えるコードを追加
+1. ノードのソースファイルを作成する
 
-まず、ロボットに速度指令(目標並進速度・角速度)を与えるコードを追加します。ひな形には既に、速度指令値が入ったメッセージを出力するための初期化コードが含まれていますので、この部分の意味を確認します。
+#### CMakeLists.txtにノードを追加
+
+`servo_control`パッケージにある`CMakeLists.txt`をエディターで開き、以下の所にソースを編集します。
 
 ```
-rsj_robot_test_node():
-{
-  ros::NodeHandle nh("~");
-  pub_twist = nh.advertise<geometry_msgs::Twist>("/ypspur_ros/cmd_vel", 5);
-  sub_odom = nh.subscribe("/ypspur_ros/odom", 5, &rsj_robot_test_node::cb_odom, this);
+## Declare a C++ executable
+## With catkin_make all packages are built within a single CMake context
+## The recommended prefix ensures that target names across packages don't collide
+# add_executable(${PROJECT_NAME}_node src/servo_control_node.cpp)
+add_executable(${PROJECT_NAME}_set_servo_pos src/set_servo_pos.cpp)
+
+## Rename C++ executable without prefix
+## The above recommended prefix causes long target names, the following renames the
+## target back to the shorter version for ease of user use
+## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
+# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
+set_target_properties(${PROJECT_NAME}_set_servo_pos PROPERTIES OUTPUT_NAME set_servo_pos PREFIX "")
+
+## Add cmake target dependencies of the executable
+## same as for the library above
+# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_set_servo_pos ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(${PROJECT_NAME}_set_servo_pos
+  ${catkin_LIBRARIES}
+)
+```
+
+なお、__必ず__{: style="color: red" } ファイルトップに`add_definitions(-std=c++11)`の行をアンコメントしてください。
+
+これでcatkinに`set_servo_pos`というノードのコンパイルを指定しました。
+
+#### ノードのソースの作成
+
+`servo_control`パッケージ内の`src/`ディレクトリに`set_servo_pos.cpp`というファイルを作成します。そしてエディターで開き、以下のソースを入力します。
+
+```
+#include <ros/ros.h>
+#include <std_msgs/Float64.h>
+
+#include <string>
+#include <vector>
+
+int main(int argc, char **argv) {
+  ros::init(argc, argv, "set_servo_pos");
+  ros::NodeHandle node;
+
+  std::string servo_command_topic;
+  ros::param::param<std::string>(
+    "~servo_command_topic",
+    servo_command_topic,
+    "/finger_servo_controller/command");
+
+  ros::Publisher pub = node.advertise<std_msgs::Float64>(servo_command_topic, 1);
+
+  std::vector<std::string> my_args;
+  ros::removeROSArgs(argc, argv, my_args);
+  if (my_args.size() < 2) {
+    ROS_FATAL("Usage: rosrun set_servo_pos [position]");
+    ros::shutdown();
+    return 1;
+  }
+  std_msgs::Float64 servo_pos;
+  servo_pos.data = std::stof(my_args[1]);
+
+  ROS_INFO("Setting servo position to %f", servo_pos.data);
+  ros::Rate r(1);
+  while (ros::ok()) {
+    pub.publish(servo_pos);
+    ros::spinOnce();
+    r.sleep();
+  }
+
+  return 0;
 }
 ```
 
-ソースコード中の、rsj_robot_test_nodeクラスの、rsj_robot_test_node関数は、クラスのコンストラクタと呼ばれるもので、_クラスが初期化されるときに自動的に呼び出されます_{: style="color: red" }。この中で、`nh.advertise<geometry_msgs::Twist>("/ypspur_ros/cmd_vel", 5);`の部分で、_このノードが、これからメッセージを出力する_{: style="color: red" } ことを宣言しています。advertise関数に与えている引数は以下のような意味を持ちます。
+このソースはコマンドラインから希望のサーボの位置を読み、パラメータで指定されたトピック（ディフォルトは`/finger_servo_controller/command`）にパブリッシュします。このトピックはサーボのコントローラがサブスクライブしています。
 
-`"/ypspur_ros/cmd_vel"`
-: 出力するメッセージを置く場所(トピックと呼ぶ)を指定
-
-`5`
-: メッセージのバッファリング量を指定 (大きくすると、処理が一時的に重くなったときなどに受け取り側の読み飛ばしを減らせる)
-
-advertise関数についている、&lt;geometry_msgs::Twist&gt;の部分は、メッセージの型を指定しています。これは、幾何的・運動学的な値を扱うメッセージを定義しているgeometry_msgsパッケージの、並進・回転速度を表すTwist型です。(この指定方法は、C++のテンプレートという機能を利用していますが、ここでは、「advertiseのときはメッセージの型指定を&lt;&gt;の中に書く、とだけ覚えておけば問題ありません。)
-
-以下のコードを、mainloop関数の中(「ここに速度指令の出力コード」の部分)に入れることで、速度指令のメッセージを出力(publish)します。
-
-```
-geometry_msgs::Twist cmd_vel;
-cmd_vel.linear.x = 0.05;
-cmd_vel.angular.z = 0.0;
-pub_twist.publish(cmd_vel);
-```
+なぜサーボの位置はパラメータとしてノードに渡さなかったでしょうか。パラメータはいわゆる「configuration」です。ノードの振る舞えを制御するためのことです。サーボのトピックははノードの振る舞えだが、サーボの位置はコマンドです。このノードはコマンドラインで利用するべきなツールなので普通のコマンドラインパラメータを利用しました。
 
 ### ビルド＆実行
 
-  $ cd ~/catkin_ws/
-  $ catkin_make
-
-この際、_ビルドエラーが出ていないか、良く確認して下さい_{: style="color: red" }。エラーが出ている場合は、ソースコードの該当箇所を確認・修正して下さい。
-
-実行の際、まずroscoreと、ypspur_rosを起動します。ypspur_rosの中では、ロボットの動作テストの際に使用した、ypspur-coordinatorが動いています。なお、roscoreは、前のものを実行し続けている場合は、そのままで使用できます。コマンド入力の際は、タブ補完を活用しましょう。
-
-```
-$ roscore
-```
-
-```
-$ rosrun ypspur_ros ypspur_ros _param_file:=/home/ubuntu/params/rsj-seminar20??.param [該当するものに置き換えること] _port:=/dev/serial/by-id/usb-T-frog_project_T-frog_Driver-if00
-```
-
-続いて、別の端末でrsj_robot_test_nodeノードを実行します。まずは、ロボットのホイールを浮かせて、走り出さない状態にして実行してみましょう。
-
-```
-$ rosrun rsj_robot_test rsj_robot_test_node
-Hello ROS World!
-```
-
-ゆっくりとホイールが回れば、正しく動作しています。__Ctrl+c__{: style="border: 1px solid black" } で終了します。
-
-### 小課題
-
-速度、角速度を変更して動作を確認してみましょう。
-
-## ロボットの状態を表示する
-
-### ロボットの状態を表示するコードを追加
-
-まず、ロボットの動作したときの移動量やオドメトリ座標を取得、表示するコードを追加します。ひな形には既に、移動量や座標が入ったメッセージを受け取るコードが含まれていますので、この部分の意味を確認します。
-
-```
-rsj_robot_test_node():
-{
-  ros::NodeHandle nh("~");
-  pub_twist = nh.advertise<geometry_msgs::Twist>( "/ypspur_ros/cmd_vel", 5);
-  sub_odom = nh.subscribe("/ypspur_ros/odom", 5, &rsj_robot_test_node::cb_odom, this);
-}
-```
-
-この中で、
-
-```
-nh.subscribe("/ypspur_ros/odom", 5, &rsj_robot_test_node::cb_odom, this);
-```
-
-の部分で、_このノードが、これからメッセージを受け取る_{: style="color: red" } ことを宣言しています。subscribe関数に与えている引数は以下のような意味を持ちます。
-
-`"/ypspur_ros/odom"`
-: 受け取るメッセージが置かれている場所(トピック)を指定
-
-`5`
-: メッセージのバッファリング量を指定 (大きくすると、処理が一時的に重くなったときなどに読み飛ばしを減らせる)
-
-`&rsj_robot_test_node::cb_odom`
-: メッセージを受け取ったときに呼び出す関数を指定 (rsj_robot_test_nodeクラスの中にある、cb_odom関数)
-
-`this`
-: メッセージを受け取ったときに呼び出す関数がクラスの中にある場合にクラスの実体を指定 (とりあえず、おまじないと思って構いません。)
-
-これにより、rsj_robot_test_nodeノードは、/odomトピックからメッセージをうけとると、cb_odom関数が呼び出されるようになります。続いてcb_odom関数の中身を確認しましょう。
-
-```
-void cb_odom(const nav_msgs::Odometry::ConstPtr &msg)
-{
-}
-```
-
-`const nav_msgs::Odometry::ConstPtr` は、const型(内容を書き換えられない)、nav_msgsパッケージに含まれる、Odometry型のメッセージの、const型ポインタを表しています。`&msg`の`&`は、参照型(内容を書き換えられるように変数を渡すことができる)という意味ですが、(const型なので)ここでは特に気にする必要はありません。
-
-cb_odom関数に、以下のコードを追加してみましょう。これにより、受け取ったメッセージの中から、ロボットの並進速度を取り出して表示できます。
-
-```
-ROS_INFO("vel %f", msg->twist.twist.linear.x);
-```
-
-ここで、`msg->twist.twist.linear.x` の意味を確認します。`nav_msgs::Odometry`メッセージには、下記のように入れ子状にメッセージが入っています。
-
-```
-std_msgs/Header header
-string child_frame_id
-geometry_msgs/PoseWithCovariance pose
-geometry_msgs/TwistWithCovariance twist
-```
-
-全て展開すると、以下の構成になります。
-
-```
-std_msgs/Header header
-  uint32 seq
-  time stamp
-  string frame_id
-string child_frame_id
-geometry_msgs/PoseWithCovariance pose
-  geometry_msgs/Pose pose
-    geometry_msgs/Point position
-      float64 x
-      float64 y
-      float64 z
-    geometry_msgs/Quaternion orientation
-      float64 x
-      float64 y
-      float64 z
-      float64 w
-  float64[36] covariance
-geometry_msgs/TwistWithCovariance twist
-  geometry_msgs/Twist twist
-    geometry_msgs/Vector3 linear
-      float64 x // ロボット並進速度
-      float64 y
-      float64 z
-    geometry_msgs/Vector3 angular
-      float64 x
-      float64 y
-      float64 z // ロボット角速度
-  float64[36] covariance
-```
-
-読みたいデータである、ロボット並進速度を取り出すためには、これを順にたどっていけば良く、`msg->twist.twist.linear.x`{: style="color: red" } 、となります。msgはクラスへのポインタなので「-&gt;」を用い、以降はクラスのメンバ変数へのアクセスなので「.」を用いてアクセスしています。
-
-### ビルド＆実行
+いつものようにコンパイルして実行します。
 
 ```
 $ cd ~/catkin_ws/
 $ catkin_make
 ```
 
-この際、ビルドエラーが出ていないか、良く確認して下さい。エラーが出ている場合は、ソースコードの該当箇所を確認・修正して下さい。
+この際、_ビルドエラーが出ていないか、良く確認して下さい_{: style="color: red" }。エラーが出ている場合は、ソースコードの該当箇所を確認・修正して下さい。
 
-まず、先ほどと同様、roscoreと、ypspur_rosを起動します。(以降、この手順の記載は省略します。)
+実行する前にまずはマニピュレータが壊れないようにします。マニピュレータのグリッパーが動くので、__電源を入れる前にマニピュレータのグリッパーは何にもぶつからないような姿勢にしましょう__{: style="color: red" } 。
 
-```
-$ roscore
-```
+マニピュレータのサーボコントローラを起動することが必要です。
 
-```
-$ rosrun ypspur_ros ypspur_ros _param_file:=/home/ubuntu/params/rsj-seminar20??.param [該当するものに置き換えること] _port:=/dev/serial/by-id/usb-T-frog_project_T-frog_Driver-if00
-```
+`servo_controller`パッケージの中に以下のファイルを作成します。
 
-続いて、rsj_robot_test_nodeノードを実行します。
+`config/dynamixel_text.yaml`:
 
 ```
-$ rosrun rsj_robot_test rsj_robot_test_node
-Hello ROS World!
-vel: 0.0500
-vel: 0.0500
-vel: 0.0500
-vel: 0.0500
+finger_servo_controller:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: finger_joint
+    joint_speed: 1.17
+    motor:
+        id: 5
+        init: 512
+        min: 0
+        max: 1023
 ```
 
-ロボットのホイールが回転し、先ほどの小課題で設定した走行指令の値と近い値が表示されれば、正しく動作しています。
-
-### 小課題
-
-同様に、ロボットの角速度を表示してみましょう。
-
-
-## シーケンス制御
-
-### 時間で動作を変える
-
-メインループを以下のように変更してみましょう。
+`launch/dynamixel_test.launch`:
 
 ```
-void mainloop()
-{
-  ROS_INFO("Hello ROS World!");
+<launch>
+    <node name="dynamixel_manager" pkg="dynamixel_controllers" type="controller_manager.py" required="true" output="screen">
+        <rosparam>
+            namespace: dynamixel_controller_manager
+            serial_ports:
+                dxl_tty1:
+                    port_name: "/dev/ttyUSB0"
+                    baud_rate: 1000000
+                    min_motor_id: 1
+                    max_motor_id: 5
+                    update_rate: 10
+        </rosparam>
+    </node>
+    <rosparam file="$(find servo_control)/config/dynamixel_test.yaml" command="load"/>
+    <node name="finger_servo_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
+          args="--manager=dynamixel_controller_manager
+                --port dxl_tty1
+                finger_servo_controller"
+          output="screen"/>
+</launch>
+```
 
-  ros::Rate rate(10.0);
-  ros::Time start = ros::Time::now();
-  while(ros::ok())
-  {
-    ros::spinOnce();
-    ros::Time now = ros::Time::now();
+端末に以下を実行してマニピュレータのグリッパーサーボコントローラを起動します。
 
-    geometry_msgs::Twist cmd_vel;
-    if(now - start &gt; ros::Duration(3.0))
-    {
-      cmd_vel.linear.x = 0.05;
-      cmd_vel.angular.z = 0.0;
-    }
-    pub_twist.publish(cmd_vel);
+```
+$ roslaunch servo_control dynamixel_test.launch
+... logging to /home/geoff/.ros/log/619c447c-396a-11e7-b868-d8cb8ae35bff/roslaunch-alnilam-1790.log
+Checking log directory for disk usage. This may take awhile.
+Press Ctrl-C to interrupt
+Done checking log file disk usage. Usage is <1GB.
 
-    rate.sleep();
-  }
+started roslaunch server http://alnilam:44912/
+
+SUMMARY
+========
+（省略）
+```
+
+別の端末に以下を実行します。
+
+```
+$ rosrun servo_control set_servo_pos 0
+[ INFO] [1494851539.189274395]: Setting servo position to 0.000000
+[Ctrl+cで止める]
+$ rosrun servo_control set_servo_pos -0.5
+[ INFO] [1494851548.085785357]: Setting servo position to -0.500000
+[Ctrl+cで止める]
+```
+
+サーボが動けば、サーボ制御は成功しました。
+
+## サーボの状態を確認
+
+もう一つのノードを作成し、サーボの現在状況を端末で表示します。上述と同じ手順で`servo_status`というノードを`servo_control`パッケージに追加します。
+
+### ノードを作成
+
+#### CMakeLists.txtにノードを追加
+
+CMakeLists.txtに次を追加します。
+
+```
+add_executable(${PROJECT_NAME}_servo_status src/servo_status.cpp)
+set_target_properties(${PROJECT_NAME}_servo_status PROPERTIES OUTPUT_NAME servo_status PREFIX "")
+add_dependencies(${PROJECT_NAME}_servo_status ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(${PROJECT_NAME}_servo_status ${catkin_LIBRARIES})
+```
+
+#### ノードのソースの作成
+
+`servo_control`パッケージ内の`src/`ディレクトリに`servo_status.cpp`というファイルを作成します。そしてエディターで開き、以下のソースを入力します。
+
+```
+#include <ros/ros.h>
+#include <dynamixel_msgs/JointState.h>
+
+#include <string>
+
+void callback(const dynamixel_msgs::JointState::ConstPtr &msg) {
+  ROS_INFO("--- Servo status ---");
+  ROS_INFO("Name: %s", msg->name.c_str());
+  ROS_INFO("ID: %d", msg->motor_ids[0]);
+  ROS_INFO("Temperature: %d", msg->motor_temps[0]);
+  ROS_INFO("Goal position: %f", msg->goal_pos);
+  ROS_INFO("Current position: %f", msg->current_pos);
+  ROS_INFO("Position error: %f", msg->error);
+  ROS_INFO("Velocity: %f", msg->velocity);
+  ROS_INFO("Load: %f", msg->load);
+  ROS_INFO("Moving: %s", msg->is_moving ? "yes" : "no");
+  ROS_INFO("");
+}
+
+int main(int argc, char **argv) {
+  ros::init(argc, argv, "servo_status");
+  ros::NodeHandle node;
+
+  std::string servo_status_topic;
+  ros::param::param<std::string>("~servo_status_topic", servo_status_topic, "/finger_servo_controller/state");
+
+  ros::Subscriber pub = node.subscribe<dynamixel_msgs::JointState>(
+    servo_status_topic,
+    10,
+    callback);
+
+  ros::spin();
+
+  return 0;
 }
 ```
 
-これは、メインループ開始時刻から、3.0秒後に、並進速度0.05m/sの指令を与えるコードです。ros::Time型(時刻を表す)同士の減算結果は、ros::Duration型(時間を表す)になり、比較演算子で比較できます。したがって、now - start > ros::Duration(3.0)の部分は、開始から3秒後に、trueになります。
-
-先ほどと同様にビルドし、ypspur_rosとrsj_robot_test_nodeを起動して動作を確認します。
-
-### センシング結果で動作を変える
-
-cb_odomで取得したオドメトリのデータを保存しておくように、以下のように変更してみましょう。(`// 追加`{: style="color: red" } の部分を追加)
+コールバックの中に`dynamixel_msgs::JointState`というメッセージタイプを利用します。このメッセージタイプは`dynamixel_msgs`パッケージに定義され、内容は以下のようです。
 
 ```
-void cb_odom(const nav_msgs::Odometry::ConstPtr &amp;msg)
-{
-  ROS_INFO("vel %f", msg->twist.twist.linear.x);
-  odom = *msg; // 追加
-}
+std_msgs/Header header
+  uint32 seq
+  time stamp
+  string frame_id
+string name
+int32[] motor_ids
+int32[] motor_temps
+float64 goal_pos
+float64 current_pos
+float64 error
+float64 velocity
+float64 load
+bool is_moving
 ```
 
-また、class rsj_robot_test_nodeの先頭に下記の変数定義を追加します。
+### ビルド＆実行
+
+コンパイルして実行します。
 
 ```
-class rsj_robot_test_node
-{
-private:
-  nav_msgs::Odometry odom; // 追加
+$ cd ~/catkin_ws/
+$ catkin_make
 ```
 
-また、odomの中で方位を表す、クオータニオンをコンストラクタ(rsj_robot_test_node()関数)の最後で初期化しておきます。
+実行する前にマニピュレータのサーボコントローラを起動することが必要です。端末に以下を実行してマニピュレータのグリッパーサーボコントローラを起動します。
 
 ```
-rsj_robot_test_node():
-{
-  // (略)
-  odom.pose.pose.orientation.w = 1.0; // 追加
-}
+$ roslaunch servo_control dynamixel_test.launch
+... logging to /home/geoff/.ros/log/619c447c-396a-11e7-b868-d8cb8ae35bff/roslaunch-alnilam-1790.log
+Checking log directory for disk usage. This may take awhile.
+Press Ctrl-C to interrupt
+Done checking log file disk usage. Usage is <1GB.
+
+started roslaunch server http://alnilam:44912/
+
+SUMMARY
+========
+（省略）
 ```
 
-メインループを以下のように変更してみましょう。
+別の端末に以下を実行します。
 
 ```
-void mainloop()
-{
-  ROS_INFO("Hello ROS World!");
-
-  ros::Rate rate(10.0);
-  while(ros::ok())
-  {
-    ros::spinOnce();
-
-    geometry_msgs::Twist cmd_vel;
-    if(tf::getYaw(odom.pose.pose.orientation) > 1.57)
-    {
-      cmd_vel.linear.x = 0.0;
-      cmd_vel.angular.z = 0.0;
-    }
-    else
-    {
-      cmd_vel.linear.x = 0.0;
-      cmd_vel.angular.z = 0.1;
-    }
-    pub_twist.publish(cmd_vel);
-
-    rate.sleep();
-  }
-}
+$ rosrun servo_control servo_status
+[ INFO] [1494855697.336794278]: --- Servo status ---
+[ INFO] [1494855697.336922059]: Name: finger_joint
+[ INFO] [1494855697.336968787]: ID: 5
+[ INFO] [1494855697.337016662]: Temperature: 37
+[ INFO] [1494855697.337069086]: Goal position: 0.000000
+[ INFO] [1494855697.337120585]: Current position: 0.000000
+[ INFO] [1494855697.337170811]: Position error: 0.000000
+[ INFO] [1494855697.337226948]: Velocity: 0.000000
+[ INFO] [1494855697.337278499]: Load: 0.000000
+[ INFO] [1494855697.337329531]: Moving: no
+[ INFO] [1494855697.337372008]: 
+[ INFO] [1494855697.432684658]: --- Servo status ---
+（省略）
 ```
 
-これは、オドメトリのYaw角度(旋回角度)が1.57ラジアン(90度)を超えるまで、正方向に旋回する動作を表しています。
+（サーボの現在状況により数字の変わることがあります。）
 
-先ほどと同様にビルドし、ypspur_rosとrsj_robot_test_nodeを起動して動作を確認します。
+別の端末に以下を実行すると、`servo_status`の端末で数字の変更が見えます。
 
-### 小課題
+```
+$ rosrun servo_control set_servo_pos 0
+[ INFO] [1494851539.189274395]: Setting servo position to 0.000000
+[Ctrl+cで止める]
+$ rosrun servo_control set_servo_pos -0.5
+[ INFO] [1494851548.085785357]: Setting servo position to -0.500000
+[Ctrl+cで止める]
+```
 
-1m前方に走行し、その後で帰ってくるコードを作成してみましょう。(1m前方に走行し180度旋回して1m前方に走行するか、もしくは、1m前方に走行し1m後方に走行すればよい。)
+## 小課題
 
-余裕があれば、四角形を描いて走行するコードを作成してみましょう。
+サーボステータスに`error`と`load`と`is_moving`という値があります。これらの利用により、サーボはストールしたかどうか判断できます。
+
+サーボがストールしたら傾向を端末で表示するノードを作成してみましょう。
