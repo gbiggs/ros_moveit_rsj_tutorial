@@ -31,7 +31,7 @@ ROSでは、プログラムをビルドする際に、catkin というシステ�
 
 以下の手順で本作業用の新しいワークスペースを作ります。
 
-```
+```shell
 $ mkdir -p ~/catkin_ws/src
 $ cd ~/catkin_ws/src
 $ catkin_init_workspace
@@ -48,7 +48,7 @@ $
 
 このディレクトリに、本作業ようのパッケージをダウンロードします。
 
-```
+```shell
 $ git clone https://github.com/gbiggs/rsj_tutorial_2017_ros_intro.git
 $ ls
 CMakeLists.txt  rsj_tutorial_2017_ros_intro
@@ -61,7 +61,7 @@ GitHubは、ソースコードなどのリポジトリーサービスです。�
 
 では、次にパッケージのディレクトリ構成を確認します。ダウンロードしているパッケージがバージョンアップされている場合などには、下記の実行例とファイル名が異なったり、ファイルが追加・削除されているが場合があります。
 
-```
+```shell
 $ cd rsj_tutorial_2017_ros_intro/
 $ ls
 CMakeLists.txt  launch  msg  package.xml  src
@@ -78,7 +78,7 @@ $
 
 以下のように、`catkin_make`コマンドで、ダウンとロードした`rsj_tutorial_2017_ros_intro`パッケージを含む、ワークスペース全体をビルドします。`catkin_make`は、ワークスペースの最上位ディレクトリ(`~/catkin_ws/`)で行います。
 
-```
+```shell
 $ cd ~/catkin_ws/
 ```
 
@@ -86,7 +86,7 @@ $ cd ~/catkin_ws/
 
 先作成したワークスペースを利用します。端末を開き、パッケージが正しくあるか確認します。
 
-```
+```shell
 $ cd ~/catkin_ws/src/
 $ ls
 CMakeLists.txt  rsj_tutorial_2017_ros_intro
@@ -106,25 +106,25 @@ $
 
 まず、先頭部分では、必要なヘッダファイルをインクルードしています。
 
-```
+```C++
 #include <ros/ros.h>
 ```
 
 続いて、本ノードが利用するメッセージのヘッダファイルをインクルードしています。
 
-```
+```C++
 #include <rsj_tutorial_2017_ros_basics/Greeting.h>
 ```
 
 `std::string`が利用されるので、ヘッダファイルをインクルードします。
 
-```
+```C++
 #include <string>
 ```
 
 続いて、C++のmain関数が定義されています。本ノードは非常に簡単なのですべての機能がmain関数に入れられました。ただし、複雑な機能や色々なデータを持つノードにはクラスとしての実装がおすすめします。
 
-```
+```C++
 int main(int argc, char **argv) {
   ros::init(argc, argv, "Greeter");
   ros::NodeHandle node;
@@ -192,18 +192,18 @@ advertise関数についている、`<rsj_tutorial_2017_ros_basics::Greeting>`�
 
 ROS上でこのパッケージをビルドするためには、catkin_makeコマンドを用います。
 
-```
+```shell
 $ cd ~/catkin_ws/
 $ catkin_make
 ```
 
 実行してみましょう。実行の際、ROSを通してノード同士がデータをやりとりするために用いる、「roscore」を起動しておく必要があります。2つの端末を開き、それぞれで以下を実行して下さい。
 
-```
+```shell
 $ roscore
 ```
 
-```
+```shell
 $ cd ~/catkin_ws/
 $ source devel/setup.bash
 $ rosrun rsj_tutorial_2017_ros_basics greeter
@@ -214,7 +214,7 @@ $ rosrun rsj_tutorial_2017_ros_basics greeter
 
 ソースコードにパラメータを利用したので、コマンドラインからパラメータの設定をためして見ましょう。ノードの端末（__注意：`roscore`の端末ではなくて__{: style="color: red" } ）に__Ctrl+c__{: style="border: 1px solid black" } を入力してノードを終了します。そして以下を実行してください。
 
-```
+```shell
 $ rosrun rsj_tutorial_2017_ros_basics greeter _hello_tex=gidday _world_name:=planet
 [ INFO] [1494840247.644756809]: Publishing greeting 'gidday planet'
 ```
@@ -225,7 +225,7 @@ $ rosrun rsj_tutorial_2017_ros_basics greeter _hello_tex=gidday _world_name:=pla
 
 以下のソースは`rsj_tutorial_2017_ros_basics/src/displayer.cpp`ファイルにあります。
 
-```
+```C++
 #include <ros/ros.h>
 #include <rsj_tutorial_2017_ros_basics/Greeting.h>
 
@@ -272,18 +272,18 @@ int main(int argc, char **argv) {
 
 もう一回、このパッケージをビルドするためにcatkin_makeコマンドを実行します。
 
-```
+```shell
 $ cd ~/catkin_ws/
 $ catkin_make
 ```
 
 実行してみましょう。また端末で以下を実行します。
 
-```
+```shell
 $ roscore
 ```
 
-```
+```shell
 $ cd ~/catkin_ws/
 $ source devel/setup.bash
 $ rosrun rsj_tutorial_2017_ros_basics greeter
@@ -292,7 +292,7 @@ $ rosrun rsj_tutorial_2017_ros_basics greeter
 
 そしてもう一つの端末を開いて、以下を実行します。
 
-```
+```shell
 $ cd ~/catkin_ws/
 $ source devel/setup.bash
 $ rosrun rsj_tutorial_2017_ros_basics displayer
@@ -314,7 +314,7 @@ launchファイルは、ノードやパラメータの組み合わせを定義�
 
 `rsj_tutorial_2017_ros_basics`パッケージに以下のファイルが`launch/say_hello.launch`として存在します。本ファイルは前セクションに手動で起動したシステムを定義します。
 
-```
+```xml
 <launch>
   <node name="greeter" pkg="rsj_tutorial_2017_ros_basics" type="greeter">
     <param name="hello_text" value="allo"/>
@@ -347,7 +347,7 @@ launchファイルは、ノードやパラメータの組み合わせを定義�
 
 開いている端末に`roscore`や起動中のノードをすべて __Ctrl+c__{: style="border: 1px solid black" } で停止します。それから一つの端末で以下を実行します。
 
-```
+```shell
 $ roslaunch rsj_tutorial_2017_ros_basics say_hello.launch
 ... logging to /home/geoff/.ros/log/40887b56-395c-11e7-b868-d8cb8ae35bff/roslaunch-alnilam-11087.log
 Checking log directory for disk usage. This may take awhile.
@@ -387,11 +387,11 @@ allo earth
 
 __Ctrl+c__{: style="border: 1px solid black" } でシステムを止めます。
 
-```
+```shell
+allo earth
+allo earth
+allo earth
 [Ctrl+c]
-allo earth
-allo earth
-allo earth
 ^C[displayer-3] killing on exit
 [greeter-2] killing on exit
 [rosout-1] killing on exit
@@ -414,7 +414,7 @@ $
 
 ワークスペースに新しいパッケージを作成するために、以下を実行してください。
 
-```
+```shell
 $ cd ~/catkin_ws/src
 $ catkin_create_pkg servo_control roscpp dynamixel_controllers dynamixel_msgs
 Created file servo_control/CMakeLists.txt
@@ -428,7 +428,7 @@ Successfully created files in /home/geoff/catkin_ws/src/servo_control. Please ad
 
 生成されたパッケージの中身を確認します。
 
-```
+```shell
 $ cd servo_control/
 $ ls
 CMakeLists.txt  include  package.xml  src
@@ -438,7 +438,7 @@ CMakeLists.txt  include  package.xml  src
 
 `package.xml`をエディターで開くと以下の行が含まれていると見えます。
 
-```
+```xml
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>dynamixel_controllers</build_depend>
   <build_depend>dynamixel_msgs</build_depend>
@@ -468,7 +468,7 @@ CMakeLists.txt  include  package.xml  src
 
 `servo_control`パッケージにある`CMakeLists.txt`をエディターで開き、以下の所にソースを編集します。
 
-```
+```cmake
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
@@ -501,7 +501,7 @@ target_link_libraries(${PROJECT_NAME}_set_servo_pos
 
 `servo_control`パッケージ内の`src/`ディレクトリに`set_servo_pos.cpp`というファイルを作成します。そしてエディターで開き、以下のソースを入力します。
 
-```
+```C++
 #include <ros/ros.h>
 #include <std_msgs/Float64.h>
 
@@ -550,7 +550,7 @@ int main(int argc, char **argv) {
 
 いつものようにコンパイルして実行します。
 
-```
+```shell
 $ cd ~/catkin_ws/
 $ catkin_make
 ```
@@ -565,7 +565,7 @@ $ catkin_make
 
 `config/dynamixel_text.yaml`:
 
-```
+```yaml
 finger_servo_controller:
     controller:
         package: dynamixel_controllers
@@ -582,7 +582,7 @@ finger_servo_controller:
 
 `launch/dynamixel_test.launch`:
 
-```
+```xml
 <launch>
     <node name="dynamixel_manager" pkg="dynamixel_controllers" type="controller_manager.py" required="true" output="screen">
         <rosparam>
@@ -607,7 +607,7 @@ finger_servo_controller:
 
 端末に以下を実行してマニピュレータのグリッパーサーボコントローラを起動します。
 
-```
+```shell
 $ roslaunch servo_control dynamixel_test.launch
 ... logging to /home/geoff/.ros/log/619c447c-396a-11e7-b868-d8cb8ae35bff/roslaunch-alnilam-1790.log
 Checking log directory for disk usage. This may take awhile.
@@ -623,7 +623,7 @@ SUMMARY
 
 別の端末に以下を実行します。
 
-```
+```shell
 $ rosrun servo_control set_servo_pos 0
 [ INFO] [1494851539.189274395]: Setting servo position to 0.000000
 [Ctrl+cで止める]
@@ -644,7 +644,7 @@ $ rosrun servo_control set_servo_pos -0.5
 
 CMakeLists.txtに次を追加します。
 
-```
+```cmake
 add_executable(${PROJECT_NAME}_servo_status src/servo_status.cpp)
 set_target_properties(${PROJECT_NAME}_servo_status PROPERTIES OUTPUT_NAME servo_status PREFIX "")
 add_dependencies(${PROJECT_NAME}_servo_status ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -655,7 +655,7 @@ target_link_libraries(${PROJECT_NAME}_servo_status ${catkin_LIBRARIES})
 
 `servo_control`パッケージ内の`src/`ディレクトリに`servo_status.cpp`というファイルを作成します。そしてエディターで開き、以下のソースを入力します。
 
-```
+```C++
 #include <ros/ros.h>
 #include <dynamixel_msgs/JointState.h>
 
@@ -715,14 +715,14 @@ bool is_moving
 
 コンパイルして実行します。
 
-```
+```shell
 $ cd ~/catkin_ws/
 $ catkin_make
 ```
 
 実行する前にマニピュレータのサーボコントローラを起動することが必要です。端末に以下を実行してマニピュレータのグリッパーサーボコントローラを起動します。
 
-```
+```shell
 $ roslaunch servo_control dynamixel_test.launch
 ... logging to /home/geoff/.ros/log/619c447c-396a-11e7-b868-d8cb8ae35bff/roslaunch-alnilam-1790.log
 Checking log directory for disk usage. This may take awhile.
@@ -738,7 +738,7 @@ SUMMARY
 
 別の端末に以下を実行します。
 
-```
+```shell
 $ rosrun servo_control servo_status
 [ INFO] [1494855697.336794278]: --- Servo status ---
 [ INFO] [1494855697.336922059]: Name: finger_joint
@@ -759,7 +759,7 @@ $ rosrun servo_control servo_status
 
 別の端末に以下を実行すると、`servo_status`の端末で数字の変更が見えます。
 
-```
+```shell
 $ rosrun servo_control set_servo_pos 0
 [ INFO] [1494851539.189274395]: Setting servo position to 0.000000
 [Ctrl+cで止める]
