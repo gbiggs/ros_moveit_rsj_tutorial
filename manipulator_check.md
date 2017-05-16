@@ -80,7 +80,7 @@ CMakeCache.txt  CMakeFiles  cmake_install.cmake  Makefile  servo_check
 
   プログラムにサーボIDを指定します。CRANE+のサーボIDは１~５です。
 
-  __注意：プログラムを実行すると指定したサーボは高速で真ん中の位置に移動します。電源を入れる前にマニピュレータをまっすぐ___上向きに近い姿勢___にしてください。__{: style: "color=red" }
+  __注意：プログラムを実行すると指定したサーボは高速で真ん中の位置に移動します。電源を入れる前にマニピュレータをまっすぐ上向きに近い姿勢にしてください。__{: style="color: red" }
 
 ```shell
 ./servo_check 1
