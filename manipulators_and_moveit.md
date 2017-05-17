@@ -314,6 +314,191 @@ __注意：本物のロボットを制御します。ランダムで選択され
 
 お好みの姿勢にグリッパーを移動して、「Plan」と「Execute」ボタンでマニピュレータを移動しましょう。シミュレータ上のロボットはグリッパーが指定した位置と角度になるように動きます。
 
-## ノードからマニピュレータの制御
+## ノードからマニピュレータを制御
 
 MoveIt!を利用するために、主にノードからアプリケーションやタスクに沿ったようにマニピュレータを制御したいでしょう。ここで簡単なノードの作成によりグリッパーの位置と角度を制御します。
+
+最初にワークスペースにノード用の新しいパッケージを作成します。
+
+```shell
+$ cd ~/crane_plus_ws/src/
+$ catkin_create_pkg gripper_mover roscpp moveit_core moveit_ros_planning_interface moveit_visual_tools moveit_msgs moveit_commander tf actionlib control_msgs geometry_msgs shape_msgs trajectory_msgs
+Created file gripper_mover/CMakeLists.txt
+Created file gripper_mover/package.xml
+Created folder gripper_mover/include/gripper_mover
+Created folder gripper_mover/src
+Successfully created files in /home/geoff/crane_plus_ws/src/gripper_mover. Please adjust the values in package.xml. 
+```
+
+パッケージ内の`package.xml`の依存関係は以下のようになるように編集します。
+
+```xml
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>moveit_core</build_depend>
+  <build_depend>moveit_ros_planning_interface</build_depend>
+  <build_depend>moveit_visual_tools</build_depend>
+  <build_depend>control_msgs</build_depend>
+  <build_depend>actionlib</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>shape_msgs</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>moveit_core</run_depend>
+  <run_depend>moveit_ros_planning_interface</run_depend>
+  <run_depend>moveit_visual_tools</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>shape_msgs</run_depend>
+  <run_depend>control_msgs</run_depend>
+  <run_depend>actionlib</run_depend>
+  <run_depend>trajectory_msgs</run_depend>
+  <run_depend>moveit_msgs</run_depend>
+  <run_depend>moveit_commander</run_depend>
+```
+
+パッケージ内の`CMakeLists.txt`にある`find_package`コマンドは以下の用に編集し依存関係パッケージを利用します。
+
+```cmake
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  moveit_core
+  moveit_ros_planning
+  moveit_ros_planning_interface
+  moveit_visual_tools
+  control_msgs
+  geometry_msgs
+  shape_msgs
+  actionlib
+)
+
+find_package(Boost REQUIRED
+  system
+  filesystem
+  date_time
+  thread
+)
+```
+
+`CMakeLists.txt`の`catkin_package`コマンドにも追加します。
+
+```cmake
+catkin_package(
+  CATKIN_DEPENDS
+    roscpp
+    control_msgs
+    geometry_msgs
+    shape_msgs
+    moveit_core
+    moveit_ros_planning_interface
+    actionlib
+)
+```
+
+`CMakeLists.txt`で`include_directories`にBoostのディレクトリを追加します。
+
+```cmake
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIR}
+)
+```
+
+パッケージ内の`CMakeLists.txt`にノード用のコンパイル情報を追加します。ここにもBoostの情報を利用します。
+
+```cmake
+## Declare a C++ executable
+## With catkin_make all packages are built within a single CMake context
+## The recommended prefix ensures that target names across packages don't collide
+# add_executable(${PROJECT_NAME}_node src/servo_control_node.cpp)
+add_executable(${PROJECT_NAME}_gripper_mover src/gripper_mover.cpp)
+
+## Rename C++ executable without prefix
+## The above recommended prefix causes long target names, the following renames the
+## target back to the shorter version for ease of user use
+## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
+set_target_properties(${PROJECT_NAME}_gripper_mover PROPERTIES OUTPUT_NAME gripper_mover PREFIX "")
+
+## Add cmake target dependencies of the executable
+## same as for the library above
+add_dependencies(${PROJECT_NAME}_gripper_mover ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(${PROJECT_NAME}_gripper_mover
+  ${catkin_LIBRARIES}
+  ${Boost_LIBRARIES}
+)
+```
+
+なお、__必ず__{: style="color: red" } ファイルトップに`add_definitions(-std=c++11)`の行をアンコメントしてください。
+
+`gripper_mover`パッケージ内の`src/`ディレクトリに`gripper_mover.cpp`というファイルを作成します。そしてエディターで開き、以下のソースを入力します。
+
+```cpp
+#include <ros/ros.h>
+
+int main(int argc, char **argv) {
+  ros::init(argc, argv, "gripper_mover");
+  ros::NodeHandle nh;
+
+  ros::shutdown();
+  return 0;
+}
+```
+
+このソースは空のノードです。これから少しづつMoveIt!のAPIを利用するコードを追加してマニピュレータを制御します。
+
+最初は、５行目（`ros::NodeHandle nh;`）の後に以下を追加します。MoveIt!はアシンクロナスな計算をしないといけないので、このコードによりROSのアシンクロナスな機能を初期化します。
+
+```c++
+  ros::AsyncSpinner spinner(1);
+  spinner.start();
+```
+
+次はMoveIt!のAPIの初期化です。ファイルの上に以下のヘッダーをインクルードします。
+
+```c++
+#include <moveit/move_group_interface/move_group_interface.h>
+```
+
+そして`main`関数に以下の変数を追加します。
+
+```c++
+  moveit::planning_interface::MoveGroupInterface arm("arm");
+```
+
+MoveIt!は「MoveGroup」という存在を制御します。「MoveGroup」とは、ロボット内の複数のジョイントのグループです。CRANE+には２つのMoveGroupがあります。「arm」は手首の部分までのジョイントを制御し、「gripper」は指のジョイントのみを制御します。以下は「arm」のMoveGroupです。
+
+![CRANE+ "arm" MoveGroup](images/crane_plus_move_group_arm.png)
+
+`arm`のMoveGroupの先端はグリッパーの真ん中ぐらいに設定されています。これで`arm`の位置を指定すると、グリッパーはその位置の周りに行きます。
+
+MoveIt!はどの座標系で制御するかを指定することが必要です。今回ロボットのベースに基づいた「`base_link`」座標系を利用します。位置制御の座標等はロボットのベースから図るという意味です。
+
+```c++
+  arm.setPoseReferenceFrame("base_link");
+```
+
+これでマニピュレータはもう制御できるようになりました。
+
+最初の動きとして、マニピュレータを立てましょう。MoveIt!は「Named pose」（名付きポーズ）というコンセプトを持ちます。CRANE+のMoveIt!コンフィグレーション（`crane_plus_moveit_config`パッケージにある）は２つの名付きポーズを指定します。
+
+`vertical`
+: マニピュレータが真上を指す
+
+`resting`
+: マニピュレータは休んでいるような姿勢になる
+
+`vertical`ポーズを利用してマニピュレータを立ちます。
+
+```c++
+  arm.setNamedTarget("vertical");
+```
+
+移動先を設定した後、MoveIt!にプラン作成を移動命令を出します。
+
+```c++
+  arm.move();
+```
