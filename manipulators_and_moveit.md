@@ -3,11 +3,17 @@ title: マニピュレータの制御とMoveIt!の利用
 date: 2017-05-09
 ---
 
-マニピュレータ制御には、全セクションで行ったようにサーボごと制御することはもちろん可能です。しかし、マニピュレータのグリッパーの位置を制御したり、スムーズなトラジェクトリーに沿って動かしたりしたいでしょう。ならば、サーボごとのようなローレベル制御は足りません。
+マニピュレータ制御には、前セクションで行ったようにサーボごと制御することはもちろん可能です。しかし、マニピュレータのグリッパーの位置を制御したり、スムーズなトラジェクトリーに沿って動かしたりしたいでしょう。ならば、サーボごとのようなローレベル制御は足りません。
 
 ROSでは、マニピュレータを一体型なロボットとして制御しタスクを行うために、[MoveIt!というライブラリ](http://moveit.ros.org/)があります。
 
 本セクションでは、MoveIt!を利用してマニピュレータによりブロックを移動します。
+
+## マニピュレータとは
+
+Describe what a manipulator is (robot made of links and joints used to move an
+end effector to a desired position or along a desired path in order to achieve
+some task).
 
 ## MoveIt!とは
 
