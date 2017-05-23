@@ -575,7 +575,7 @@ $ rosrun gripper_mover gripper_mover
 
 _このソースは以下のURLでダウンロード可能です。_
 
-_https://github.com/gbiggs/rsj_2017_gripper_mover/tree/named_pose_
+(https://github.com/gbiggs/rsj_2017_gripper_mover/tree/named_pose)
 
 ### マニピュレータを任意の姿勢に移動
 
@@ -778,7 +778,7 @@ control_msgs/GripperCommand command
 
 _上述のソースは以下のURLでダウンロード可能です。_
 
-_https://github.com/gbiggs/rsj_2017_gripper_mover/tree/picking_
+(https://github.com/gbiggs/rsj_2017_gripper_mover/tree/picking)
 
 ## 小課題
 
@@ -810,7 +810,7 @@ __注意：変更し始める前に、ソースのバックアップを作りま
 
 _このソースは以下のURLでダウンロード可能です。_
 
-_ _
+()
 
 ## さらに小課題
 
@@ -822,4 +822,4 @@ CRANE+と本セミナーの物体（すなわちスポンジのキューブ）�
 
 _このソースは以下のURLでダウンロード可能です。_
 
-_ _
+()
