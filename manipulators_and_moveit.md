@@ -573,9 +573,9 @@ $ rosrun gripper_mover gripper_mover
 
 ![CRANE+ vertical named pose](images/crane_plus_vertical_pose.png)
 
-__このソースは以下のURLでダウンロード可能です。__
+_このソースは以下のURLでダウンロード可能です。_
 
-__https://github.com/gbiggs/rsj_2017_gripper_mover/tree/named_pose__
+_https://github.com/gbiggs/rsj_2017_gripper_mover/tree/named_pose_
 
 ### マニピュレータを任意の姿勢に移動
 
@@ -776,9 +776,9 @@ control_msgs/GripperCommand command
 
 これでROS上でMoveIt!とマニピュレータを利用して、ピック・アンド・プレースの前半が実装できました。
 
-__上述のソースは以下のURLでダウンロード可能です。__
+_上述のソースは以下のURLでダウンロード可能です。_
 
-__https://github.com/gbiggs/rsj_2017_gripper_mover/tree/picking__
+_https://github.com/gbiggs/rsj_2017_gripper_mover/tree/picking_
 
 ## 小課題
 
@@ -808,9 +808,9 @@ __注意：コールバックは`main`関数にある`arm`や`gripper`の変数�
 
 __注意：変更し始める前に、ソースのバックアップを作りましょう。__{: style="color: red" }
 
-__このソースは以下のURLでダウンロード可能です。__
+_このソースは以下のURLでダウンロード可能です。_
 
-__ __
+_ _
 
 ## さらに小課題
 
@@ -820,6 +820,6 @@ CRANE+と本セミナーの物体（すなわちスポンジのキューブ）�
 
 ノードにプレースを行うソースを実装してみましょう。
 
-__このソースは以下のURLでダウンロード可能です。__
+_このソースは以下のURLでダウンロード可能です。_
 
-__ __
+_ _
