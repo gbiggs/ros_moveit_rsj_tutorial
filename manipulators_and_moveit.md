@@ -303,8 +303,6 @@ __注意：本物のロボットを制御します。ランダムで選択され
 
 ![MoveIt! RViz random pose execution](images/crane_plus_moveit_rviz_random_pose_executed_hardware.png)
 
-![CRANE+ random pose execution](images/crane_plus_random_pose_execution.jpg)
-
 ランダムな姿勢に移動できたら、次に手動制御を行いましょう。RViz内でマニピュレータの先端に球体と丸と矢印があります。以下の方法でこれらを利用してグリッパーの位置と角度が制御できます。
 
 球体をドラッグ
