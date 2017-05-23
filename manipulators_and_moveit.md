@@ -42,7 +42,7 @@ $ cd ~/
 $ mkdir -p ~/crane_plus_ws/src/
 $ cd ~/crane_plus_ws/src/
 $ catkin_init_workspace
-Creating symlink "/home/geoff/crane_plus_ws/src/CMakeLists.txt" pointing to "/opt/ros/kinetic/share/catkin/cmake/toplevel.cmake"
+Creating symlink "/home/username/crane_plus_ws/src/CMakeLists.txt" pointing to "/opt/ros/kinetic/share/catkin/cmake/toplevel.cmake"
 $
 ```
 
@@ -58,14 +58,14 @@ Resolving deltas: 100% (235/235), done.
 Checking connectivity... done.
 $ cd ~/crane_plus_ws/
 $ catkin_make
-Base path: /home/geoff/crane_plus_ws
-Source space: /home/geoff/crane_plus_ws/src
-Build space: /home/geoff/crane_plus_ws/build
-Devel space: /home/geoff/crane_plus_ws/devel
-Install space: /home/geoff/crane_plus_ws/install
+Base path: /home/username/crane_plus_ws
+Source space: /home/username/crane_plus_ws/src
+Build space: /home/username/crane_plus_ws/build
+Devel space: /home/username/crane_plus_ws/devel
+Install space: /home/username/crane_plus_ws/install
 （省略）
 [ 80%] Built target crane_plus_arm_moveit_ikfast_plugin
-[100%] Linking CXX executable /home/geoff/crane_plus_ws/devel/lib/crane_plus_camera_calibration/calibrate_camera_checkerboard
+[100%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/crane_plus_camera_calibration/calibrate_camera_checkerboard
 [100%] Built target calibrate_camera_checkerboard
 $
 ```
@@ -156,7 +156,7 @@ __Shift__{: style="border: 1px solid black" } を押しながらマウスをク�
 $ cd ~/crane_plus_ws/
 $ source devel/setup.bash
 $ roslaunch crane_plus_moveit_config move_group.launch
-... logging to /home/geoff/.ros/log/7b527712-3aa3-11e7-b868-d8cb8ae35bff/roslaunch-alnilam-3483.log
+... logging to /home/username/.ros/log/7b527712-3aa3-11e7-b868-d8cb8ae35bff/roslaunch-alnilam-3483.log
 Checking log directory for disk usage. This may take awhile.
 Press Ctrl-C to interrupt
 Done checking log file disk usage. Usage is <1GB.
@@ -246,7 +246,7 @@ $ roslaunch crane_plus_hardware start_arm_standalone.launch
 $ cd ~/crane_plus_ws/
 $ source devel/setup.bash
 $ roslaunch crane_plus_moveit_config move_group.launch
-... logging to /home/geoff/.ros/log/7b527712-3aa3-11e7-b868-d8cb8ae35bff/roslaunch-alnilam-3483.log
+... logging to /home/username/.ros/log/7b527712-3aa3-11e7-b868-d8cb8ae35bff/roslaunch-alnilam-3483.log
 Checking log directory for disk usage. This may take awhile.
 Press Ctrl-C to interrupt
 Done checking log file disk usage. Usage is <1GB.
@@ -324,6 +324,8 @@ __注意：本物のロボットを制御します。ランダムで選択され
 
 MoveIt!を利用するために、主にノードからアプリケーションやタスクに沿ったようにマニピュレータを制御したいでしょう。ここで簡単なノードの作成によりグリッパーの位置と角度を制御します。
 
+### ノードを作成
+
 最初にワークスペースにノード用の新しいパッケージを作成します。
 
 ```shell
@@ -333,7 +335,7 @@ Created file gripper_mover/CMakeLists.txt
 Created file gripper_mover/package.xml
 Created folder gripper_mover/include/gripper_mover
 Created folder gripper_mover/src
-Successfully created files in /home/geoff/crane_plus_ws/src/gripper_mover. Please adjust the values in package.xml. 
+Successfully created files in /home/username/crane_plus_ws/src/gripper_mover. Please adjust the values in package.xml.
 ```
 
 パッケージ内の`package.xml`の依存関係は以下のようになるように編集します。
@@ -456,6 +458,8 @@ int main(int argc, char **argv) {
 
 このソースは空のノードです。これから少しづつMoveIt!のAPIを利用するコードを追加してマニピュレータを制御します。
 
+### マニピュレータを保存された姿勢に移動
+
 最初は、５行目（`ros::NodeHandle nh;`）の後に以下を追加します。MoveIt!はアシンクロナスな計算をしないといけないので、このコードによりROSのアシンクロナスな機能を初期化します。
 
 ```c++
@@ -487,7 +491,7 @@ MoveIt!はどの座標系で制御するかを指定することが必要です�
   arm.setPoseReferenceFrame("base_link");
 ```
 
-これでマニピュレータはもう制御できるようになりました。
+これでマニピュレータは制御できるようになりました。
 
 最初の動きとして、マニピュレータを立てましょう。MoveIt!は「Named pose」（名付きポーズ）というコンセプトを持ちます。CRANE+のMoveIt!コンフィグレーション（`crane_plus_moveit_config`パッケージにある）は２つの名付きポーズを指定します。
 
@@ -508,3 +512,316 @@ MoveIt!はどの座標系で制御するかを指定することが必要です�
 ```c++
   arm.move();
 ```
+
+ノードをコンパイルします。端末で以下を実行します。
+
+```shell
+$ catkin_make
+Base path: /home/username/crane_plus_ws
+Source space: /home/username/crane_plus_ws/src
+Build space: /home/username/crane_plus_ws/build
+Devel space: /home/username/crane_plus_ws/devel
+Install space: /home/username/crane_plus_ws/install
+（省略）
+[ 85%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/gripper_mover/gripper_mover
+[ 85%] Built target gripper_mover_gripper_mover
+[100%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/crane_plus_camera_calibration/calibrate_camera_checkerboard
+[100%] Built target calibrate_camera_checkerboard
+$
+```
+
+次にマニピュレータを起動します。
+
+```shell
+$ roslaunch crane_plus_hardware start_arm_standalone.launch
+... logging to /home/username/.ros/log/4de82534-3e85-11e7-a03f-d8cb8ae35bff/roslaunch-alnilam-27138.log
+Checking log directory for disk usage. This may take awhile.
+Press Ctrl-C to interrupt
+Done checking log file disk usage. Usage is <1GB.
+
+started roslaunch server http://alnilam:37805/
+（省略）
+[joint_trajectory_controller_spawner-4] process has finished cleanly
+[servo_controller_spawner-3] process has finished cleanly
+```
+
+そして、MoveIt!を起動します。別の端末で以下のコマンドを実行します。
+
+```shell
+$ roslaunch crane_plus_moveit_config move_group.launch
+... logging to /home/username/.ros/log/4de82534-3e85-11e7-a03f-d8cb8ae35bff/roslaunch-alnilam-28429.log
+Checking log directory for disk usage. This may take awhile.
+Press Ctrl-C to interrupt
+Done checking log file disk usage. Usage is <1GB.
+
+started roslaunch server http://alnilam:33774/
+（省略）
+[ INFO] [1495412987.240640847]: MoveGroup context using planning plugin ompl_interface/OMPLPlanner
+[ INFO] [1495412987.240652629]: MoveGroup context initialization complete
+
+You can start planning now!
+```
+
+最後に、作成したノードを起動します。別の端末で以下を実行します。
+
+```shell
+$ rosrun gripper_mover gripper_mover
+[ INFO] [1495413039.031396268]: Loading robot model 'crane_plus'...
+[ INFO] [1495413039.031446316]: No root/virtual joint specified in SRDF. Assuming fixed joint
+[ INFO] [1495413040.033491742]: Ready to take commands for planning group arm.
+```
+
+成功であれば、マニピュレータは立ちます。
+
+![CRANE+ vertical named pose](images/crane_plus_vertical_pose.png)
+
+__このソースは以下のURLでダウンロード可能です。__
+
+__https://github.com/gbiggs/rsj_2017_gripper_mover/tree/named_pose__
+
+### マニピュレータを任意の姿勢に移動
+
+MoveIt!によってマニピュレータのグリッパーを任意の姿勢に移動します。
+
+グリッパーの姿勢を指定するために、位置と角度を指定することが必要です。作成したソースから`arm.move()`の行を削除し、以下を追加します。
+
+```c++
+  // Prepare
+  ROS_INFO("Moving to prepare pose");
+  geometry_msgs::PoseStamped pose;
+  pose.header.frame_id = "base_link";
+  pose.pose.position.x = 0.2;
+  pose.pose.position.y = 0.0;
+  pose.pose.position.z = 0.1;
+  pose.pose.orientation.x = 0.0;
+  pose.pose.orientation.y = 0.707106;
+  pose.pose.orientation.z = 0.0;
+  pose.pose.orientation.w = 0.707106;
+
+  arm.setPoseTarget(pose);
+  if (!arm.move()) {
+    ROS_WARN("Could not move to prepare pose");
+    return 1;
+  }
+```
+
+上記のソースの前半はグリッパーの姿勢を設定します。`geometry_msgs/PoseStamped`メッセージを利用します：
+
+```
+std_msgs/Header header
+  uint32 seq
+  time stamp
+  string frame_id
+geometry_msgs/Pose pose
+  geometry_msgs/Point position
+    float64 x
+    float64 y
+    float64 z
+  geometry_msgs/Quaternion orientation
+    float64 x
+    float64 y
+    float64 z
+    float64 w
+```
+
+`header`の下の`frame_id`に、このポーズのタスクフレーム（座標系）を指定します。先に指定した制御座標系`base_link`を指定します。
+
+`pose`の下の`position`はグリッパーの位置です。マニピュレータから真っ直ぐ前の20 cm、机から10 cm離れた所にします。
+
+`pose`の下の`orientation`はグリッパーの角度です。ROSでは角度をオイラー角ではなくて、四元数（quaternion）として指定します。人に分かりにくくなりますが、計算としてより楽で早いです。指定している角度は、グリッパーがX軸を指します(机に対して水平になります。)。
+
+もう一度コンパイルして実行します。
+
+```shell
+$ catkin_make
+Base path: /home/username/crane_plus_ws
+Source space: /home/username/crane_plus_ws/src
+Build space: /home/username/crane_plus_ws/build
+Devel space: /home/username/crane_plus_ws/devel
+Install space: /home/username/crane_plus_ws/install
+（省略）
+[ 85%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/gripper_mover/gripper_mover
+[ 85%] Built target gripper_mover_gripper_mover
+[100%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/crane_plus_camera_calibration/calibrate_camera_checkerboard
+[100%] Built target calibrate_camera_checkerboard
+$ rosrun  gripper_mover gripper_mover
+[ INFO] [1495423076.668768146]: Loading robot model 'crane_plus'...
+[ INFO] [1495423076.668847786]: No root/virtual joint specified in SRDF. Assuming fixed joint
+[ INFO] [1495423077.846839325]: Ready to take commands for planning group arm.
+$
+```
+
+![CRANE+ pick pre-grasp pose](images/crane_plus_pick_pre_grasp_pose.png)
+
+## グリッパーを開く
+
+MoveIt!はグリッパーの制御もできるが、直接グリッパーコントローラにコマンドを出すこともよくあります。こちらでは後方の方法でグリッパーの開けく・閉めることを行います。
+
+グリッパーコントローラはROSの`actionlib`（アシンクロナスRPCのような構造）を利用し、`control_msgs/GripperCommandAction`アクションを利用します。このアクションのリクエストは`control_msgs/GripperCommandGoal`で、内容は以下です。
+
+```
+control_msgs/GripperCommand command
+  float64 position
+  float64 max_effort
+```
+
+上記のメッセージの中にある`position`はグリッパーの指の幅を示します。ゼロにするとグリッパーは完全に閉じられます。開いた状態の幅はもちろんグリッパーによって変わります。CRANE+の場合は、10 cm 程度です。すなわち、グリッパーが開けたい時に`position`を`0.1`に設定し、閉じたい時に`position`を`0`に設定します。正しい、何かを持ちたい場合はゼロに設定すると __グリッパーサーボがストールしエラーになる可能性や持つものを壊す可能性がある__ ので、普段は持つ物の大きさに合わせます。
+
+アクションの利用はサーバーとクライアントが必要です。CRANE+のグリッパーの場合には、サーバーは`crane_plus_gripper`ノードで、クライントはここで作成するノードです。
+
+ノードのソースを編集してグリッパーを開けましょう。
+
+まずはヘッダーファイルに下記を追加します。
+
+```c++
+#include <actionlib/client/simple_action_client.h>
+#include <control_msgs/GripperCommandAction.h>
+```
+
+つぎにノードの初期化あたりに下記でグリッパーのアクションクリアンとを初期化します。
+
+```c++
+  actionlib::SimpleActionClient<control_msgs::GripperCommandAction> gripper(
+      "/crane_plus_gripper/gripper_command",
+      "true");
+  gripper.waitForServer();
+```
+
+最後に、マニピュレータを移動したあとに下記を追加してグリッパーを開けます。
+
+```c++
+  // Open gripper
+  ROS_INFO("Opening gripper");
+  control_msgs::GripperCommandGoal goal;
+  goal.command.position = 0.1;
+  gripper.sendGoal(goal);
+  bool finishedBeforeTimeout = gripper.waitForResult(ros::Duration(30));
+  if (!finishedBeforeTimeout) {
+    ROS_WARN("Gripper open action did not complete");
+    return 1;
+  }
+```
+
+ノードをコンパイルし実行すると以下のようにグリッパーが開きます。
+
+![CRANE+ pick open gripper](images/crane_plus_pick_open_gripper.png)
+
+## ピッキングタスクを行う
+
+本セクションではマニピュレータを利用して机の上の物を運びます。
+
+上記のマニピュレータを机の上に移動することとグリッパーを開けることは「ピッキング」というタスクの１番目と２番目のステップです。ピッキングタスクの全部を見ると、以下のようになります。
+
+1. アプローチのスタート点に移動
+
+   的の物体の近くに移動して、持つための角度に合わせる [pre-grasp pose]
+
+   ![CRANE+ pick pre-grasp pose](images/crane_plus_pick_step_prepare.jpg)
+
+1. グリッパーを準備する
+
+   物体を持つためにグリッパーを開ける
+
+   ![CRANE+ pick open gripper](images/crane_plus_pick_step_open_gripper.jpg)
+
+1. アプローチを実行する
+
+   グリッパーが物体の周りになるようにアプローチベクターに沿って、グラスプポーズに移動する [approach、grasp pose]
+
+   ![CRANE+ pick grasp pose](images/crane_plus_pick_step_approach.jpg)
+
+1. グリッパーを閉じて物体を持つ
+
+   グリッパーが物体に充分力を与えるまでに閉じる [grasp]
+
+   ![CRANE+ pick close gripper](images/crane_plus_pick_step_close_gripper.jpg)
+
+1. リトリートを実行する
+
+   物体を持ちながらテーブル等から離れる（アプローチの反対方向ではない場合もある） [retreat, post-grasp post]
+
+   ![CRANE+ pick post grasp](images/crane_plus_pick_step_retreat.jpg)
+
+前セクションでステップ１と２を実装しました。次に下記のソースをノードに追加してステップ３から５を実装します。
+
+```c++
+  // Approach
+  ROS_INFO("Executing approach");
+  pose.pose.position.z = 0.05;
+  arm.setPoseTarget(pose);
+  if (!arm.move()) {
+    ROS_WARN("Could not move to grasp pose");
+    return 1;
+  }
+
+  // Grasp
+  ROS_INFO("Grasping object");
+  goal.command.position = 0.015;
+  gripper.sendGoal(goal);
+  finishedBeforeTimeout = gripper.waitForResult(ros::Duration(30));
+  if (!finishedBeforeTimeout) {
+    ROS_WARN("Gripper close action did not complete");
+    return 1;
+  }
+
+  // Retreat
+  ROS_INFO("Retreating");
+  pose.pose.position.z = 0.1;
+  arm.setPoseTarget(pose);
+  if (!arm.move()) {
+    ROS_WARN("Could not move to retreat pose");
+    return 1;
+  }
+```
+
+ノードをコンパイルして実行してみましょう。成功であればマニピュレータはピッキングタスクを行います。
+
+これでROS上でMoveIt!とマニピュレータを利用して、ピック・アンド・プレースの前半が実装できました。
+
+__上述のソースは以下のURLでダウンロード可能です。__
+
+__https://github.com/gbiggs/rsj_2017_gripper_mover/tree/picking__
+
+## 小課題
+
+実装したノードはすでに決まっている所（`(x: 0.2, y: 0.0)`）にしかピッキングできません。従来のロボットワークセルでは、決まっている所にタスクを行うことが普通です。しかし、将来の産業ロボットには、そしてサービスロボットにも、センサーデータによって物体の場所を判断して、そしてピッキングします。
+
+上記で実装したノードを、ROSのトピックから受信した場所にあるブロックをピッキングするように変更してみましょう。
+
+トピックのメッセージタイプに`geometry_msgs/Pose2D`は利用できます。
+
+```
+float64 x
+float64 y
+float64 theta
+```
+
+`theta`を無視して、`x`と`y`だけでブロックの位置を示す。
+
+ノードにブロックの位置を送信するために、`rostopic`が利用できます。例えばトピックの名は`block`であれば、端末で以下を実行するとノードに位置情報が送信できます。
+
+```shell
+$ rostopic pub /block geometry_msgs/Pose2D "x: 0.1, y: 0.0"
+```
+
+ノードはトピックにサブスクライブして、コールバックでピッキングタスクを行います。
+
+__注意：コールバックは`main`関数にある`arm`や`gripper`の変数にアクセスできません。この場合はグローバル変数にするか、ノードをクラスとして実装するかという２つのオプションがあります。__
+
+__注意：変更し始める前に、ソースのバックアップを作りましょう。__{: style="color: red" }
+
+__このソースは以下のURLでダウンロード可能です。__
+
+__ __
+
+## さらに小課題
+
+ピッキングタスクの逆は「place」（プレース、置くこと）です。動きは基本的にピッイングの逆ですが、物体の置き方により動きは代わりことがあります。
+
+CRANE+と本セミナーの物体（すなわちスポンジのキューブ）の場合は、プレースはピッキングの逆で問題ありません。（落とすことでも問題ありませんが、少し無粋でしょう。）
+
+ノードにプレースを行うソースを実装してみましょう。
+
+__このソースは以下のURLでダウンロード可能です。__
+
+__ __
