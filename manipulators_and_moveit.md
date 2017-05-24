@@ -125,109 +125,6 @@ crane_plus_description         crane_plus_hardware  crane_plus_joint_state_publi
 
 基本的に`crane_plus_hardware`または`crane_plus_simulator`のlaunchファイルを利用してハードウェアかシミュレータのロボットを起動して、`crane_plus_moveit_config`のlaunchファイルでMoveIt!を起動したからロボットを制御します。次のセクションからこの手順を実習します。
 
-## シミュレータのロボットを制御
-
-ロボットハードウェアの制御には大きな弱点があります：制御ソフトウェアにエラーがあれば高いハードウェアを壊す可能性があります。
-
-そのリスクを防ぐためにシミュレータの利用がおすすめです。ROSで[Gazebo](http://gazebosim.org/)というシミュレータの利用が基本です。
-
-以下の実行でCRANE+のシミュレーションを起動します。
-
-```shell
-$ roslaunch crane_plus_simulation simulation.launch
-```
-
-![Simulated CRANE+](images/crane_plus_gazebo.png)
-
-Gazeboでカメラの制御は以下で行います。
-
-マウスをクリックとドラッグ
-: クリックした点を中心にしてカメラをXZで移動する
-
-__Shift__{: style="border: 1px solid black" } を押しながらマウスをクリックとドラッグ　または　マウスをミドルクリックとドラッグ
-: クリックした点を中心にしてカメラの回転
-
-マウスウィール　または　マウス右クリックとドラッグ
-: クリックした点を中心にしてカメラズーム（注意：シミュレータ世界の点ので、遠いところにクリックしてズームするとカメラが急に遠くなる）
-
-次にMoveIt!を起動します。新しい端末で以下を実行します。
-
-```shell
-$ cd ~/crane_plus_ws/
-$ source devel/setup.bash
-$ roslaunch crane_plus_moveit_config move_group.launch
-... logging to /home/username/.ros/log/7b527712-3aa3-11e7-b868-d8cb8ae35bff/roslaunch-alnilam-3483.log
-Checking log directory for disk usage. This may take awhile.
-Press Ctrl-C to interrupt
-Done checking log file disk usage. Usage is <1GB.
-
-started roslaunch server http://alnilam:33499/
-
-SUMMARY
-（省略）
-[ INFO] [1494986092.617635076, 141.869000000]: MoveGroup context initialization complete
-
-You can start planning now!
-```
-
-最後に「You can start planning now!」が出力されたら、マニピュレータは利用可能な状態になりました。
-
-MoveIt!は、ROSノードでMoveIt!のAPIを利用することが基本の利用方法です。しかし、試すだけのためにノードを利用するや手動制御の時、ノードの利用は重い作業です。）ノードを作成の代わりにROSの基本の可視化ツール[RViz](http://wiki.ros.org/rviz)も利用できます。
-
-MoveIt!はRViz上でマニピュレータ制御ユーザーインターフェースをプラグインとして提供します。MoveIt!と同時にインストールされて、CRANE+のMoveIt!パッケージから起動します。新しい端末で以下を実行してRVizのMoveIt!ユーザーインターフェースを起動します。
-
-```shell
-$ cd ~/crane_plus_ws/
-$ source devel/setup.bash
-$ roslaunch crane_plus_moveit_config moveit_rviz.launch
-```
-
-![MoveIt! RViz interface](images/crane_plus_moveit_rviz_panel_sim.png)
-
-RVizでカメラの制御は以下で行います。
-
-マウスをクリックとドラッグ
-: 青い点を中心にしてカメラの回転
-
-__Shift__{: style="border: 1px solid black" } を押しながらマウスをクリックとドラッグ　または　マウスをミドルクリックとドラッグ
-: 青い点を中心にしてカメラをXYで移動する
-
-マウスウィール　または　マウス右クリックとドラッグ
-: 青い点を中心にしてカメラズーム
-
-RViz内の「Motion Planning」パネルにある「Planning」タブをクリックして、以下のインターフェースを開きます。
-
-![MoveIt! RViz interface](images/crane_plus_moveit_rviz_panel_planning_tab_sim_labeled.png)
-
-最初のテストとして、マニピュレータをランダムな姿勢に移動しましょう。Planningタブ内の「Select Goal State」で「`<random valid>`」が選択されているを確認して、「Update」をクリックします。
-
-![MoveIt! RViz random pose](images/crane_plus_moveit_rviz_random_pose_sim.png)
-
-「Plan」をクリックします。MoveIt!が移動プランを計算します。RVizでロボットが追う経路は表示されます。
-
-![MoveIt! RViz random pose plan](images/crane_plus_moveit_rviz_random_pose_plan_sim.png)
-
-プランを実行します。「Execute」をクリックするとシミュレータ上のマニピュレータが指定した姿勢に移動します。RViz上でロボットの現在の姿勢が表示され、これも指定したポーズ（すなわちシミュレータ上のロボットのポーズ）に移動します。
-
-![MoveIt! RViz random pose execution](images/crane_plus_moveit_rviz_random_pose_executed_sim.png)
-
-![MoveIt! RViz random pose execution in the simulator](images/crane_plus_moveit_rviz_random_pose_executed_sim_gazebo.png)
-
-ランダムな姿勢に移動できたら、次に手動制御を行いましょう。RViz内でマニピュレータの先端に球体と丸と矢印があります。以下の方法でこれらを利用してグリッパーの位置と角度が制御できます。
-
-球体をドラッグ
-: グリッパーの位置を移動する。
-
-丸を回す
-: グリッパーの角度を変更する。（注意：CRANE+は4DOFのマニピュレータだけなのでグリッパーの角度は上下（緑色の丸）しか変更できない。他の角度変更は無視される。）
-
-矢印をドラッグ
-: グリッパーの位置を一つの軸だけで移動する。
-
-基本的にMoveIt!のユーザーインターフェースは可能か姿勢しか許さないので、時々マニピュレータは移動してくれないことや飛ぶことがあります。
-
-お好みの姿勢にグリッパーを移動して、「Plan」と「Execute」ボタンでマニピュレータを移動しましょう。シミュレータ上のロボットはグリッパーが指定した位置と角度になるように動きます。
-
 ## ハードウェアのロボットを制御
 
 CRANE+を制御するために、まずはROSとハードウェアのインターフェースになるノードを起動します。
@@ -262,7 +159,7 @@ You can start planning now!
 
 最後に「You can start planning now!」が出力されたら、マニピュレータは利用可能な状態になりました。
 
-MoveIt!は、ROSノードでMoveIt!のAPIを利用することが基本の利用方法です。しかし、試すだけのためにノードを利用するや手動制御の時、ノードの利用は重い作業です。）ノードを作成の代わりにROSの基本の可視化ツール[RViz](http://wiki.ros.org/rviz)も利用できます。
+MoveIt!は、ROSノードでMoveIt!のAPIを利用することが基本の利用方法です。しかし、試すだけのためにノードを作成することは重い作業です。ノード作成の代わりにROSの基本の可視化ツール[RViz](http://wiki.ros.org/rviz)も利用できます。
 
 MoveIt!はRViz上でマニピュレータ制御ユーザーインターフェースをプラグインとして提供します。MoveIt!と同時にインストールされて、CRANE+のMoveIt!パッケージから起動します。新しい端末で以下を実行してRVizのMoveIt!ユーザーインターフェースを起動します。
 
