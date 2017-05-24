@@ -542,3 +542,7 @@ MoveIt!でプラニングを行う際、マニピュレータの周りの物体�
 ![Attaching sponge cube to robot](images/rviz_planning_scene_attached_cube.png)
 
 ![Detaching cube from robot](images/rviz_planning_scene_detached_cube.png)
+
+_このソースは以下のURLでダウンロード可能です。_
+
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/planning_scene_visualisation>
