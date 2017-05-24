@@ -328,12 +328,12 @@ MoveIt!を利用するために、主にノードからアプリケーション�
 
 ```shell
 $ cd ~/crane_plus_ws/src/
-$ catkin_create_pkg gripper_mover roscpp moveit_core moveit_ros_planning_interface moveit_visual_tools moveit_msgs moveit_commander tf actionlib control_msgs geometry_msgs shape_msgs trajectory_msgs
-Created file gripper_mover/CMakeLists.txt
-Created file gripper_mover/package.xml
-Created folder gripper_mover/include/gripper_mover
-Created folder gripper_mover/src
-Successfully created files in /home/username/crane_plus_ws/src/gripper_mover. Please adjust the values in package.xml.
+$ catkin_create_pkg pick_and_placer roscpp moveit_core moveit_ros_planning_interface moveit_visual_tools moveit_msgs moveit_commander tf actionlib control_msgs geometry_msgs shape_msgs trajectory_msgs
+Created file pick_and_placer/CMakeLists.txt
+Created file pick_and_placer/package.xml
+Created folder pick_and_placer/include/pick_and_placer
+Created folder pick_and_placer/src
+Successfully created files in /home/username/crane_plus_ws/src/pick_and_placer. Please adjust the values in package.xml.
 ```
 
 パッケージ内の`package.xml`の依存関係は以下のようになるように編集します。
@@ -419,20 +419,20 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/servo_control_node.cpp)
-add_executable(${PROJECT_NAME}_gripper_mover src/gripper_mover.cpp)
+add_executable(${PROJECT_NAME}_pick_and_placer src/pick_and_placer.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-set_target_properties(${PROJECT_NAME}_gripper_mover PROPERTIES OUTPUT_NAME gripper_mover PREFIX "")
+set_target_properties(${PROJECT_NAME}_pick_and_placer PROPERTIES OUTPUT_NAME pick_and_placer PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(${PROJECT_NAME}_gripper_mover ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_pick_and_placer ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME}_gripper_mover
+target_link_libraries(${PROJECT_NAME}_pick_and_placer
   ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
 )
@@ -440,7 +440,7 @@ target_link_libraries(${PROJECT_NAME}_gripper_mover
 
 なお、__必ず__{: style="color: red" } ファイルトップに`add_definitions(-std=c++11)`の行をアンコメントしてください。
 
-`gripper_mover`パッケージ内の`src/`ディレクトリに`gripper_mover.cpp`というファイルを作成します。そしてエディターで開き、以下のソースを入力します。
+`pick_and_placer`パッケージ内の`src/`ディレクトリに`pick_and_placer.cpp`というファイルを作成します。そしてエディターで開き、以下のソースを入力します。
 
 ```cpp
 #include <ros/ros.h>
@@ -521,8 +521,8 @@ Build space: /home/username/crane_plus_ws/build
 Devel space: /home/username/crane_plus_ws/devel
 Install space: /home/username/crane_plus_ws/install
 （省略）
-[ 85%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/gripper_mover/gripper_mover
-[ 85%] Built target gripper_mover_gripper_mover
+[ 85%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/pick_and_placer/pick_and_placer
+[ 85%] Built target pick_and_placer_pick_and_placer
 [100%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/crane_plus_camera_calibration/calibrate_camera_checkerboard
 [100%] Built target calibrate_camera_checkerboard
 $
@@ -563,7 +563,7 @@ You can start planning now!
 最後に、作成したノードを起動します。別の端末で以下を実行します。
 
 ```shell
-$ rosrun gripper_mover gripper_mover
+$ rosrun pick_and_placer pick_and_placer
 [ INFO] [1495413039.031396268]: Loading robot model 'crane_plus'...
 [ INFO] [1495413039.031446316]: No root/virtual joint specified in SRDF. Assuming fixed joint
 [ INFO] [1495413040.033491742]: Ready to take commands for planning group arm.
@@ -575,7 +575,7 @@ $ rosrun gripper_mover gripper_mover
 
 _このソースは以下のURLでダウンロード可能です。_
 
-<https://github.com/gbiggs/rsj_2017_gripper_mover/tree/named_pose>
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/named_pose>
 
 ### マニピュレータを任意の姿勢に移動
 
@@ -638,11 +638,11 @@ Build space: /home/username/crane_plus_ws/build
 Devel space: /home/username/crane_plus_ws/devel
 Install space: /home/username/crane_plus_ws/install
 （省略）
-[ 85%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/gripper_mover/gripper_mover
-[ 85%] Built target gripper_mover_gripper_mover
+[ 85%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/pick_and_placer/pick_and_placer
+[ 85%] Built target pick_and_placer_pick_and_placer
 [100%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/crane_plus_camera_calibration/calibrate_camera_checkerboard
 [100%] Built target calibrate_camera_checkerboard
-$ rosrun  gripper_mover gripper_mover
+$ rosrun  pick_and_placer pick_and_placer
 [ INFO] [1495423076.668768146]: Loading robot model 'crane_plus'...
 [ INFO] [1495423076.668847786]: No root/virtual joint specified in SRDF. Assuming fixed joint
 [ INFO] [1495423077.846839325]: Ready to take commands for planning group arm.
@@ -778,7 +778,7 @@ control_msgs/GripperCommand command
 
 _上述のソースは以下のURLでダウンロード可能です。_
 
-<https://github.com/gbiggs/rsj_2017_gripper_mover/tree/picking>
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/picking>
 
 ## 小課題
 
@@ -810,7 +810,7 @@ __注意：変更し始める前に、ソースのバックアップを作りま
 
 _このソースは以下のURLでダウンロード可能です。_
 
-<https://github.com/gbiggs/rsj_2017_gripper_mover/tree/topic_picker>
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/topic_picker>
 
 ## さらに小課題
 
@@ -822,4 +822,4 @@ CRANE+と本セミナーの物体（すなわちスポンジのキューブ）�
 
 _このソースは以下のURLでダウンロード可能です。_
 
-<https://github.com/gbiggs/rsj_2017_gripper_mover/tree/pickandplace>
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/pickandplace>
