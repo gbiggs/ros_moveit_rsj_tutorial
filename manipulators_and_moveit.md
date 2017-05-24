@@ -446,7 +446,7 @@ target_link_libraries(${PROJECT_NAME}_gripper_mover
 #include <ros/ros.h>
 
 int main(int argc, char **argv) {
-  ros::init(argc, argv, "gripper_mover");
+  ros::init(argc, argv, "pickandplacer");
   ros::NodeHandle nh;
 
   ros::shutdown();
@@ -461,7 +461,7 @@ int main(int argc, char **argv) {
 最初は、５行目（`ros::NodeHandle nh;`）の後に以下を追加します。MoveIt!はアシンクロナスな計算をしないといけないので、このコードによりROSのアシンクロナスな機能を初期化します。
 
 ```c++
-  ros::AsyncSpinner spinner(1);
+  ros::AsyncSpinner spinner(2);
   spinner.start();
 ```
 
@@ -794,12 +794,12 @@ float64 y
 float64 theta
 ```
 
-`theta`を無視して、`x`と`y`だけでブロックの位置を示す。
+`theta`を無視して、`x`と`y`だけでブロックの位置を示す。`geometry_msgs/Pose2D`のヘッダーは`geometry_msgs/Pose2D.h`です。
 
 ノードにブロックの位置を送信するために、`rostopic`が利用できます。例えばトピックの名は`block`であれば、端末で以下を実行するとノードに位置情報が送信できます。
 
 ```shell
-$ rostopic pub /block geometry_msgs/Pose2D "x: 0.1, y: 0.0"
+$ rostopic pub -1 /block geometry_msgs/Pose2D "x: 0.1, y: 0.0"
 ```
 
 ノードはトピックにサブスクライブして、コールバックでピッキングタスクを行います。
@@ -810,16 +810,16 @@ __注意：変更し始める前に、ソースのバックアップを作りま
 
 _このソースは以下のURLでダウンロード可能です。_
 
-<https://>
+<https://github.com/gbiggs/rsj_2017_gripper_mover/tree/topic_picker>
 
 ## さらに小課題
 
-ピッキングタスクの逆は「place」（プレース、置くこと）です。動きは基本的にピッイングの逆ですが、物体の置き方により動きは代わりことがあります。
+ピッキングタスクの逆は「place」（プレース、置くこと）です。動きは基本的にピッイングの逆ですが、物体の置き方により動きは代わることがあります。
 
 CRANE+と本セミナーの物体（すなわちスポンジのキューブ）の場合は、プレースはピッキングの逆で問題ありません。（落とすことでも問題ありませんが、少し無粋でしょう。）
 
-ノードにプレースを行うソースを実装してみましょう。
+ノードにピッキング後にプレースを行うソースを実装してみましょう。
 
 _このソースは以下のURLでダウンロード可能です。_
 
-<https://>
+<https://github.com/gbiggs/rsj_2017_gripper_mover/tree/pickandplace>
