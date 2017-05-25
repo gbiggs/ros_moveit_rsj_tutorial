@@ -40,7 +40,7 @@ date: 2017-05-09
 
    ```shell
    $ cp -r ~/Downloads/DynamixelSDK/c/include/dynamixel_sdk* .
-   $ cp ~/Downloads/DynamixelSDK/c/build/linux64/libdxl_x64.c.so .
+   $ cp ~/Downloads/DynamixelSDK/c/build/linux64/libdxl_x64_c.so .
    $ ls
    CMakeLists.txt  dynamixel_sdk  dynamixel_sdk.h  dynamixel_sdk_linux  dynamixel_sdk_windows  libdxl_x64_c.so  LICENSE  README.md  servo_check.c
    ```
