@@ -546,3 +546,15 @@ MoveIt!でプラニングを行う際、マニピュレータの周りの物体�
 _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/planning_scene_visualisation>
+
+### プラニング結果の可視化
+
+MoveIt!が計算した移動敬老の可視化も可能です。RVizを利用して、ノードのソースを変更せずに可能です。
+
+RVizで「Trajectory」の可視化を追加します。
+
+![Adding the trajectory visualisation](images/rviz_plan_vis_add_trajectory.png)
+
+Trajectoryのオプションで「Loop Animation」を選択すると、計算された移動経路が繰り返して表示されます。
+
+![Trajectory visualisation](images/rviz_plan_vis.png)
