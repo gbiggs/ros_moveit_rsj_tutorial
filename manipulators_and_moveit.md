@@ -727,7 +727,7 @@ _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/topic_picker>
 
-## さらに小課題
+## 更に小課題
 
 ピッキングタスクの逆は「place」（プレース、置くこと）です。動きは基本的にピッイングの逆ですが、物体の置き方により動きは代わることがあります。
 
@@ -740,3 +740,108 @@ __注意：変更し始める前に、ソースのバックアップを作りま
 _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/pickandplace>
+
+## 更に小課題
+
+MoveIt!はピック・アンド・プレースを行うソースが含まれています。動きを自分で指定するより、この機能を利用するとMoveIt!の様々な機能（コリジョン・チェッカー等）が自動的に利用されます。
+
+ノードのソースを編集して、MoveIt!の「pick」と「place」アクションを利用しましょう。
+
+下記のヘッダーファイルを追加します。
+
+```c++
+#include <moveit_msgs/Grasp.h>
+```
+
+`DoPick`関数の中身は下記のとおりになります。
+
+```c++
+  bool DoPick(geometry_msgs::Pose2D::ConstPtr const& msg) {
+    std::vector<moveit_msgs::Grasp> grasps;
+    moveit_msgs::Grasp g;
+    g.grasp_pose.header.frame_id = arm_.getPlanningFrame();
+    g.grasp_pose.pose.position.x = msg->x;
+    g.grasp_pose.pose.position.y = msg->y;
+    g.grasp_pose.pose.position.z = 0.05;
+    g.grasp_pose.pose.orientation.y = 0.707106;
+    g.grasp_pose.pose.orientation.w = 0.707106;
+
+    g.pre_grasp_approach.direction.header.frame_id = arm_.getPlanningFrame();
+    g.pre_grasp_approach.direction.vector.z = -1;
+    g.pre_grasp_approach.min_distance = 0.05;
+    g.pre_grasp_approach.desired_distance = 0.07;
+
+    g.post_grasp_retreat.direction.header.frame_id = arm_.getPlanningFrame();
+    g.post_grasp_retreat.direction.vector.z = 1;
+    g.post_grasp_retreat.min_distance = 0.05;
+    g.post_grasp_retreat.desired_distance = 0.07;
+
+    g.pre_grasp_posture.joint_names.resize(1, "crane_plus_moving_finger_joint");
+    g.pre_grasp_posture.points.resize(1);
+    g.pre_grasp_posture.points[0].positions.resize(1);
+    g.pre_grasp_posture.points[0].positions[0] = 0.1;
+
+    g.grasp_posture.joint_names.resize(1, "crane_plus_moving_finger_joint");
+    g.grasp_posture.points.resize(1);
+    g.grasp_posture.points[0].positions.resize(1);
+    g.grasp_posture.points[0].positions[0] = 0.01;
+
+    grasps.push_back(g);
+    arm_.setSupportSurfaceName("table");
+    ROS_INFO("Beginning pick");
+    arm_.pick("sponge", grasps);
+    ROS_INFO("Pick complete");
+    return true;
+  }
+```
+
+上記は`Grasp`を作成します。物体を持つための位置と角度、アプローチベクター、リトリートベクター及びグリッパーの開けると閉じる方法（直接ジョイント制御で）を指定します。
+
+本方法の特に便利なことは、周りの物体で当たってもいい物が指定できます。このシナリオの場合には、テーブルとスポンジが接触してもいいと指定しています。
+
+`DoPlace`関数の中身は下記の通りになります。
+
+```c++
+  bool DoPlace() {
+    std::vector<moveit_msgs::PlaceLocation> location;
+    moveit_msgs::PlaceLocation p;
+    p.place_pose.header.frame_id = arm_.getPlanningFrame();
+    p.place_pose.pose.position.x = 0.2;
+    p.place_pose.pose.position.y = 0;
+    p.place_pose.pose.position.z = 0.1;
+    p.place_pose.pose.orientation.y = 0.707106;
+    p.place_pose.pose.orientation.w = 0.707106;
+
+    p.pre_place_approach.direction.header.frame_id = arm_.getPlanningFrame();
+    p.pre_place_approach.direction.vector.z = -1;
+    p.pre_place_approach.min_distance = 0.05;
+    p.pre_place_approach.desired_distance = 0.07;
+
+    p.post_place_retreat.direction.header.frame_id = arm_.getPlanningFrame();
+    p.post_place_retreat.direction.vector.z = 1;
+    p.post_place_retreat.min_distance = 0.05;
+    p.post_place_retreat.desired_distance = 0.07;
+
+    p.post_place_posture.joint_names.resize(1, "crane_plus_moving_finger_joint");
+    p.post_place_posture.points.resize(1);
+    p.post_place_posture.points[0].positions.resize(1);
+    p.post_place_posture.points[0].positions[0] = 0.1;
+
+    location.push_back(p);
+    arm_.setSupportSurfaceName("table");
+    ROS_INFO("Beginning place");
+    arm_.place("sponge", location);
+    ROS_INFO("Place done");
+    return true;
+  }
+```
+
+`DoPick`と同様に、どこに物体をどうやって置くか指定します。
+
+コンパイルして実行するとマニピュレータはよりスムーズな動きでピック・アンド・プレースを行います。
+
+_注意：MoveIt!は基本的に6DOF以上を持つマニピュレータ向きです。CRANE+のような4DOFマニピュレータのリチャブル・スペース（マニピュレータが届ける姿勢）はかなり限られていて、プラニングが難しいです。MoveIt!はプラニングで失敗することが多くなります。_
+
+_このソースは以下のURLでダウンロード可能です。_
+
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/moveit_pick_place_plugin>
