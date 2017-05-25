@@ -32,7 +32,7 @@ date: 2017-05-09
 
    ```shell
    $ cd ~/Downloads/
-   $ git clone git@github.com:gbiggs/dynamixel_servo_check.git
+   $ git clone https://github.com/gbiggs/dynamixel_servo_check.git
    $ cd dynamixel_servo_check
    ```
 
