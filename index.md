@@ -56,7 +56,7 @@ title: 日本ロボット学会　第106回 ロボットの作り方 ～ROSを�
 - 「つくば駅」（つくばエクスプレス線）から路線バス（「つくばセンター行き（筑波大学循環）」か「筑波大学中央行き」）で10〜20分、「第三エリア前」で下車する。料金は**270**円です。
 	- 参考ウェブページ：<http://kantetsu.co.jp/bus/timetable_tsukuba.html>
 	- 参考資料：<http://kantetsu.co.jp/bus/timetable_files/center/center06.pdf>
-- 「東京駅」（各線）から高速バス（筑波大学行き）で約75分、「大学会館」で下車する。料金は現金とICカードで異なり、現金の場合は**1180円**で、ICカードの場合は**1130円**（下り）か**950円**（上り）です。
+- 「東京駅」（各線）から高速バス（筑波大学行き）で約75分、「大学会館」で下車する。料金は現金とICカードで異なり、現金の場合は**1180円**で、ICカードの場合は**1130円**（下り）／**950円**（上り）です。
 	- 参考ウェブページ：<http://kantetsu.co.jp/bus/highway_tsukuba_tokyo.html>
 	- 参考資料：<http://kantetsu.co.jp/img/bus/highway/tsukuba_tokyo/timetable_.pdf>
 
