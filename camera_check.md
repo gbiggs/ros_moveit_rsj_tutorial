@@ -8,7 +8,7 @@ date: 2017-05-26
 【準備】
 1. ROSパッケージ『usb_cam』をコンパイルします。
 
-  ```shell
+  ```bash
   $ cd ~/catkin_ws/src
   $ git clone https://github.com/bosch-ros-pkg/usb_cam.git
   $ cd ..
@@ -17,7 +17,7 @@ date: 2017-05-26
 
 2. パッケージ『v4l-utils』をインストールします。
 
-  ```shell
+  ```bash
   $ sudo apt-get install v4l-utils
   ```
 
@@ -27,23 +27,25 @@ date: 2017-05-26
 【実行】
 1. 接続中のカメラが対応している解像度を確認します。カメラのデバイス番号が0の場合の例を示します。
 
-  ```shell
+  ```bash
   $ ls /dev/video*
   $ v4l2-ctl -d 0 --list-formats-ext
   ```
 
 2. 必要に応じて、カメラのパラメーターを設定します。
 
-  ```shell
+  ```bash
   $ rosparam set usb_cam/pixel_format yuyv
   ```
 
 3. roscoreとusb_camを実行します。
 
-  ```shell
-  一つ目のターミナルで
+  ```bash
+  #一つ目のターミナル
   $ roscore
-  二つ目のターミナルで
+  ```
+  ```bash
+  #二つ目のターミナルで
   $ rosrun usb_cam usb_cam_node
   ```
 
