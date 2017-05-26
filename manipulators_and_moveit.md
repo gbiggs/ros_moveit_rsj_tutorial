@@ -166,10 +166,12 @@ MoveIt!はRViz上でマニピュレータ制御ユーザーインターフェー
 ```shell
 $ cd ~/crane_plus_ws/
 $ source devel/setup.bash
-$ roslaunch crane_plus_moveit_config moveit_rviz.launch
+$ roslaunch crane_plus_moveit_config moveit_rviz.launch config:=true
 ```
 
 ![MoveIt! RViz interface](images/crane_plus_moveit_rviz_panel_hardware.png)
+
+__注意：コマンドの最後に`config:=true`を忘れると、上記画像のようなGUIが表示されません。__{: style: "color: red" }
 
 RVizでカメラの制御は以下で行います。
 
