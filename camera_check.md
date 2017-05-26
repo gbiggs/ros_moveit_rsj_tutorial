@@ -5,8 +5,8 @@ date: 2017-05-26
 
 既存のROSパッケージを使用してカメラの動作を確認します。
 
-1. 準備
-	1. ROSパッケージ『usb_cam』をコンパイルします。
+【準備】
+1. ROSパッケージ『usb_cam』をコンパイルします。
 
   ```shell
   $ cd ~/catkin_ws/src
@@ -18,21 +18,37 @@ date: 2017-05-26
 2. パッケージ『v4l-utils』をインストールします。
 
   ```shell
-  $  sudo apt-get install v4l-utils
+  $ sudo apt-get install v4l-utils
   ```
 
-3. 接続中のカメラが対応している解像度を確認します。ただし、カメラのデバイス番号は0とします。
+
+
+
+【実行】
+1. 接続中のカメラが対応している解像度を確認します。カメラのデバイス番号が0の場合の例を示します。
 
   ```shell
-  $  v4l2-ctl -d 0 --list-formats-ext
+  $ ls /dev/video*
+  $ v4l2-ctl -d 0 --list-formats-ext
   ```
 
-3. usb_camを実行します。
+2. 必要に応じて、カメラのパラメーターを設定します。
 
   ```shell
-  $  
+  $ rosparam set usb_cam/pixel_format yuyv
   ```
 
+3. roscoreとusb_camを実行します。
+
+  ```shell
+  一つ目のターミナルで
+  $ roscore
+  二つ目のターミナルで
+  $ rosrun usb_cam usb_cam_node
+  ```
+
+4. usb_cam_nodeから
+image_view
 
 
 
@@ -46,13 +62,9 @@ date: 2017-05-26
 
 
 
----
-
-以下参考
-
----
 
 
+<!-- 
 
 簡単なプログラムを利用してマニピュレータのサーボの動作を確認します。
 
@@ -157,3 +169,6 @@ date: 2017-05-26
    ```
 
 1. １から５まで、前サーボの動作を確認しましょう。
+
+-->
+
