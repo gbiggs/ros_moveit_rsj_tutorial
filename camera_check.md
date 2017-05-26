@@ -6,6 +6,7 @@ date: 2017-05-26
 既存のROSパッケージを使用してカメラの動作を確認します。
 
 【準備】
+
 (1) ROSパッケージ『usb_cam』をコンパイルします。
 
   ```bash
@@ -25,20 +26,21 @@ date: 2017-05-26
 
 
 【実行】
-1. 接続中のカメラが対応している解像度を確認します。カメラのデバイス番号が0の場合の例を示します。
+
+(3) 接続中のカメラが対応している解像度を確認します。カメラのデバイス番号が0の場合の例を示します。
 
   ```bash
   $ ls /dev/video*
   $ v4l2-ctl -d 0 --list-formats-ext
   ```
 
-2. 必要に応じて、カメラのパラメーターを設定します。
+(4) 必要に応じて、カメラのパラメーターを設定します。
 
   ```bash
-  $ rosparam set usb_cam/pixel_format yuyv
+  $ rosparam set usb_cam/pixel_format yuyv #mjpegからyuyvへ変更する。
   ```
 
-3. roscoreとusb_camを実行します。
+(5) roscoreとusb_camを実行します。
 
   ```bash
   #一つ目のターミナル
@@ -49,130 +51,23 @@ date: 2017-05-26
   $ rosrun usb_cam usb_cam_node
   ```
 
-4. どのようなROSトピックが流れているかを確認する。
+(6) どのようなROSトピックが流れているかを確認します。
 
-5. usb_cam_nodeから
-image_view
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- 
-
-簡単なプログラムを利用してマニピュレータのサーボの動作を確認します。
-
-## ソフトウェアのコンパイル
-
-1. サーボドライバーソフトウェアをコンパイルします。端末を起動し、以下のコマンドを実行します。
-
-  ```shell
-  $ cd ~/Downloads/
-  $ git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git
-  $ cd DynamixelSDK/c/build/linux64/
-  $ make
-  mkdir -p ./.objects/
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/group_bulk_read.c -o .objects/group_bulk_read.o
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/group_bulk_write.c -o .objects/group_bulk_write.o
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/group_sync_read.c -o .objects/group_sync_read.o
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/group_sync_write.c -o .objects/group_sync_write.o
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/packet_handler.c -o .objects/packet_handler.o
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/port_handler.c -o .objects/port_handler.o
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/protocol1_packet_handler.c -o .objects/protocol1_packet_handler.o
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/protocol2_packet_handler.c -o .objects/protocol2_packet_handler.o
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk_linux/port_handler_linux.c -o .objects/port_handler_linux.o
-  g++ -shared -fPIC -m64 -o ./libdxl_x64_c.so ./.objects/group_bulk_read.o ./.objects/group_bulk_write.o ./.objects/group_sync_read.o ./.objects/group_sync_write.o ./.objects/packet_handler.o ./.objects/port_handler.o ./.objects/protocol1_packet_handler.o ./.objects/protocol2_packet_handler.o ./.objects/port_handler_linux.o -lrt
-  $
+  ```bash
+  #三つ目のターミナル
+  $ rostopic list　#/usb_cam/image_rawが存在することを確認する。
   ```
 
-1. サーボ確認プログラムのソースを取得します。
+(7) 画像を表示します。
 
-   ```shell
-   $ cd ~/Downloads/
-   $ git clone git@github.com:gbiggs/dynamixel_servo_check.git
-   $ cd dynamixel_servo_check
-   ```
+  ```bash
+  #三つ目のターミナル
+  $ rosrun image_view image_view image:=/usb_cam/image_raw
+  ```
 
-1. サーボドライバーのライブラリとヘッダーをコピーします。
+　次のようなユーザーインターフェースが表示されたら、正しく動作しています。このユーザーインターフェースのボタンを利用することで、画像を保存することができます。
 
-   ```shell
-   $ cp -r ~/Downloads/DynamixelSDK/c/include/dynamixel_sdk* .
-   $ cp ~/Downloads/DynamixelSDK/c/build/linux64/libdxl_x64.c.so .
-   $ ls
-   CMakeLists.txt  dynamixel_sdk  dynamixel_sdk.h  dynamixel_sdk_linux  dynamixel_sdk_windows  libdxl_x64_c.so  LICENSE  README.md  servo_check.c
-   ```
+![usb_cam](images/usb_cam.png)
 
-1. サーボ確認プログラムをコンパイルします。
 
-   ```shell
-   $ mkdir build
-   $ cd build
-   $ cmake ../
-   -- The C compiler identification is GNU 5.4.0
-   -- The CXX compiler identification is GNU 5.4.0
-   -- Check for working C compiler: /usr/bin/cc
-   -- Check for working C compiler: /usr/bin/cc -- works
-   -- Detecting C compiler ABI info
-   -- Detecting C compiler ABI info - done
-   -- Detecting C compile features
-   -- Detecting C compile features - done
-   -- Check for working CXX compiler: /usr/bin/c++
-   -- Check for working CXX compiler: /usr/bin/c++ -- works
-   -- Detecting CXX compiler ABI info
-   -- Detecting CXX compiler ABI info - done
-   -- Detecting CXX compile features
-   -- Detecting CXX compile features - done
-   -- Configuring done
-   -- Generating done
-   -- Build files have been written to: /home/geoff/Downloads/dynamixel_servo_check/build
-   $ make
-   [ 50%] Building C object CMakeFiles/servo_check.dir/servo_check.c.o
-   [100%] Linking C executable servo_check
-   [100%] Built target servo_check
-   $ ls
-   CMakeCache.txt  CMakeFiles  cmake_install.cmake  Makefile  servo_check
-   ```
-
-1. サーボ確認プログラムを実行しサーボの動きを確認します。
-
-   プログラムにサーボIDを指定します。CRANE+のサーボIDは１~５です。
-
-   __注意：プログラムを実行すると指定したサーボは高速で真ん中の位置に移動します。電源を入れる前にマニピュレータをまっすぐ___上向きに近い姿勢___にしてください。__{: style: "color=red" }
-
-   ```shell
-   ./servo_check 1
-   Opened port
-   Changed buadrate
-   Dynamixel has been successfully connected
-   [ID:003] GoalPos:512  PresPos:760
-   [ID:003] GoalPos:512  PresPos:757
-   [ID:003] GoalPos:512  PresPos:744
-   [ID:003] GoalPos:512  PresPos:730
-   [ID:003] GoalPos:512  PresPos:718
-   [ID:003] GoalPos:512  PresPos:705
-   [ID:003] GoalPos:512  PresPos:687
-   [ID:003] GoalPos:512  PresPos:672
-   [ID:003] GoalPos:512  PresPos:656
-   [ID:003] GoalPos:512  PresPos:640
-   [ID:003] GoalPos:512  PresPos:623
-   [ID:003] GoalPos:512  PresPos:604
-   [ID:003] GoalPos:512  PresPos:586
-   [ID:003] GoalPos:512  PresPos:564
-   [ID:003] GoalPos:512  PresPos:543
-   [ID:003] GoalPos:512  PresPos:522
-   ```
-
-1. １から５まで、前サーボの動作を確認しましょう。
-
--->
 
