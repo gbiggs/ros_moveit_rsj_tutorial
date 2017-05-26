@@ -7,7 +7,7 @@ date: 2017-05-26
 
 <div style="text-align: center;">
 
-【準備】
+<font color="Black">【準備】/font>
 
 </div>
 
@@ -29,7 +29,7 @@ date: 2017-05-26
 
 <div style="text-align: center;">
 
-【実行】
+<font color="Black"><【実行】/font>
 
 </div>
 
@@ -73,7 +73,11 @@ date: 2017-05-26
 
 　次のようなユーザーインターフェースが表示されたら、正しく動作しています。このユーザーインターフェースのボタンを利用することで、画像を保存することができます。
 
+<div style="text-align: center;">
+
 ![usb_cam](images/usb_cam.png)
+
+</div>
 
 
 
