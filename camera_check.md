@@ -5,11 +5,32 @@ date: 2017-05-26
 
 既存のROSパッケージを使用してカメラの動作を確認します。
 
-1. ROSパッケージ『usb_cam』をコンパイルします。
+1. 準備
+	1. ROSパッケージ『usb_cam』をコンパイルします。
 
   ```shell
-  $ cd ~/Downloads/
+  $ cd ~/catkin_ws/src
+  $ git clone https://github.com/bosch-ros-pkg/usb_cam.git
+  $ cd ..
+  $ catkin_make
+  ```
 
+2. パッケージ『v4l-utils』をインストールします。
+
+  ```shell
+  $  sudo apt-get install v4l-utils
+  ```
+
+3. 接続中のカメラが対応している解像度を確認します。ただし、カメラのデバイス番号は0とします。
+
+  ```shell
+  $  v4l2-ctl -d 0 --list-formats-ext
+  ```
+
+3. usb_camを実行します。
+
+  ```shell
+  $  
   ```
 
 
@@ -25,10 +46,10 @@ date: 2017-05-26
 
 
 
-
-
 ---
+
 以下参考
+
 ---
 
 
