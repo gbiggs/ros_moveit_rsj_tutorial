@@ -49,9 +49,9 @@ title: 日本ロボット学会　第106回 ロボットの作り方 ～ROSを�
 
 ## 交通案内
 
-### 最寄バス停まで
+### 最寄駅から最寄バス停まで
 
-つくば駅か東京駅からの推奨ルートは下記のとおりとなっております。
+つくば駅および東京駅からの推奨ルートは下記のとおりとなっています。
 
 - 「つくば駅」（つくばエクスプレス線）から路線バス（「つくばセンター行き（筑波大学循環）」か「筑波大学中央行き」）で10〜20分、「第三エリア前」で下車する。料金は**270**円です。
 	- 参考ウェブページ：<http://kantetsu.co.jp/bus/timetable_tsukuba.html>
@@ -62,10 +62,10 @@ title: 日本ロボット学会　第106回 ロボットの作り方 ～ROSを�
 
 その他、筑波大学のウェブサイトを参考にしてください。
 
-http://www.tsukuba.ac.jp/access/tsukuba_access.html（交通アクセス）
-http://www.tsukuba.ac.jp/access/tsukuba_campus.html（キャンパスマップ）
+- http://www.tsukuba.ac.jp/access/tsukuba_access.html（交通アクセス）
+- http://www.tsukuba.ac.jp/access/tsukuba_campus.html（キャンパスマップ）
 
-### 会場まで
+### 最寄バス停から会場まで
 
 作成中
 
