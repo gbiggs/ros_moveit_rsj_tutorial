@@ -6,7 +6,7 @@ date: 2017-05-26
 既存のROSパッケージを使用してカメラの動作を確認します。
 
 【準備】
-1. ROSパッケージ『usb_cam』をコンパイルします。
+(1) ROSパッケージ『usb_cam』をコンパイルします。
 
   ```bash
   $ cd ~/catkin_ws/src
@@ -15,7 +15,7 @@ date: 2017-05-26
   $ catkin_make
   ```
 
-2. パッケージ『v4l-utils』をインストールします。
+(2) パッケージ『v4l-utils』をインストールします。
 
   ```bash
   $ sudo apt-get install v4l-utils
@@ -45,11 +45,13 @@ date: 2017-05-26
   $ roscore
   ```
   ```bash
-  #二つ目のターミナルで
+  #二つ目のターミナル
   $ rosrun usb_cam usb_cam_node
   ```
 
-4. usb_cam_nodeから
+4. どのようなROSトピックが流れているかを確認する。
+
+5. usb_cam_nodeから
 image_view
 
 
