@@ -62,12 +62,14 @@ title: 日本ロボット学会　第106回 ロボットの作り方 ～ROSを�
 
 その他、筑波大学のウェブサイトを参考にしてください。
 
-- http://www.tsukuba.ac.jp/access/tsukuba_access.html（交通アクセス）
-- http://www.tsukuba.ac.jp/access/tsukuba_campus.html（キャンパスマップ）
+- 交通アクセス：<http://www.tsukuba.ac.jp/access/tsukuba_access.html>
+- キャンパスマップ：<http://www.tsukuba.ac.jp/access/tsukuba_campus.html>
 
 ### 最寄バス停から会場まで
 
-作成中
+下記の配布資料を参考にお越しください。
+
+- 参考資料：作成中
 
 ## 昼食案内
 
