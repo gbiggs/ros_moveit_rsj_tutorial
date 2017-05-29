@@ -215,7 +215,7 @@ $ rosrun rsj_tutorial_2017_ros_basics greeter
 ソースコードにパラメータを利用したので、コマンドラインからパラメータの設定をためして見ましょう。ノードの端末（__注意：`roscore`の端末ではなくて__{: style="color: red" } ）に__Ctrl+c__{: style="border: 1px solid black" } を入力してノードを終了します。そして以下を実行してください。
 
 ```shell
-$ rosrun rsj_tutorial_2017_ros_basics greeter _hello_tex=gidday _world_name:=planet
+$ rosrun rsj_tutorial_2017_ros_basics greeter _hello_text:=gidday _world_name:=planet
 [ INFO] [1494840247.644756809]: Publishing greeting 'gidday planet'
 ```
 
@@ -561,7 +561,7 @@ $ catkin_make
 
 `servo_controller`パッケージの中に以下のファイルを作成します。
 
-`config/dynamixel_text.yaml`:
+`config/dynamixel_test.yaml`:
 
 ```yaml
 finger_servo_controller:
@@ -770,4 +770,4 @@ $ rosrun servo_control set_servo_pos -0.5
 
 サーボステータスに`error`と`load`と`is_moving`という値があります。これらの利用により、サーボはストールしたかどうか判断できます。
 
-サーボがストールしたら傾向を端末で表示するノードを作成してみましょう。
+サーボがストールしたら警告を端末で表示するノードを作成してみましょう。
