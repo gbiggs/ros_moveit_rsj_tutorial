@@ -466,29 +466,29 @@ CMakeLists.txt  include  package.xml  src
 
 #### CMakeLists.txtにノードを追加
 
-`servo_control`パッケージにある`CMakeLists.txt`（`~/catkin_ws/src/servo_control/CMakeLists.txt`）をエディターで開き、以下の通りになるようにソースを編集します。（137行目、144行目、149行目および152行目を追加しました。）
+`servo_control`パッケージにある`CMakeLists.txt`（`~/catkin_ws/src/servo_control/CMakeLists.txt`）をエディターで開き、以下の通りになるようにソースを編集します。（5行目、12行目、17行目および20行目を追加しました。ファイル内の133行目ぐらいから始まります。catkinのバージョンにより編集する具体的な行目の変更があります。）
 
 ```cmake
-133 ## Declare a C++ executable
-134 ## With catkin_make all packages are built within a single CMake context
-135 ## The recommended prefix ensures that target names across packages don't collide
-136 # add_executable(${PROJECT_NAME}_node src/servo_control_node.cpp)
-137 add_executable(${PROJECT_NAME}_set_servo_pos src/set_servo_pos.cpp)
-138
-139 ## Rename C++ executable without prefix
-140 ## The above recommended prefix causes long target names, the following renames the
-141 ## target back to the shorter version for ease of user use
-142 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-143 # set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
-144 set_target_properties(${PROJECT_NAME}_set_servo_pos PROPERTIES OUTPUT_NAME set_servo_pos PREFIX "")
-145
-146 ## Add cmake target dependencies of the executable
-147 ## same as for the library above
-148 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-149 add_dependencies(${PROJECT_NAME}_set_servo_pos ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-150
-151 ## Specify libraries to link a library or executable target against
-152 target_link_libraries(${PROJECT_NAME}_set_servo_pos ${catkin_LIBRARIES})
+## Declare a C++ executable
+## With catkin_make all packages are built within a single CMake context
+## The recommended prefix ensures that target names across packages don't collide
+# add_executable(${PROJECT_NAME}_node src/servo_control_node.cpp)
+add_executable(${PROJECT_NAME}_set_servo_pos src/set_servo_pos.cpp)
+
+## Rename C++ executable without prefix
+## The above recommended prefix causes long target names, the following renames the
+## target back to the shorter version for ease of user use
+## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
+# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
+set_target_properties(${PROJECT_NAME}_set_servo_pos PROPERTIES OUTPUT_NAME set_servo_pos PREFIX "")
+
+## Add cmake target dependencies of the executable
+## same as for the library above
+# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_set_servo_pos ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(${PROJECT_NAME}_set_servo_pos ${catkin_LIBRARIES})
 ```
 
 なお、__必ず__{: style="color: red" } ファイルトップにある`add_definitions(-std=c++11)`の行をアンコメントしてください。
@@ -643,33 +643,33 @@ $ rosrun servo_control set_servo_pos -0.5
 #### CMakeLists.txtにノードを追加
 
 `~/catkin_ws/src/servo_control/CMakeLists.txt`を編集して、新しいノードのコンパイル方法をしていします。ファイルをエディターで開き以下の通りになるように編集します。
-（138行目、146行目、152行目および156行目を追加しました。）
+（6行目、14行目、20行目および24行目を追加しました。）
 
 ```cmake
-133 ## Declare a C++ executable
-134 ## With catkin_make all packages are built within a single CMake context
-135 ## The recommended prefix ensures that target names across packages don't collide
-136 # add_executable(${PROJECT_NAME}_node src/servo_control_node.cpp)
-137 add_executable(${PROJECT_NAME}_set_servo_pos src/set_servo_pos.cpp)
-138 add_executable(${PROJECT_NAME}_servo_status src/servo_status.cpp)
-139
-140 ## Rename C++ executable without prefix
-141 ## The above recommended prefix causes long target names, the following renames the
-142 ## target back to the shorter version for ease of user use
-143 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-144 # set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
-145 set_target_properties(${PROJECT_NAME}_set_servo_pos PROPERTIES OUTPUT_NAME set_servo_pos PREFIX "")
-146 set_target_properties(${PROJECT_NAME}_servo_status PROPERTIES OUTPUT_NAME servo_status PREFIX "")
-147
-148 ## Add cmake target dependencies of the executable
-149 ## same as for the library above
-150 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-151 add_dependencies(${PROJECT_NAME}_set_servo_pos ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-152 add_dependencies(${PROJECT_NAME}_servo_status ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-153
-154 ## Specify libraries to link a library or executable target against
-155 target_link_libraries(${PROJECT_NAME}_set_servo_pos ${catkin_LIBRARIES})
-156 target_link_libraries(${PROJECT_NAME}_servo_status ${catkin_LIBRARIES})
+## Declare a C++ executable
+## With catkin_make all packages are built within a single CMake context
+## The recommended prefix ensures that target names across packages don't collide
+# add_executable(${PROJECT_NAME}_node src/servo_control_node.cpp)
+add_executable(${PROJECT_NAME}_set_servo_pos src/set_servo_pos.cpp)
+add_executable(${PROJECT_NAME}_servo_status src/servo_status.cpp)
+
+## Rename C++ executable without prefix
+## The above recommended prefix causes long target names, the following renames the
+## target back to the shorter version for ease of user use
+## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
+# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
+set_target_properties(${PROJECT_NAME}_set_servo_pos PROPERTIES OUTPUT_NAME set_servo_pos PREFIX "")
+set_target_properties(${PROJECT_NAME}_servo_status PROPERTIES OUTPUT_NAME servo_status PREFIX "")
+
+## Add cmake target dependencies of the executable
+## same as for the library above
+# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_set_servo_pos ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_servo_status ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(${PROJECT_NAME}_set_servo_pos ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_servo_status ${catkin_LIBRARIES})
 ```
 
 #### ノードのソースの作成
