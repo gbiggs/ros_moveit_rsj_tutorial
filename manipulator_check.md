@@ -83,7 +83,7 @@ date: 2017-05-09
    __注意：プログラムを実行すると指定したサーボは高速で真ん中の位置に移動します。電源を入れる前にマニピュレータをまっすぐ___上向きに近い姿勢___にしてください。__{: style: "color=red" }
 
    ```shell
-   ./servo_check 1
+   $ sudo ./servo_check 1
    Opened port
    Changed buadrate
    Dynamixel has been successfully connected
