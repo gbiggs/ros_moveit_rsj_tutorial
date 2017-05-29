@@ -7,6 +7,14 @@ repo: "https://github.com/gbiggs/ros_moveit_rsj_tutorial"
 markdown: kramdown
 highlighter: rouge
 
+kramdown:
+  syntax_highlighter_opts:
+    span:
+      line_numbers: false
+    block:
+      line_numbers: true
+      start_line: 1
+
 exclude:
   - README.md
   - Gemfile
