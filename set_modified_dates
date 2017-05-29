@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+function set_date() {
+  TGT="${1}"
+  DATE=$(stat -c %y "${TGT}" | awk '{print $1;}')
+  echo "Setting modification time of ${1} to ${DATE}"
+  sed -i "s/date: .*$/date: ${DATE}/" "${TGT}"
+}
+
+for ii in $(ls *.md); do
+  set_date "${ii}"
+done
