@@ -119,6 +119,36 @@ LinuxとROSのインストール方法を示します。
 
    [ROS KineticのUbuntuへのインストール](http://wiki.ros.org/ja/kinetic/Installation/Ubuntu)
 
+   以下はインストールコマンドの概要だけです。上記のページにご参照してください。
+
+   ```shell
+   $ sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+   $ sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+   $ sudo apt-get update
+   $ sudo apt-get install ros-kinetic-desktop-full
+   $ sudo rosdep init
+   $ rosdep update
+   $ echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc
+   $ source ~/.bashrc
+   $ sudo apt-get install python-rosinstall
+   ```
+
+1. 確認のため、新しい端末を起動して、下記を実行してください。
+
+   ```shell
+   $ printenv | grep ROS
+   ```
+
+   下記が出力されたら、ROSのインストールが完了しました。
+
+   ```shell
+   ROS_ROOT=/opt/ros/kinetic/share/ros
+   ROS_PACKAGE_PATH=/opt/ros/kinetic/share
+   ROS_MASTER_URI=http://localhost:11311
+   ROSLISP_PACKAGE_DIRECTORIES=
+   ROS_DISTRO=kinetic
+   ROS_ETC_DIR=/opt/ros/kinetic/etc/ros
+   ```
 
 ### 必要なパッケージのインストール
 
