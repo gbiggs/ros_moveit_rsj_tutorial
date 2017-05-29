@@ -197,11 +197,17 @@ $ cd ~/catkin_ws/
 $ catkin_make
 ```
 
-実行してみましょう。実行の際、ROSを通してノード同士がデータをやりとりするために用いる、「roscore」を起動しておく必要があります。2つの端末を開き、それぞれで以下を実行して下さい。
+端末で実行してみましょう。
+
+ROSシステムの実行の際、ROSを通してノード同士がデータをやりとりするために用いる、「roscore」を起動しておく必要があります。2つ目の端末を開き、それぞれで以下を実行して下さい。
+
+1つ目の端末：
 
 ```shell
 $ roscore
 ```
+
+2つ目の端末：
 
 ```shell
 $ cd ~/catkin_ws/
@@ -234,7 +240,6 @@ $ rosrun rsj_tutorial_2017_ros_basics greeter _hello_text:=gidday _world_name:=p
 void callback(const rsj_tutorial_2017_ros_basics::Greeting::ConstPtr &msg) {
   std::cout << msg->hello_text << " " << msg->world_name << '\n';
 }
-
 int main(int argc, char **argv) {
   ros::init(argc, argv, "Displayer");
   ros::NodeHandle node;
@@ -270,18 +275,13 @@ int main(int argc, char **argv) {
 
 ### ビルド＆実行
 
-もう一回、このパッケージをビルドするためにcatkin_makeコマンドを実行します。
-
-```shell
-$ cd ~/catkin_ws/
-$ catkin_make
-```
-
-実行してみましょう。また端末で以下を実行します。
+実行してみましょう。また1つ目の端末で以下を実行します。
 
 ```shell
 $ roscore
 ```
+
+そして2つ目の端末で以下を実行します。
 
 ```shell
 $ cd ~/catkin_ws/
@@ -290,7 +290,7 @@ $ rosrun rsj_tutorial_2017_ros_basics greeter
 [ INFO] [1494840089.900580884]: Publishing greeting 'hello world'
 ```
 
-そしてもう一つの端末を開いて、以下を実行します。
+最後に、3番目の端末を開いて、下記を実行します。
 
 ```shell
 $ cd ~/catkin_ws/
@@ -466,38 +466,38 @@ CMakeLists.txt  include  package.xml  src
 
 #### CMakeLists.txtにノードを追加
 
-`servo_control`パッケージにある`CMakeLists.txt`をエディターで開き、以下の所にソースを編集します。
+`servo_control`パッケージにある`CMakeLists.txt`（`~/catkin_ws/src/servo_control/CMakeLists.txt`）をエディターで開き、以下の通りになるようにソースを編集します。（137行目、144行目、149行目および152行目を追加しました。）
 
 ```cmake
-## Declare a C++ executable
-## With catkin_make all packages are built within a single CMake context
-## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/servo_control_node.cpp)
-add_executable(${PROJECT_NAME}_set_servo_pos src/set_servo_pos.cpp)
-
-## Rename C++ executable without prefix
-## The above recommended prefix causes long target names, the following renames the
-## target back to the shorter version for ease of user use
-## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-set_target_properties(${PROJECT_NAME}_set_servo_pos PROPERTIES OUTPUT_NAME set_servo_pos PREFIX "")
-
-## Add cmake target dependencies of the executable
-## same as for the library above
-add_dependencies(${PROJECT_NAME}_set_servo_pos ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-## Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME}_set_servo_pos
-  ${catkin_LIBRARIES}
-)
+133 ## Declare a C++ executable
+134 ## With catkin_make all packages are built within a single CMake context
+135 ## The recommended prefix ensures that target names across packages don't collide
+136 # add_executable(${PROJECT_NAME}_node src/servo_control_node.cpp)
+137 add_executable(${PROJECT_NAME}_set_servo_pos src/set_servo_pos.cpp)
+138
+139 ## Rename C++ executable without prefix
+140 ## The above recommended prefix causes long target names, the following renames the
+141 ## target back to the shorter version for ease of user use
+142 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
+143 # set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
+144 set_target_properties(${PROJECT_NAME}_set_servo_pos PROPERTIES OUTPUT_NAME set_servo_pos PREFIX "")
+145
+146 ## Add cmake target dependencies of the executable
+147 ## same as for the library above
+148 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+149 add_dependencies(${PROJECT_NAME}_set_servo_pos ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+150
+151 ## Specify libraries to link a library or executable target against
+152 target_link_libraries(${PROJECT_NAME}_set_servo_pos ${catkin_LIBRARIES})
 ```
 
-なお、__必ず__{: style="color: red" } ファイルトップに`add_definitions(-std=c++11)`の行をアンコメントしてください。
+なお、__必ず__{: style="color: red" } ファイルトップにある`add_definitions(-std=c++11)`の行をアンコメントしてください。
 
 これでcatkinに`set_servo_pos`というノードのコンパイルを指定しました。
 
 #### ノードのソースの作成
 
-`servo_control`パッケージ内の`src/`ディレクトリに`set_servo_pos.cpp`というファイルを作成します。そしてエディターで開き、以下のソースを入力します。
+`servo_control`パッケージ内の`src/`ディレクトリに`set_servo_pos.cpp`というファイル（`~/catkin_ws/src/servo_control/src/set_servo_pos.cpp`）を作成します。そしてエディターで開き、以下のソースを入力します。
 
 ```C++
 #include <ros/ros.h>
@@ -544,9 +544,11 @@ int main(int argc, char **argv) {
 
 なぜサーボの位置はパラメータとしてノードに渡さなかったでしょうか。パラメータはいわゆる「configuration」です。ノードの振る舞えを制御するためのことです。サーボのトピックははノードの振る舞えだが、サーボの位置はコマンドです。このノードはコマンドラインで利用するべきなツールなので普通のコマンドラインパラメータを利用しました。
 
-### ビルド＆実行
+### ビルド＆実
 
-いつものようにコンパイルして実行します。
+パッケージ内のソースを変更・追加した後、必ず再ビルドが必要です。端末でcatkin_makeコマンドを実行して再ビルドします。
+
+1つ目の端末：
 
 ```shell
 $ cd ~/catkin_ws/
@@ -561,7 +563,7 @@ $ catkin_make
 
 `servo_controller`パッケージの中に以下のファイルを作成します。
 
-`config/dynamixel_test.yaml`:
+`~/catkin_ws/src/servo_control/config/dynamixel_test.yaml`:
 
 ```yaml
 finger_servo_controller:
@@ -578,7 +580,7 @@ finger_servo_controller:
         max: 1023
 ```
 
-`launch/dynamixel_test.launch`:
+`~/catkin_ws/src/servo_control/launch/dynamixel_test.launch`:
 
 ```xml
 <launch>
@@ -603,7 +605,7 @@ finger_servo_controller:
 </launch>
 ```
 
-端末に以下を実行してマニピュレータのグリッパーサーボコントローラを起動します。
+1つ目の端末に以下を実行してマニピュレータのグリッパーサーボコントローラを起動します。
 
 ```shell
 $ roslaunch servo_control dynamixel_test.launch
@@ -619,7 +621,7 @@ SUMMARY
 （省略）
 ```
 
-別の端末に以下を実行します。
+2つ目の端末に以下を実行します。
 
 ```shell
 $ rosrun servo_control set_servo_pos 0
@@ -634,24 +636,45 @@ $ rosrun servo_control set_servo_pos -0.5
 
 ## サーボの状態を確認
 
-もう一つのノードを作成し、サーボの現在状況を端末で表示します。上述と同じ手順で`servo_status`というノードを`servo_control`パッケージに追加します。
+もう一つのノードを作成し、サーボの現在状況を端末で表示します。上記と同じ手順で`servo_status`というノードを`servo_control`パッケージに追加します。
 
 ### ノードを作成
 
 #### CMakeLists.txtにノードを追加
 
-CMakeLists.txtに次を追加します。
+`~/catkin_ws/src/servo_control/CMakeLists.txt`を編集して、新しいノードのコンパイル方法をしていします。ファイルをエディターで開き以下の通りになるように編集します。
+（138行目、146行目、152行目および156行目を追加しました。）
 
 ```cmake
-add_executable(${PROJECT_NAME}_servo_status src/servo_status.cpp)
-set_target_properties(${PROJECT_NAME}_servo_status PROPERTIES OUTPUT_NAME servo_status PREFIX "")
-add_dependencies(${PROJECT_NAME}_servo_status ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(${PROJECT_NAME}_servo_status ${catkin_LIBRARIES})
+133 ## Declare a C++ executable
+134 ## With catkin_make all packages are built within a single CMake context
+135 ## The recommended prefix ensures that target names across packages don't collide
+136 # add_executable(${PROJECT_NAME}_node src/servo_control_node.cpp)
+137 add_executable(${PROJECT_NAME}_set_servo_pos src/set_servo_pos.cpp)
+138 add_executable(${PROJECT_NAME}_servo_status src/servo_status.cpp)
+139
+140 ## Rename C++ executable without prefix
+141 ## The above recommended prefix causes long target names, the following renames the
+142 ## target back to the shorter version for ease of user use
+143 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
+144 # set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
+145 set_target_properties(${PROJECT_NAME}_set_servo_pos PROPERTIES OUTPUT_NAME set_servo_pos PREFIX "")
+146 set_target_properties(${PROJECT_NAME}_servo_status PROPERTIES OUTPUT_NAME servo_status PREFIX "")
+147
+148 ## Add cmake target dependencies of the executable
+149 ## same as for the library above
+150 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+151 add_dependencies(${PROJECT_NAME}_set_servo_pos ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+152 add_dependencies(${PROJECT_NAME}_servo_status ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+153
+154 ## Specify libraries to link a library or executable target against
+155 target_link_libraries(${PROJECT_NAME}_set_servo_pos ${catkin_LIBRARIES})
+156 target_link_libraries(${PROJECT_NAME}_servo_status ${catkin_LIBRARIES})
 ```
 
 #### ノードのソースの作成
 
-`servo_control`パッケージ内の`src/`ディレクトリに`servo_status.cpp`というファイルを作成します。そしてエディターで開き、以下のソースを入力します。
+`servo_control`パッケージ内の`src/`ディレクトリに`servo_status.cpp`というファイルを作成します。エディターで`~/catkin_ws/src/servo_control/src/servo_status.cpp`を開き（作成）、以下のソースを入力します。
 
 ```C++
 #include <ros/ros.h>
@@ -711,14 +734,14 @@ bool is_moving
 
 ### ビルド＆実行
 
-コンパイルして実行します。
+コンパイルして実行します。1つ目の端末で`catkin_make`を実行します。
 
 ```shell
 $ cd ~/catkin_ws/
 $ catkin_make
 ```
 
-実行する前にマニピュレータのサーボコントローラを起動することが必要です。端末に以下を実行してマニピュレータのグリッパーサーボコントローラを起動します。
+実行する前にマニピュレータのサーボコントローラを起動することが必要です。1つ目の端末に下記を実行してマニピュレータのグリッパーサーボコントローラを起動します。
 
 ```shell
 $ roslaunch servo_control dynamixel_test.launch
@@ -734,7 +757,7 @@ SUMMARY
 （省略）
 ```
 
-別の端末に以下を実行します。
+2つ目の端末に下記を実行します。
 
 ```shell
 $ rosrun servo_control servo_status
@@ -748,14 +771,14 @@ $ rosrun servo_control servo_status
 [ INFO] [1494855697.337226948]: Velocity: 0.000000
 [ INFO] [1494855697.337278499]: Load: 0.000000
 [ INFO] [1494855697.337329531]: Moving: no
-[ INFO] [1494855697.337372008]: 
+[ INFO] [1494855697.337372008]:
 [ INFO] [1494855697.432684658]: --- Servo status ---
 （省略）
 ```
 
 （サーボの現在状況により数字の変わることがあります。）
 
-別の端末に以下を実行すると、`servo_status`の端末で数字の変更が見えます。
+3つ目の端末に下記を実行すると、`servo_status`の端末で数字の変更が見えます。
 
 ```shell
 $ rosrun servo_control set_servo_pos 0
