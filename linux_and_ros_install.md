@@ -1,6 +1,6 @@
 ---
 title: Ubuntu LinuxとROSのインストール
-date: 2017-05-09
+date: 2017-05-29
 ---
 
 セミナー中に開発環境としてUbuntu Linuxを利用します。そして、Ubuntu
