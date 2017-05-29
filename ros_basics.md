@@ -106,25 +106,25 @@ $
 
 まず、先頭部分では、必要なヘッダファイルをインクルードしています。
 
-```C++
+```c++
 #include <ros/ros.h>
 ```
 
 続いて、本ノードが利用するメッセージのヘッダファイルをインクルードしています。
 
-```C++
+```c++
 #include <rsj_tutorial_2017_ros_basics/Greeting.h>
 ```
 
 `std::string`が利用されるので、ヘッダファイルをインクルードします。
 
-```C++
+```c++
 #include <string>
 ```
 
 続いて、C++のmain関数が定義されています。本ノードは非常に簡単なのですべての機能がmain関数に入れられました。ただし、複雑な機能や色々なデータを持つノードにはクラスとしての実装がおすすめします。
 
-```C++
+```c++
 int main(int argc, char **argv) {
   ros::init(argc, argv, "Greeter");
   ros::NodeHandle node;
@@ -231,7 +231,7 @@ $ rosrun rsj_tutorial_2017_ros_basics greeter _hello_text:=gidday _world_name:=p
 
 以下のソースは`rsj_tutorial_2017_ros_basics/src/displayer.cpp`ファイルにあります。
 
-```C++
+```c++
 #include <ros/ros.h>
 #include <rsj_tutorial_2017_ros_basics/Greeting.h>
 
@@ -499,7 +499,7 @@ CMakeLists.txt  include  package.xml  src
 
 `servo_control`パッケージ内の`src/`ディレクトリに`set_servo_pos.cpp`というファイル（`~/catkin_ws/src/servo_control/src/set_servo_pos.cpp`）を作成します。そしてエディターで開き、以下のソースを入力します。
 
-```C++
+```c++
 #include <ros/ros.h>
 #include <std_msgs/Float64.h>
 
@@ -676,7 +676,7 @@ $ rosrun servo_control set_servo_pos -0.5
 
 `servo_control`パッケージ内の`src/`ディレクトリに`servo_status.cpp`というファイルを作成します。エディターで`~/catkin_ws/src/servo_control/src/servo_status.cpp`を開き（作成）、以下のソースを入力します。
 
-```C++
+```c++
 #include <ros/ros.h>
 #include <dynamixel_msgs/JointState.h>
 
