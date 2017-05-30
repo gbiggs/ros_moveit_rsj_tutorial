@@ -466,9 +466,13 @@ $ rosrun pick_and_placer pick_and_placer
 
 ![CRANE+ vertical named pose](images/crane_plus_vertical_pose.png)
 
-_このソースは以下のURLでダウンロード可能です。_
+_このソースは以下のURLでダウンロード可能です。
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/named_pose>
+
+_編集されたC++ファイルは以下です。
+
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/named_pose/src/pick_and_placer.cpp>_
 
 ### マニピュレータを任意の姿勢に移動
 
@@ -544,9 +548,13 @@ $
 
 ![CRANE+ pick pre-grasp pose](images/crane_plus_pick_pre_grasp_pose.png)
 
-_このソースは以下のURLでダウンロード可能です。_
+_このソースは以下のURLでダウンロード可能です。
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/specified_pose>
+
+_編集されたC++ファイルは以下です。
+
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/specified_pose/src/pick_and_placer.cpp>_
 
 ## グリッパーを開く
 
@@ -601,9 +609,13 @@ control_msgs/GripperCommand command
 
 ![CRANE+ pick open gripper](images/crane_plus_pick_open_gripper.png)
 
-_このソースは以下のURLでダウンロード可能です。_
+_このソースは以下のURLでダウンロード可能です。
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/open_gripper>
+
+_編集されたC++ファイルは以下です。
+
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/open_gripper/src/pick_and_placer.cpp>_
 
 ## ピッキングタスクを行う
 
@@ -680,6 +692,10 @@ _このソースは以下のURLでダウンロード可能です。_
 _上述のソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/picking>
+
+_編集されたC++ファイルは以下です。
+
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/picking/src/pick_and_placer.cpp>_
 
 ## 小課題
 
