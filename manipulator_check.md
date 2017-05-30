@@ -9,24 +9,24 @@ date: 2017-05-29
 
 1. サーボドライバーソフトウェアをコンパイルします。端末を起動し、以下のコマンドを実行します。
 
-  ```shell
-  $ cd ~/Downloads/
-  $ git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git
-  $ cd DynamixelSDK/c/build/linux64/
-  $ make
-  mkdir -p ./.objects/
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/group_bulk_read.c -o .objects/group_bulk_read.o
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/group_bulk_write.c -o .objects/group_bulk_write.o
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/group_sync_read.c -o .objects/group_sync_read.o
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/group_sync_write.c -o .objects/group_sync_write.o
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/packet_handler.c -o .objects/packet_handler.o
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/port_handler.c -o .objects/port_handler.o
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/protocol1_packet_handler.c -o .objects/protocol1_packet_handler.o
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/protocol2_packet_handler.c -o .objects/protocol2_packet_handler.o
-  gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk_linux/port_handler_linux.c -o .objects/port_handler_linux.o
-  g++ -shared -fPIC -m64 -o ./libdxl_x64_c.so ./.objects/group_bulk_read.o ./.objects/group_bulk_write.o ./.objects/group_sync_read.o ./.objects/group_sync_write.o ./.objects/packet_handler.o ./.objects/port_handler.o ./.objects/protocol1_packet_handler.o ./.objects/protocol2_packet_handler.o ./.objects/port_handler_linux.o -lrt
-  $
-  ```
+   ```shell
+   $ cd ~/Downloads/
+   $ git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git
+   $ cd DynamixelSDK/c/build/linux64/
+   $ make
+   mkdir -p ./.objects/
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/group_bulk_read.c -o .objects/group_bulk_read.o
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/group_bulk_write.c -o .objects/group_bulk_write.o
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/group_sync_read.c -o .objects/group_sync_read.o
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/group_sync_write.c -o .objects/group_sync_write.o
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/packet_handler.c -o .objects/packet_handler.o
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/port_handler.c -o .objects/port_handler.o
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/protocol1_packet_handler.c -o .objects/protocol1_packet_handler.o
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/protocol2_packet_handler.c -o .objects/protocol2_packet_handler.o
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk_linux/port_handler_linux.c -o .objects/port_handler_linux.o
+   g++ -shared -fPIC -m64 -o ./libdxl_x64_c.so ./.objects/group_bulk_read.o ./.objects/group_bulk_write.o ./.objects/group_sync_read.o ./.objects/group_sync_write.o ./.objects/packet_handler.o ./.objects/port_handler.o ./.objects/protocol1_packet_handler.o ./.objects/protocol2_packet_handler.o ./.objects/port_handler_linux.o -lrt
+   $
+   ```
 
 1. サーボ確認プログラムのソースを取得します。
 
@@ -75,6 +75,20 @@ date: 2017-05-29
    $ ls
    CMakeCache.txt  CMakeFiles  cmake_install.cmake  Makefile  servo_check
    ```
+
+## ソフトウェアを実行
+
+1. シリアルポートへアクセスするために、下記のコマンドにパーミッショングループに自分のユーザーを追加します。
+
+   ```shell
+   $ sudo gpasswd -a ユーザ名 dialout
+   ```
+
+   上記で`ユーザ名`を自分のユーザ名に変更します。
+
+   上記のようにパーミッショングループにユーザを追加しないとサーボ制御ソフトウェアはハードウェアへアクセスできなくて、エラーになります。
+
+   また、 __実行後は一旦ログアウトしてまたログインしてください。__{:style="color: red"}
 
 1. サーボ確認プログラムを実行しサーボの動きを確認します。
 
