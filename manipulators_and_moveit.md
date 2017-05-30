@@ -470,7 +470,7 @@ _このソースは以下のURLでダウンロード可能です。
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/named_pose>
 
-_編集されたC++ファイルは以下です。
+編集されたC++ファイルは以下です。
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/named_pose/src/pick_and_placer.cpp>_
 
@@ -552,7 +552,7 @@ _このソースは以下のURLでダウンロード可能です。
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/specified_pose>
 
-_編集されたC++ファイルは以下です。
+編集されたC++ファイルは以下です。
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/specified_pose/src/pick_and_placer.cpp>_
 
@@ -613,7 +613,7 @@ _このソースは以下のURLでダウンロード可能です。
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/open_gripper>
 
-_編集されたC++ファイルは以下です。
+編集されたC++ファイルは以下です。
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/open_gripper/src/pick_and_placer.cpp>_
 
@@ -693,7 +693,7 @@ _上述のソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/picking>
 
-_編集されたC++ファイルは以下です。
+編集されたC++ファイルは以下です。
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/picking/src/pick_and_placer.cpp>_
 
@@ -743,9 +743,9 @@ ros::Subscriber sub = node_handle.subscribe("/block", 1, &PickNPlacer::DoPick, t
 
 __注意：変更し始める前に、ソースのバックアップを作りましょう。__{: style="color: red" }
 
-_このソースは以下のURLでダウンロード可能です。_
+_このソースは以下のURLでダウンロード可能です。
 
-<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/topic_picker>
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/topic_picker>_
 
 ## 更に小課題
 
@@ -757,9 +757,9 @@ CRANE+と本セミナーの物体（すなわちスポンジのキューブ）�
 
 __注意：変更し始める前に、ソースのバックアップを作りましょう。__{: style="color: red" }
 
-_このソースは以下のURLでダウンロード可能です。_
+_このソースは以下のURLでダウンロード可能です。
 
-<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/pickandplace>
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/pickandplace>_
 
 ## 更に小課題
 
@@ -865,6 +865,6 @@ MoveIt!はピック・アンド・プレースを行うソースが含まれて�
 
 _注意：MoveIt!は基本的に6DOF以上を持つマニピュレータ向きです。CRANE+のような4DOFマニピュレータのリチャブル・スペース（マニピュレータが届ける姿勢）はかなり限られていて、プラニングが難しいです。MoveIt!はプラニングで失敗することが多くなります。_
 
-_このソースは以下のURLでダウンロード可能です。_
+_このソースは以下のURLでダウンロード可能です。
 
-<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/moveit_pick_place_plugin>
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/moveit_pick_place_plugin>_
