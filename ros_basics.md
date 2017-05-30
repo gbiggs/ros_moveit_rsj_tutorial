@@ -35,7 +35,7 @@ ROSでは、プログラムをビルドする際に、catkin というシステ�
 $ mkdir -p ~/catkin_ws/src
 $ cd ~/catkin_ws/src
 $ catkin_init_workspace
-Creating symlink "/home/[ユーザーダイレクトリー]/catkin/src/CMakeLists.txt" pointing to "/opt/ros/kinetic/share/catkin/cmake/toplevel.cmake"
+Creating symlink "/home/[ユーザダイレクトリー]/catkin/src/CMakeLists.txt" pointing to "/opt/ros/kinetic/share/catkin/cmake/toplevel.cmake"
 $ ls
 CMakeLists.txt
 $ cd ..
