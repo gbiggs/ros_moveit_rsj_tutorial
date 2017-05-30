@@ -44,11 +44,12 @@ src
 $
 ```
 
-`catkin_ws`ディレクトリの中にある、`build`、`devel`は、catkinシステムがプログラムをビルドする際に使用するものなので、ユーザが触る必要はありません。`catkin_ws/src`ディレクトリは、ROSパッケージのソースコードを置く場所で、中にある`CMakeLists.txt` は、ワークスペース全体をビルドするためのルールが書かれているファイルです。
+`catkin_ws`ディレクトリ内にある、`build`、`devel`は、catkinシステムがプログラムをビルドする際に使用するものなので、ユーザが触る必要はありません。`catkin_ws/src`ディレクトリは、ROSパッケージのソースコードを置く場所で、中にある`CMakeLists.txt` は、ワークスペース全体をビルドするためのルールが書かれているファイルです。
 
 このディレクトリに、本作業ようのパッケージをダウンロードします。
 
 ```shell
+$ cd ~/catkin_ws/src
 $ git clone https://github.com/gbiggs/rsj_tutorial_2017_ros_intro.git
 $ ls
 CMakeLists.txt  rsj_tutorial_2017_ros_intro
@@ -62,7 +63,7 @@ GitHubは、ソースコードなどのリポジトリーサービスです。�
 では、次にパッケージのディレクトリ構成を確認します。ダウンロードしているパッケージがバージョンアップされている場合などには、下記の実行例とファイル名が異なったり、ファイルが追加・削除されているが場合があります。
 
 ```shell
-$ cd rsj_tutorial_2017_ros_intro/
+$ cd ~/catkin_ws/src/rsj_tutorial_2017_ros_intro/
 $ ls
 CMakeLists.txt  launch  msg  package.xml  src
 $ ls launch/
@@ -70,17 +71,13 @@ say_hello.launch
 $ ls msg/
 Greeting.msg
 $ ls src/
-greeter.cpp
+displayer.cpp  greeter.cpp
 $
 ```
 
 `CMakeLists.txt`と`package.xml`には、使っているライブラリの一覧や、生成する実行ファイルとC++のソースコードの対応など、このパッケージをビルドするために必要な情報が書かれています。`launch`ディレクトリには、複数のノードでできたシステムの定義が、`msg`ディレクトリには、このパッケージ独自のデータ形式の定義が、`src`ディレクトリには、このパッケージに含まれるプログラム(ノード)のソースコードが含まれています。
 
-以下のように、`catkin_make`コマンドで、ダウンとロードした`rsj_tutorial_2017_ros_intro`パッケージを含む、ワークスペース全体をビルドします。`catkin_make`は、ワークスペースの最上位ディレクトリ(`~/catkin_ws/`)で行います。
-
-```shell
-$ cd ~/catkin_ws/
-```
+`catkin_make`コマンドで、ダウンとロードした`rsj_tutorial_2017_ros_intro`パッケージを含む、ワークスペース全体をビルドします。`catkin_make`は、ワークスペースの最上位ディレクトリ(`~/catkin_ws/`)で行います。
 
 ## ROSノードの理解とビルド・実行
 
@@ -190,7 +187,7 @@ advertise関数についている、`<rsj_tutorial_2017_ros_basics::Greeting>`�
 
 ### ビルド＆実行
 
-ROS上でこのパッケージをビルドするためには、catkin_makeコマンドを用います。
+ROS上でこのパッケージをビルドするためには、`catkin_make`コマンドを用います。
 
 ```shell
 $ cd ~/catkin_ws/
@@ -224,6 +221,8 @@ $ rosrun rsj_tutorial_2017_ros_basics greeter
 $ rosrun rsj_tutorial_2017_ros_basics greeter _hello_text:=gidday _world_name:=planet
 [ INFO] [1494840247.644756809]: Publishing greeting 'gidday planet'
 ```
+
+両方の端末で __Ctrl+c__{: style="border: 1px solid black" } でノードと`roscore`を終了します。
 
 ### データを取得
 
@@ -348,6 +347,8 @@ launchファイルは、ノードやパラメータの組み合わせを定義�
 開いている端末に`roscore`や起動中のノードをすべて __Ctrl+c__{: style="border: 1px solid black" } で停止します。それから一つの端末で以下を実行します。
 
 ```shell
+$ cd ~/catkin_ws
+$ source devel/setup.bash
 $ roslaunch rsj_tutorial_2017_ros_basics say_hello.launch
 ... logging to /home/geoff/.ros/log/40887b56-395c-11e7-b868-d8cb8ae35bff/roslaunch-alnilam-11087.log
 Checking log directory for disk usage. This may take awhile.
@@ -450,7 +451,7 @@ CMakeLists.txt  include  package.xml  src
 
 これらはパッケージの依存を定義します。ROSとcatkinはこれらの利用によってパッケージのビルド順番等を決めます。
 
-普段は`package.xml`のメール等を編集しますが、今回は時間のために省略します。
+普段は`package.xml`のメール等（`<maintainer email>`タグ等）も編集するべきですが、今回は時間のために省略します。
 
 以上、パッケージの作成ができました。
 
@@ -542,7 +543,7 @@ int main(int argc, char **argv) {
 
 このソースはコマンドラインから希望のサーボの位置を読み、パラメータで指定されたトピック（ディフォルトは`/finger_servo_controller/command`）にパブリッシュします。このトピックはサーボのコントローラがサブスクライブしています。
 
-なぜサーボの位置はパラメータとしてノードに渡さなかったでしょうか。パラメータはいわゆる「configuration」です。ノードの振る舞えを制御するためのことです。サーボのトピックははノードの振る舞えだが、サーボの位置はコマンドです。このノードはコマンドラインで利用するべきなツールなので普通のコマンドラインパラメータを利用しました。
+なぜサーボの位置はパラメータとしてノードに渡さなかったでしょうか。パラメータはいわゆる「configuration」です。ノードの振る舞いを制御するためのことです。サーボのトピックははノードの振る舞えだが、サーボの位置はコマンドです。このノードはコマンドラインで利用するべきなツールなので普通のコマンドラインパラメータを利用しました。
 
 ### ビルド＆実
 
@@ -561,7 +562,13 @@ $ catkin_make
 
 マニピュレータのサーボコントローラを起動することが必要です。
 
-`servo_controller`パッケージの中に以下のファイルを作成します。
+`servo_controller`パッケージの中に以下のファイルを作成します。`~/catkin_ws/src/servo_control/config`と`~/catkin_ws/src/servo_control/launch`ディレクトリは作成した上でファイルを編集します。
+
+```shell
+$ cd ~/catkin_ws/src/servo_control
+$ mkdir config
+$ mkdir launch
+```
 
 `~/catkin_ws/src/servo_control/config/dynamixel_test.yaml`:
 
@@ -633,6 +640,10 @@ $ rosrun servo_control set_servo_pos -0.5
 ```
 
 サーボが動けば、サーボ制御は成功しました。
+
+_このソースは以下のURLでダウンロード可能です。_
+
+<https://github.com/gbiggs/rsj_2017_servo_control>
 
 ## サーボの状態を確認
 
@@ -788,6 +799,10 @@ $ rosrun servo_control set_servo_pos -0.5
 [ INFO] [1494851548.085785357]: Setting servo position to -0.500000
 [Ctrl+cで止める]
 ```
+
+_このソースは以下のURLでダウンロード可能です。_
+
+<https://github.com/gbiggs/rsj_2017_servo_control>
 
 ## 小課題
 
