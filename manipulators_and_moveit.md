@@ -466,13 +466,13 @@ $ rosrun pick_and_placer pick_and_placer
 
 ![CRANE+ vertical named pose](images/crane_plus_vertical_pose.png)
 
-_このソースは以下のURLでダウンロード可能です。
+_このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/named_pose>
 
-編集されたC++ファイルは以下です。
+_編集されたC++ファイルは以下です。_
 
-<https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/named_pose/src/pick_and_placer.cpp>_
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/named_pose/src/pick_and_placer.cpp>
 
 ### マニピュレータを任意の姿勢に移動
 
@@ -548,13 +548,13 @@ $
 
 ![CRANE+ pick pre-grasp pose](images/crane_plus_pick_pre_grasp_pose.png)
 
-_このソースは以下のURLでダウンロード可能です。
+_このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/specified_pose>
 
-編集されたC++ファイルは以下です。
+_編集されたC++ファイルは以下です。_
 
-<https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/specified_pose/src/pick_and_placer.cpp>_
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/specified_pose/src/pick_and_placer.cpp>
 
 ## グリッパーを開く
 
@@ -609,13 +609,13 @@ control_msgs/GripperCommand command
 
 ![CRANE+ pick open gripper](images/crane_plus_pick_open_gripper.png)
 
-_このソースは以下のURLでダウンロード可能です。
+_このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/open_gripper>
 
-編集されたC++ファイルは以下です。
+_編集されたC++ファイルは以下です。_
 
-<https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/open_gripper/src/pick_and_placer.cpp>_
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/open_gripper/src/pick_and_placer.cpp>
 
 ## ピッキングタスクを行う
 
@@ -693,9 +693,9 @@ _上述のソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/picking>
 
-編集されたC++ファイルは以下です。
+_編集されたC++ファイルは以下です。_
 
-<https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/picking/src/pick_and_placer.cpp>_
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/picking/src/pick_and_placer.cpp>
 
 ## 小課題
 
@@ -743,9 +743,9 @@ ros::Subscriber sub = node_handle.subscribe("/block", 1, &PickNPlacer::DoPick, t
 
 __注意：変更し始める前に、ソースのバックアップを作りましょう。__{: style="color: red" }
 
-_このソースは以下のURLでダウンロード可能です。
+_このソースは以下のURLでダウンロード可能です。_
 
-<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/topic_picker>_
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/topic_picker>
 
 ## 更に小課題
 
@@ -757,9 +757,9 @@ CRANE+と本セミナーの物体（すなわちスポンジのキューブ）�
 
 __注意：変更し始める前に、ソースのバックアップを作りましょう。__{: style="color: red" }
 
-_このソースは以下のURLでダウンロード可能です。
+_このソースは以下のURLでダウンロード可能です。_
 
-<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/pickandplace>_
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/pickandplace>
 
 ## 更に小課題
 
@@ -865,6 +865,6 @@ MoveIt!はピック・アンド・プレースを行うソースが含まれて�
 
 _注意：MoveIt!は基本的に6DOF以上を持つマニピュレータ向きです。CRANE+のような4DOFマニピュレータのリチャブル・スペース（マニピュレータが届ける姿勢）はかなり限られていて、プラニングが難しいです。MoveIt!はプラニングで失敗することが多くなります。_
 
-_このソースは以下のURLでダウンロード可能です。
+_このソースは以下のURLでダウンロード可能です。_
 
-<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/moveit_pick_place_plugin>_
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/moveit_pick_place_plugin>
