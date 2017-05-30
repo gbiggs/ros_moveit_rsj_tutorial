@@ -9,12 +9,6 @@ ROSでは、マニピュレータを一体型なロボットとして制御し�
 
 本セクションでは、MoveIt!を利用してマニピュレータによりブロックを移動します。
 
-## マニピュレータとは
-
-Describe what a manipulator is (robot made of links and joints used to move an
-end effector to a desired position or along a desired path in order to achieve
-some task).
-
 ## MoveIt!とは
 
 MoveIt!はマニピュレータようのプラニングフレームワーク（「Motion Planning Framework」）です。主なユースケースは、グリッパーを指定された姿勢（位置と角度）への経路を計算し、マニピュレータのサーボの時間に対しての位置を制御し、グリッパーを移動させることです。
