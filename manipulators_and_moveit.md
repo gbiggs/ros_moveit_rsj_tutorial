@@ -544,6 +544,10 @@ $
 
 ![CRANE+ pick pre-grasp pose](images/crane_plus_pick_pre_grasp_pose.png)
 
+_このソースは以下のURLでダウンロード可能です。_
+
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/specified_pose>
+
 ## グリッパーを開く
 
 MoveIt!はグリッパーの制御もできるが、直接グリッパーコントローラにコマンドを出すこともよくあります。こちらでは後方の方法でグリッパーの開けく・閉めることを行います。
@@ -596,6 +600,10 @@ control_msgs/GripperCommand command
 ノードをコンパイルし実行すると以下のようにグリッパーが開きます。
 
 ![CRANE+ pick open gripper](images/crane_plus_pick_open_gripper.png)
+
+_このソースは以下のURLでダウンロード可能です。_
+
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/open_gripper>
 
 ## ピッキングタスクを行う
 
