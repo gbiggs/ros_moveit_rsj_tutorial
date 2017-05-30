@@ -19,6 +19,7 @@
           <p>{{ site.description | default: site.github.project_tagline }}</p>
         {% else %}
           <h1>{{ page.title | default: site.title }}</h1>
+          <p>Updated on: {{ page.date }}</p>
           <p/>
           <p class="view"><a href="index.html">トップに戻る</a></p>
         {% endif %}
