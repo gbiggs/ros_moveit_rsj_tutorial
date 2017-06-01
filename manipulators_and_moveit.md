@@ -43,7 +43,7 @@ $
 次にCRANE+のROSパッケージをダウンロードしコンパイルします。
 
 ```shell
-$ git clone git@github.com:gbiggs/crane_plus_arm.git
+$ git clone https://github.com/gbiggs/crane_plus_arm.git
 Cloning into 'crane_plus_arm'...
 remote: Counting objects: 474, done.
 remote: Total 474 (delta 0), reused 0 (delta 0), pack-reused 474
@@ -165,7 +165,7 @@ $ roslaunch crane_plus_moveit_config moveit_rviz.launch config:=true
 
 ![MoveIt! RViz interface](images/crane_plus_moveit_rviz_panel_hardware.png)
 
-__注意：コマンドの最後に`config:=true`を忘れると、上記画像のようなGUIが表示されません。__{: style: "color: red" }
+__注意：コマンドの最後に`config:=true`を忘れると、上記画像のようなGUIが表示されません。__{:style="color: red" }
 
 RVizでカメラの制御は以下で行います。
 
@@ -186,7 +186,7 @@ RViz内の「Motion Planning」パネルにある「Planning」タブをクリ�
 
 ![MoveIt! RViz random pose](images/crane_plus_moveit_rviz_random_pose_hardware.png)
 
-__注意：本物のロボットを制御します。ランダムで選択された姿勢は机等に当たらないようになるまでに、「Update」をクリックしましょう。__{: style="color: red" }
+__注意：本物のロボットを制御します。ランダムで選択された姿勢は机等に当たらないようになるまでに、「Update」をクリックしましょう。__{:style="color: red" }
 
 安全な姿勢になったら、「Plan」をクリックします。MoveIt!が移動プランを計算します。RVizでロボットが追う経路は表示されます。
 
@@ -751,7 +751,7 @@ _このソースは以下のURLでダウンロード可能です。_
 
 ピッキングタスクの逆は「place」（プレース、置くこと）です。動きは基本的にピッイングの逆ですが、物体の置き方により動きは代わることがあります。
 
-CRANE+と本セミナーの物体（すなわちスポンジのキューブ）の場合は、プレースはピッキングの逆で問題ありません。（落とすことでも問題ありませんが、少し無粋でしょう。）
+CRANE+と本セミナーの物体（すなわちスポンジのブロック）の場合は、プレースはピッキングの逆で問題ありません。（落とすことでも問題ありませんが、少し無粋でしょう。）
 
 ノードにピッキング後にプレースを行うソースを実装してみましょう。
 
@@ -820,7 +820,7 @@ MoveIt!はピック・アンド・プレースを行うソースが含まれて�
 
 上記は`Grasp`を作成します。物体を持つための位置と角度、アプローチベクター、リトリートベクター及びグリッパーの開けると閉じる方法（直接ジョイント制御で）を指定します。
 
-本方法の特に便利なことは、周りの物体で当たってもいい物が指定できます。このシナリオの場合には、テーブルとスポンジが接触してもいいと指定しています。
+本方法の特に便利なことは、周りの物体で当たってもいい物が指定できます。このシナリオの場合には、テーブルとブロックが接触してもいいと指定しています。
 
 `DoPlace`関数の中身は下記の通りになります。
 
