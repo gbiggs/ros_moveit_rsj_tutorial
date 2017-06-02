@@ -90,7 +90,7 @@ $ source devel/setup.bash
 $ roslaunch usb_cam usb_cam-test.launch
 ```
 
-![Aligning camera](camera_calibration_aligning.png)
+![Aligning camera](images/camera_calibration_aligning.png)
 
 カメラを正しい方向に向けたら、 __Ctrl+c__{: style="border: 1px solid black" } で終了します。
 
@@ -151,7 +151,7 @@ Move edge of gripper to point 1 in image and press Enter.
 
 カメラカリブレーションプロセスが始まると以下の画像表示が現れます。
 
-![Camera calibration image view](camera_calibration_image_view.png)
+![Camera calibration image view](images/camera_calibration_image_view.png)
 
 _自分の画面に出る画像をよく確認してください。１〜４で示されたポイントの順番が大事です。_{:style="color: red"}
 
@@ -170,15 +170,15 @@ Move edge of gripper to point 4 in image and press Enter.
 
 指示通りに、マニピュレータの指先を4つのポイントに合わせて、ポイントづつに __Enter__{: style="border: 1px solid black" } を押します。
 
-![Manipulator calibration finger tip](camera_calibration_finger_tip.jpg)
+![Manipulator calibration finger tip](images/camera_calibration_finger_tip.jpg)
 
-![Manipulator moved to calibration point](camera_calibration_moved_to_point_1.jpg)
+![Manipulator moved to calibration point](images/camera_calibration_moved_to_point_1.jpg)
 
-![Manipulator moved to calibration point](camera_calibration_moved_to_point_2.jpg)
+![Manipulator moved to calibration point](images/camera_calibration_moved_to_point_2.jpg)
 
-![Manipulator moved to calibration point](camera_calibration_moved_to_point_3.jpg)
+![Manipulator moved to calibration point](images/camera_calibration_moved_to_point_3.jpg)
 
-![Manipulator moved to calibration point](camera_calibration_moved_to_point_4.jpg)
+![Manipulator moved to calibration point](images/camera_calibration_moved_to_point_4.jpg)
 
 すべてのポイントに合わせたら、姿勢が計算されます。以下のように姿勢が出力されます。
 
