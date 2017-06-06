@@ -36,7 +36,8 @@ $ cd ~/
 $ mkdir -p ~/crane_plus_ws/src/
 $ cd ~/crane_plus_ws/src/
 $ catkin_init_workspace
-Creating symlink "/home/username/crane_plus_ws/src/CMakeLists.txt" pointing to "/opt/ros/kinetic/share/catkin/cmake/toplevel.cmake"
+Creating symlink "/home/username/crane_plus_ws/src/CMakeLists.txt" pointing to
+    "/opt/ros/kinetic/share/catkin/cmake/toplevel.cmake"
 $
 ```
 
@@ -59,7 +60,8 @@ Devel space: /home/username/crane_plus_ws/devel
 Install space: /home/username/crane_plus_ws/install
 （省略）
 [ 80%] Built target crane_plus_arm_moveit_ikfast_plugin
-[100%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/crane_plus_camera_calibration/calibrate_camera_checkerboard
+[100%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/
+         crane_plus_camera_calibration/calibrate_camera_checkerboard
 [100%] Built target calibrate_camera_checkerboard
 $
 ```
@@ -84,8 +86,9 @@ $ ls
 CMakeLists.txt  crane_plus_arm
 $ cd crane_plus_arm/
 $ ls
-crane_plus_camera_calibration  crane_plus_gripper   crane_plus_ikfast_arm_plugin      crane_plus_moveit_config  crane_plus_simulation  README.md
-crane_plus_description         crane_plus_hardware  crane_plus_joint_state_publisher  crane_plus_move_to_pose   LICENSE
+crane_plus_camera_calibration  crane_plus_hardware               crane_plus_moveit_config  README.md
+crane_plus_description         crane_plus_ikfast_arm_plugin      crane_plus_move_to_pose   LICENSE
+crane_plus_gripper             crane_plus_joint_state_publisher  crane_plus_simulation
 ```
 
 `README.md`と`LICENSE`以外はすべてパッケージです。パッケージづつの機能を説明します。
@@ -221,12 +224,14 @@ MoveIt!を利用するために、主にノードからアプリケーション�
 
 ```shell
 $ cd ~/crane_plus_ws/src/
-$ catkin_create_pkg pick_and_placer roscpp moveit_core moveit_ros_planning_interface moveit_visual_tools moveit_msgs moveit_commander tf actionlib control_msgs geometry_msgs shape_msgs trajectory_msgs
+$ catkin_create_pkg pick_and_placer roscpp moveit_core moveit_ros_planning_interface moveit_visual_tools \
+    moveit_msgs moveit_commander tf actionlib control_msgs geometry_msgs shape_msgs trajectory_msgs
 Created file pick_and_placer/CMakeLists.txt
 Created file pick_and_placer/package.xml
 Created folder pick_and_placer/include/pick_and_placer
 Created folder pick_and_placer/src
-Successfully created files in /home/username/crane_plus_ws/src/pick_and_placer. Please adjust the values in package.xml.
+Successfully created files in /home/username/crane_plus_ws/src/pick_and_placer.
+    Please adjust the values in package.xml.
 ```
 
 パッケージ内の`package.xml`の依存関係は以下のようになるように編集します。
@@ -318,11 +323,13 @@ add_executable(${PROJECT_NAME}_pick_and_placer src/pick_and_placer.cpp)
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-set_target_properties(${PROJECT_NAME}_pick_and_placer PROPERTIES OUTPUT_NAME pick_and_placer PREFIX "")
+set_target_properties(${PROJECT_NAME}_pick_and_placer
+  PROPERTIES OUTPUT_NAME pick_and_placer PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(${PROJECT_NAME}_pick_and_placer ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_pick_and_placer
+  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_pick_and_placer
@@ -416,7 +423,8 @@ Install space: /home/username/crane_plus_ws/install
 （省略）
 [ 85%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/pick_and_placer/pick_and_placer
 [ 85%] Built target pick_and_placer_pick_and_placer
-[100%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/crane_plus_camera_calibration/calibrate_camera_checkerboard
+[100%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/
+         crane_plus_camera_calibration/calibrate_camera_checkerboard
 [100%] Built target calibrate_camera_checkerboard
 $
 ```
@@ -537,7 +545,8 @@ Install space: /home/username/crane_plus_ws/install
 （省略）
 [ 85%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/pick_and_placer/pick_and_placer
 [ 85%] Built target pick_and_placer_pick_and_placer
-[100%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/crane_plus_camera_calibration/calibrate_camera_checkerboard
+[100%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/
+         crane_plus_camera_calibration/calibrate_camera_checkerboard
 [100%] Built target calibrate_camera_checkerboard
 $ rosrun  pick_and_placer pick_and_placer
 [ INFO] [1495423076.668768146]: Loading robot model 'crane_plus'...
