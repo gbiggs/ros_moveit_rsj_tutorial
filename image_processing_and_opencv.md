@@ -25,16 +25,16 @@ OpenCVはバージョンが変わると、記述方法や機能が大幅に変�
 
 
 
-# 必要なパッケージのインストール
+# 事前準備
 
-本セミナーではパッケージ『cv_bridge』を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、IplImageへ変換し、処理を施し、Image Messageへ戻るという一連の処理を記述することができます。
+本セミナーではパッケージ『cv_bridge』を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、IplImageへ変換し、処理を施し、Image Messageへ戻すという一連の処理を記述することができます。
 
 ```shell
 sudo apt-get install ros-kinetic-cv-camera
 ```
 IplはIntel Image Processing Libraryの略で、バージョン1で使用されている型になります。そのため、本セミナーでは更にIplImageをMatへ変換します。
 
-# 画像処理用パッケージの作成
+# セミナー用画像処理パッケージの作成
 
 新しいワークスペースを作成します。
 
@@ -42,38 +42,24 @@ IplはIntel Image Processing Libraryの略で、バージョン1で使用され�
 $ mkdir -p ~/block_finder_ws/src/
 $ cd ~/block_finder_ws/src/
 $ catkin_init_workspace
+$　ls
+CMakeLists.txt
 ```
 
-
-
-
-
-# ほげほげ
-
-
-次にCRANE+のROSパッケージをダウンロードしコンパイルします。
+次にセミナー用画像処理のROSパッケージをダウンロードします。
 
 ```shell
-$ git clone https://github.com/gbiggs/crane_plus_arm.git
-Cloning into 'crane_plus_arm'...
-remote: Counting objects: 474, done.
-remote: Total 474 (delta 0), reused 0 (delta 0), pack-reused 474
-Receiving objects: 100% (474/474), 1.07 MiB | 1.09 MiB/s, done.
-Resolving deltas: 100% (235/235), done.
-Checking connectivity... done.
-$ cd ~/crane_plus_ws/
-$ catkin_make
-Base path: /home/username/crane_plus_ws
-Source space: /home/username/crane_plus_ws/src
-Build space: /home/username/crane_plus_ws/build
-Devel space: /home/username/crane_plus_ws/devel
-Install space: /home/username/crane_plus_ws/install
-（省略）
-[ 80%] Built target crane_plus_arm_moveit_ikfast_plugin
-[100%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/
-         crane_plus_camera_calibration/calibrate_camera_checkerboard
-[100%] Built target calibrate_camera_checkerboard
-$
+$ git clone git@github.com:Suzuki1984/rsj_2017_block_finder.git
+
+stl-ws2017@stl-ws2017:~/block_finder_ws/src$ ls
+CMakeLists.txt  rsj_2017_block_finder
+```
+
+コンパイルします。エラーが出ず、[100%]となることを確認します。
+
+```shell
+$ cd ~/block_finder_ws/
+$ catkin_make 
 ```
 
 ワークスペース内のパッケージが利用できるようにワークスペースをソースします。
@@ -82,67 +68,66 @@ $
 $ source devel/setup.bash
 ```
 
-これでCRANE+のパッケージが利用可能になり、ROSでCRANE+の利用が可能になりました。
+これでセミナー用画像処理のパッケージ「rsj_2017_block_finder」が利用可能になりました。
 
-## CRANE+のパッケージ
+# セミナー用画像処理パッケージの内容
 
-CRANE+のパッケージは一つだけではありません。複数のパッケージがそれぞれの持つ機能を合わせてマニピュレータを制御します。CRANE+用のパッケージを見てみましょう。
-
-先クローンしたソースのディレクトリの中を見ると、以下のパッケージが見えます。
+セミナー用画像処理パッケージの内容を確認します。
 
 ```shell
-$ cd src/
 $ ls
-CMakeLists.txt  crane_plus_arm
-$ cd crane_plus_arm/
-$ ls
-crane_plus_camera_calibration  crane_plus_hardware               crane_plus_moveit_config  README.md
-crane_plus_description         crane_plus_ikfast_arm_plugin      crane_plus_move_to_pose   LICENSE
-crane_plus_gripper             crane_plus_joint_state_publisher  crane_plus_simulation
+CMakeLists.txt  launch  package.xml  readme.md  rsj_2017_block_finder.rviz  src
 ```
 
-`README.md`と`LICENSE`以外はすべてパッケージです。パッケージづつの機能を説明します。
-
-`crane_plus_camera_calibration`
-: CRANE+とカメラの位置関係を計算する
-
-`crane_plus_description`
-: ROSでなくてはならないCRANE+のURDF（Unified Robot Description Format、ROSのロボット定義フォーマット）モデルや、シミュレータ用のモデル
-
-`crane_plus_gripper`
-: CRANE+のグリッパーを制御するノード
-
-`crane_plus_hardware`
-: CRANE+のハードウェアと利用するために様々なノードの起動やパラメータ設定を行うlaunchファイル
-
-`crane_plus_ikfast_arm_plugin`
-: MoveIt!と利用するCRANE+のinverse kinematics（グリッパーの位置と角度を果たすためにジョイントのそれぞれの値の計算）プラグイン
-
-`crane_plus_joint_state_publisher`
-: Dynamixelサーボのコントローラが出力するサーボ状況メッセージ（`dynamixel_msgs/JointState`型） をROSの`sensor_msgs/JointState`型へ変換するノード
-
-`crane_plus_moveit_config`
-: CRANE+をMoveIt!で利用するためのパラメータやlaunchファイル等
-
-`crane_plus_move_to_pose`
-: MoveIt!を利用してCRANE+のグリッパーの姿勢をコマンドする簡単なツール
-
-`crane_plus_simulation`
-: `crane_plus_hardware`と類似なパッケージで、ハードウェアではなくてシミュレータ上でマニピュレータを操作するためのパラメータやlaunchファイル
-
-基本的に`crane_plus_hardware`または`crane_plus_simulator`のlaunchファイルを利用してハードウェアかシミュレータのロボットを起動して、`crane_plus_moveit_config`のlaunchファイルでMoveIt!を起動したからロボットを制御します。次のセクションからこの手順を実習します。
-
-## ハードウェアのロボットを制御
-
-CRANE+を制御するために、まずはROSとハードウェアのインターフェースになるノードを起動します。
-
-CRANE+の電源を入れたから、以下を実行します。
+ディレクト「launch」の中にはblock_finder.launchがあります。このlaunchファイルでは4つのノードを起動します。配信（publish）と購読（listen）の関係性を以下に示します。
 
 ```shell
-$ roslaunch crane_plus_hardware start_arm_standalone.launch
+<?xml version="1.0"?>
+<launch>
+ <node pkg="usb_cam" type="usb_cam_node" name="usb_cam_node" output="screen">
+  <param name="image_width" value="640"/>
+  <param name="image_height" value="480"/>
+  <param name="pixel_format" value="yuyv"/>
+  <param name="camera_frame_id" value="camera_link"/>
+ </node>
+ <node pkg="rsj_2017_block_finder" type="block_finder" name="block_finder" output="screen"/>
+ <node pkg="tf" type="static_transform_publisher" name="camera_transform_publisher" args="-0.118 -0.039 0.474 -0.293 -0.075 -0.191 0.934 /camera_link /world 100"/>
+ <node pkg="rviz" type="rviz" name="rviz" args="-d $(find rsj_2017_block_finder)/rsj_2017_block_finder.rviz"/>
+</launch>
 ```
 
-エラー（赤い文字で表示される）がなければ、マニピュレータは起動しました。
+`usb_cam_node`
+: 画像メッセージを配信する。
+
+`block_finder`
+: 画像メッセージを購読し、処理し、世界座標系におけるブロックの位置を配信する。
+
+`camera_transform_publisher`
+: 世界座標系の原点から見たカメラ座標系の原点の位置を配信する。
+
+`rviz`
+: 世界座標、カメ座標系、ブロックの位置関係を確認する。
+
+# セミナー用画像処理プログラムの内容
+
+カメラを接続し、チェスボードを机の上に置いたあと、下記のコマンドで実行します。入力画像、出力画像、RVizの３つの画面が開きます。チェスボード上に黄色の四角形が表示されていれば正常に起動しています。
+
+```shell
+$ roslaunch rsj_2017_block_finder block_finder.launch
+```
+
+![Block Finder GUI](images/bf01.png)
+
+次に、チェスボードを退かし、黄色の四角形に収まるようにブロックを置きます。
+
+
+
+# ほげほげ
+
+
+
+
+
 
 次にMoveIt!を起動します。新しい端末で以下を実行します。
 
