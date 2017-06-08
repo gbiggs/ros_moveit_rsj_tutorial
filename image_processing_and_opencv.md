@@ -120,6 +120,11 @@ $ roslaunch rsj_2017_block_finder block_finder.launch
 
 次に、チェスボードを退かし、黄色の四角形に収まるようにブロックを置きます。
 
+TFは座標系を表示し、R色がX軸、G色がY軸、B色がZ軸を表します。
+
+PointStampedはHeaderとPointが組み合わさったメッセージで、Headerで位置データを取得した時刻、Pointで位置データを表現することができます。
+
+
 
 
 # ほげほげ
