@@ -370,13 +370,7 @@ MoveIt!も起動することが必要です。上記と同様にインクルー�
 
 __注意：上記の中の`/dev/video0`を必要におおじて自分のハードウェアに合わせて変更してください。__{:style="color: red"}
 
-ハードウェアを起動したので、つぎに`block_finder`を起動します。下記をラウンチファイルに追加します。
-
-```xml
-  <node name="block_finder" pkg="block_finder" type="block_finder" output="screen"/>
-```
-
-最後に、ピック・アンド・プレースのノードを起動します。
+ハードウェアを起動したので、つぎにピック・アンド・プレースのノードを起動します。下記をラウンチファイルに追加します。
 
 ```xml
   <node name="pickandplace" pkg="pick_and_placer" type="pick_and_placer" output="screen">
@@ -391,6 +385,14 @@ __注意：上記の中の`/dev/video0`を必要におおじて自分のハー�
 ROSでは、このようなトピック名が合わない状況は非常に多いです。まるで普通の状態なので、ROSは簡単な対応方法を持ちます。これは「topic remapping」です。ノードを起動するときに、ノードのパブリッシュとサブスクライブするトピック名を変更する機能です。
 
 launchファイルでこの機能を利用するために、`<node>`タグ内に`<remap>`タグを利用します。上記の定義は、このノードが`/block`というトピック名を利用すると自動的に`/block_finder/pose`に変更します。すなわち、`pick_and_placer`ノードは`/block`ではなくて、`/block_finder/pose`トピックにサブスクライブします。これで`block_finder`と`pick_and_placer`は、ソースを変更せずに繋がれるようにしました。
+
+最後に、`block_finder`を起動します。こちらにもトピック名をtopic remappingで変更します。
+
+```xml
+  <node name="block_finder" pkg="block_finder" type="block_finder" output="screen">
+    <remap from="/usb_cam_node/image_raw" to="/camera/image_raw"/>
+  </node>
+```
 
 上記により、アプリケーションを起動するlaunchファイルを作成しました。これでアプリケーションの実装が完成です。
 
