@@ -11,7 +11,7 @@ date: 2017-06-02
 
 ROSでは、ノード作成ではなくてノードの組み合わせによってアプリケーションを作ることがよくあります。本アプリケーションも同様に、本セミナーで作成したマニピュレータ制御ノードを画像処理ノードを組み合わせてアプリケーションを作成します。ノード構造は以下のようになります。
 
-![Full application](images/full_application_graph.png)
+![Full application](images/full_application_overview.png)
 
 どのノードを起動するか等を定義するlaunchファイルの作成本アプリケーション作成の作業のほぼ全部です。
 
