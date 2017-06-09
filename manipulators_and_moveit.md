@@ -845,7 +845,7 @@ _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/parameterised>
 
-## MoveIt!のピックアンドプレース機能を利用
+### MoveIt!のピックアンドプレース機能を利用
 
 MoveIt!はピック・アンド・プレースを行うソースが含まれています。動きを自分で指定するより、この機能を利用するとMoveIt!の様々な機能（コリジョン・チェッカー等）が自動的に利用されます。
 
