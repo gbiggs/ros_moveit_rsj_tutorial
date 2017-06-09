@@ -311,6 +311,10 @@ $ mkdir urdf
 
 これで既存のハードウェア定義を再利用してアプリケーションのハードウェアを定義しました。そして現在のカメラの位置にこの定義を合わせました。
 
+_このソースは以下のURLでダウンロード可能です。_
+
+<https://github.com/gbiggs/rsj_2017_application/blob/master/urdf/work_cell.urdf.xacro>
+
 ### launchファイル作成
 
 以下のディレクトリーを作成します。
@@ -399,7 +403,11 @@ launchファイルでこの機能を利用するために、`<node>`タグ内に
 
 _このソースは以下のURLでダウンロード可能です。_
 
-<https://github.com/gbiggs/rsj_2017_application/tree/master/launch>
+<https://github.com/gbiggs/rsj_2017_application/blob/master/launch/start_app.launch>
+
+_パッケージ全体は下記のURLでダウンロード可能です。_
+
+<https://github.com/gbiggs/rsj_2017_application>
 
 ## システムを起動
 
