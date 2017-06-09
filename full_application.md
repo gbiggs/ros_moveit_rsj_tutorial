@@ -70,7 +70,8 @@ Build space: /home/geoff/rsj_2017_application_ws/build
 Devel space: /home/geoff/rsj_2017_application_ws/devel
 Install space: /home/geoff/rsj_2017_application_ws/install
 （省略）
-[100%] Linking CXX executable /home/geoff/rsj_2017_application_ws/devel/lib/crane_plus_camera_calibration/calibrate_camera_checkerboard
+[100%] Linking CXX executable /home/geoff/rsj_2017_application_ws/devel/lib/
+         crane_plus_camera_calibration/calibrate_camera_checkerboard
 [100%] Built target calibrate_camera_checkerboard
 ```
 
@@ -197,7 +198,8 @@ Resulting transform (fixed frame -> camera frame):
 
 Static transform publisher:
 rosrun tf static_transform_publisher x y z qx qy qz qw frame_id child_frame_id period_in_ms
-rosrun tf static_transform_publisher 0.253695 0.0777012 0.559156 0.703803 0.697261 -0.133715 -0.0246739 /base_link /camera_link 100
+rosrun tf static_transform_publisher 0.253695 0.0777012 0.559156 0.703803 0.697261 -0.133715 \
+  -0.0246739 /base_link /camera_link 100
 
 URDF output:
 <?xml version="1.0"?>
@@ -225,10 +227,12 @@ _必ずこの情報を保存してください。これからの手順に必要�
 パッケージは、`catkin_create_pkg`で作成します。依存する他パッケージとして、launchファイルで利用する他パッケージをしていします。直接依存するパッケージのみの指定が必要です。非直接の依存パッケージは他パッケージの依存関係で`catkin_make`が対応してくれます。
 
 ```shell
-$ catkin_create_pkg rsj_2017_application pick_and_placer block_finder crane_plus_description crane_plus_hardware usb_cam
+$ catkin_create_pkg rsj_2017_application pick_and_placer block_finder \
+    crane_plus_description crane_plus_hardware usb_cam
 Created file rsj_2017_application/package.xml
 Created file rsj_2017_application/CMakeLists.txt
-Successfully created files in /home/geoff/rsj_2017_application_ws/src/rsj_2017_application. Please adjust the values in package.xml.
+Successfully created files in /home/geoff/rsj_2017_application_ws/src/rsj_2017_application.
+  Please adjust the values in package.xml.
 ```
 
 本パッケージにソースを入れないので、`CMakeLists.txt`の編集は必要ではありません。
@@ -329,7 +333,8 @@ $ mkdir launch
 
 ```xml
 <launch>
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find rsj_2017_application)/urdf/work_cell.urdf.xacro'"/>
+  <param name="robot_description"
+    command="$(find xacro)/xacro --inorder '$(find rsj_2017_application)/urdf/work_cell.urdf.xacro'"/>
 </launch>
 ```
 

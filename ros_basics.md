@@ -35,7 +35,8 @@ ROSでは、プログラムをビルドする際に、catkin というシステ�
 $ mkdir -p ~/catkin_ws/src
 $ cd ~/catkin_ws/src
 $ catkin_init_workspace
-Creating symlink "/home/[ユーザダイレクトリー]/catkin/src/CMakeLists.txt" pointing to "/opt/ros/kinetic/share/catkin/cmake/toplevel.cmake"
+Creating symlink "/home/[ユーザダイレクトリー]/catkin/src/CMakeLists.txt"
+    pointing to "/opt/ros/kinetic/share/catkin/cmake/toplevel.cmake"
 $ ls
 CMakeLists.txt
 $ cd ..
@@ -591,7 +592,8 @@ finger_servo_controller:
 
 ```xml
 <launch>
-    <node name="dynamixel_manager" pkg="dynamixel_controllers" type="controller_manager.py" required="true" output="screen">
+    <node name="dynamixel_manager" pkg="dynamixel_controllers"
+      type="controller_manager.py" required="true" output="screen">
         <rosparam>
             namespace: dynamixel_controller_manager
             serial_ports:
@@ -712,7 +714,10 @@ int main(int argc, char **argv) {
   ros::NodeHandle node;
 
   std::string servo_status_topic;
-  ros::param::param<std::string>("~servo_status_topic", servo_status_topic, "/finger_servo_controller/state");
+  ros::param::param<std::string>(
+    "~servo_status_topic",
+    servo_status_topic,
+    "/finger_servo_controller/state");
 
   ros::Subscriber pub = node.subscribe<dynamixel_msgs::JointState>(
     servo_status_topic,
