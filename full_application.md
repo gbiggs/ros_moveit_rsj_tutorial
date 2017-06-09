@@ -390,6 +390,7 @@ launchファイルでこの機能を利用するために、`<node>`タグ内に
 
 ```xml
   <node name="block_finder" pkg="block_finder" type="block_finder" output="screen">
+    <remap from="/usb_cam_node/camera_info" to="/camera/camera_info"/>
     <remap from="/usb_cam_node/image_raw" to="/camera/image_raw"/>
   </node>
 ```
