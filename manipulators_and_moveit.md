@@ -708,6 +708,8 @@ _編集されたC++ファイルは以下です。_
 
 ## 小課題
 
+### トピックでピックの場所を受信
+
 実装したノードはすでに決まっている所（`(x: 0.2, y: 0.0)`）にしかピッキングできません。従来のロボットワークセルでは、決まっている所にタスクを行うことが普通です。しかし、将来の産業ロボットには、そしてサービスロボットにも、センサーデータによって物体の場所を判断して、そしてピッキングします。
 
 上記で実装したノードを、ROSのトピックから受信した場所にあるブロックをピッキングするように変更してみましょう。
@@ -756,7 +758,7 @@ _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/topic_picker>
 
-## 更に小課題
+### プレースタスクも行う
 
 ピッキングタスクの逆は「place」（プレース、置くこと）です。動きは基本的にピッイングの逆ですが、物体の置き方により動きは代わることがあります。
 
@@ -770,7 +772,7 @@ _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/pickandplace>
 
-## 更に小課題
+### パラメータで振る舞えを変更
 
 ピックの場所をトピックから受信するようにしたらノードは様々なアプリケーションで再利用できるようになりました。しかし、プレースの場所はまだソースでハードコードしたのでノードの再利用性が低いです。
 
@@ -781,44 +783,51 @@ _このソースは以下のURLでダウンロード可能です。_
 ノードのクラスのセットアップするところ（コンストラクタなど）に、最初に`ros::param::param()`を呼びプレース座標を読み込む行を追加します。`arm_`を作成する前に入れます。
 
 ```c++
-    ros::param::param<geometry_msgs::Pose2D>(
-      "~place_position",
-      place_position_,
-      geometry_msgs::Pose2D(0.1, -0.2, 0.0));
+    ros::param::param<float>(
+      "~place_x",
+      place_x_,
+      0.1);
+    ros::param::param<float>("~place_y", place_y_, -0.2);
 ```
 
 １行目は関数を呼びます。テンプレート関数のでパラメータのデータ型を指定します。
 
 ２行目でパラメータ名を指定します。パラメータサーバからこのパラメータを読み込みます。`~`で始まる理由は、ノードのネームスペース内のパラメータだと指定します。基本的に一つのノードだけで利用するパラメータはノードのネームスペース内に置くべきです。
 
-３行目は保存先を指定します。メンバー変数`place_position_`に保存します。
+３行目は保存先を指定します。メンバー変数`place_x_`に保存します。
 
-４行目はディフォルト値です。パラメータサーバに指定したパラメータがなかったら、この値は`place_position_`に入れられます。
+４行目はディフォルト値です。パラメータサーバに指定したパラメータがなかったら、この値は`place_x_`に入れられます。
+
+5行目はY座標のパラメータを同様に読み込みます。
 
 クラスのプライベートな変数も追加します。
 
 ```c++
-  geometry_msgs::Pose2D place_position_;
+  float place_x_;
+  float place_y_;
 ```
 
 実装の最後として、`DoPlace()`内で`pose`変数を初期化するところに、`pose.pose.position.x`と`pose.pose.position.y`の値をパラメータからとるように変更します。
 
 ```c++
-    pose.pose.position.x = place_position_.x;
-    pose.pose.position.y = place_position_.y;
+    pose.pose.position.x = place_x_;
+    pose.pose.position.y = place_y_;
 ```
 
 パラメータの設定は、「ROSの基本操作」で学んだように、ノードの起動時に行います。
 
 ```shell
-$ rosrun pick_and_placer pick_and_placer _place_position:='{x: 0.1, y: -0.2, theta: 0.0}'
+$ rosrun pick_and_placer pick_and_placer _place_x:='0.1' _place_y:='-0.2'
 ```
+
+_パラメータ名の頭にアンダーバーを付けている理由は、パラメータはノードのネームスペース内であるからです。_
 
 下記のように、パラメータをlaunchファイルに指定することも可能です。
 
 ```xml
   <node name="pickandplace" pkg="pick_and_placer" type="pick_and_placer" output="screen">
-    <param name="place_position" value="{x: 0.1, y: -0.2, theta: 0.0}"/>
+    <param name="place_x" value="0.1"/>
+    <param name="place_y" value="-0.2"/>
   </node>
 ```
 
@@ -836,7 +845,7 @@ _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/parameterised>
 
-## 更に小課題
+### MoveIt!のピックアンドプレース機能を利用
 
 MoveIt!はピック・アンド・プレースを行うソースが含まれています。動きを自分で指定するより、この機能を利用するとMoveIt!の様々な機能（コリジョン・チェッカー等）が自動的に利用されます。
 
