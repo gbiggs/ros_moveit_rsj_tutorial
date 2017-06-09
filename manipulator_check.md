@@ -15,16 +15,29 @@ date: 2017-05-30
    $ cd DynamixelSDK/c/build/linux64/
    $ make
    mkdir -p ./.objects/
-   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/group_bulk_read.c -o .objects/group_bulk_read.o
-   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/group_bulk_write.c -o .objects/group_bulk_write.o
-   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/group_sync_read.c -o .objects/group_sync_read.o
-   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/group_sync_write.c -o .objects/group_sync_write.o
-   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/packet_handler.c -o .objects/packet_handler.o
-   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/port_handler.c -o .objects/port_handler.o
-   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/protocol1_packet_handler.c -o .objects/protocol1_packet_handler.o
-   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk/protocol2_packet_handler.c -o .objects/protocol2_packet_handler.o
-   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c ../../src/dynamixel_sdk_linux/port_handler_linux.c -o .objects/port_handler_linux.o
-   g++ -shared -fPIC -m64 -o ./libdxl_x64_c.so ./.objects/group_bulk_read.o ./.objects/group_bulk_write.o ./.objects/group_sync_read.o ./.objects/group_sync_write.o ./.objects/packet_handler.o ./.objects/port_handler.o ./.objects/protocol1_packet_handler.o ./.objects/protocol2_packet_handler.o ./.objects/port_handler_linux.o -lrt
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c
+       ../../src/dynamixel_sdk/group_bulk_read.c -o .objects/group_bulk_read.o
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c
+       ../../src/dynamixel_sdk/group_bulk_write.c -o .objects/group_bulk_write.o
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c
+       ../../src/dynamixel_sdk/group_sync_read.c -o .objects/group_sync_read.o
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c
+       ../../src/dynamixel_sdk/group_sync_write.c -o .objects/group_sync_write.o
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c
+       ../../src/dynamixel_sdk/packet_handler.c -o .objects/packet_handler.o
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c
+       ../../src/dynamixel_sdk/port_handler.c -o .objects/port_handler.o
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c
+       ../../src/dynamixel_sdk/protocol1_packet_handler.c -o .objects/protocol1_packet_handler.o
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c
+       ../../src/dynamixel_sdk/protocol2_packet_handler.c -o .objects/protocol2_packet_handler.o
+   gcc -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall -c -I../../include -m64 -fPIC -g -c
+       ../../src/dynamixel_sdk_linux/port_handler_linux.c -o .objects/port_handler_linux.o
+   g++ -shared -fPIC -m64 -o ./libdxl_x64_c.so ./.objects/group_bulk_read.o
+       ./.objects/group_bulk_write.o ./.objects/group_sync_read.o ./.objects/group_sync_write.o
+       ./.objects/packet_handler.o ./.objects/port_handler.o
+       ./.objects/protocol1_packet_handler.o ./.objects/protocol2_packet_handler.o
+       ./.objects/port_handler_linux.o -lrt
    $
    ```
 
@@ -42,7 +55,8 @@ date: 2017-05-30
    $ cp -r ~/Downloads/DynamixelSDK/c/include/dynamixel_sdk* .
    $ cp ~/Downloads/DynamixelSDK/c/build/linux64/libdxl_x64_c.so .
    $ ls
-   CMakeLists.txt  dynamixel_sdk  dynamixel_sdk.h  dynamixel_sdk_linux  dynamixel_sdk_windows  libdxl_x64_c.so  LICENSE  README.md  servo_check.c
+   CMakeLists.txt  dynamixel_sdk.h      dynamixel_sdk_windows  LICENSE    servo_check.c
+   dynamixel_sdk   dynamixel_sdk_linux  libdxl_x64_c.so        README.md
    ```
 
 1. サーボ確認プログラムをコンパイルします。
