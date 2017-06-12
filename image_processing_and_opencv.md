@@ -143,13 +143,18 @@ TFは座標系を表示し、R色がX軸、G色がY軸、B色がZ軸を表しま
 
 PointStampedはHeaderとPointが組み合わさったメッセージで、Headerで位置データを取得した時刻、Pointで位置データを表現することができます。
 
+
+
+-0.165 -0.036 0.468 -0.307 -0.113 -0.175 0.929
+をそのまま貼り付ける。
+
 ## ブロックの検出
 
 まず、関数「threshold」で入力画像を２値化する。第３引数が閾値となり、スライドバーで変更する。
 
 次に、関数findContoursを使用する。第３引数が近似手法となり、現在はCV_CHAIN_APPROX_NONEとなっています。CV_CHAIN_APPROX_SIMPLEやCV_CHAIN_APPROX_TC89_L1に変更して、結果の違いを確認してください。
 
-
+roslaunch rsj_2017_block_finder block_finder.launch method:=1
 
 # 発展
 
