@@ -30,7 +30,7 @@ $ catkin_init_workspace
 ```shell
 $ cd ~/rsj_2017_application_ws/src
 $ cp -r ~/crane_plus_ws/src/pick_and_placer .
-$ cp -r ~/block_finder_ws/src/block_finder .
+$ cp -r ~/block_finder_ws/src/rsj_2017_block_finder .
 ```
 
 自分で作ったノードの代わりに、本セミナーに用意されたノードの利用も可能です。パッケージごとのクローンするためのコマンドは下記の通りです。
@@ -47,9 +47,9 @@ $ cp -r ~/block_finder_ws/src/block_finder .
 - `block_finder`　（ブロックを見つける画像処理ノード）
 : ```shell
   $ cd ~/rsj_2017_application_ws/src
-  $ git clone https://github.com/Suzuki1984/image_processing.git
+  $ git clone https://github.com/Suzuki1984/rsj_2017_block_finder
   ```
-  _注意：パッケージ名が自分製パッケージと異なります。下記の説明で`block_finder`と書いているところに`rsj_block_finder`を利用してください。_
+  _注意：パッケージ名が自分製パッケージと異なります。下記の説明で`block_finder`と書いているところに`rsj_2017_block_finder`を利用してください。_
 
 他の必要なノードもワークスペースに入れます.
 
@@ -129,7 +129,7 @@ $ roslaunch crane_plus_hardware start_arm_standalone.launch
 ```shell
 $ cd ~/rsj_2017_application_ws
 $ source devel/setup.bash
-$ roslaunch block_finder start_camera.launch
+$ roslaunch rsj_2017_block_finder start_camera.launch
 ```
 
 カメラは`world`座標系に対してカリブレーションします。でも、`crane_plus_hardware`の`start_arm_standalone.launch`はマニピュレータを`base_link`座標系に置きます。一時的に`world`と`base_link`の関係を示すことが必要です。新しい端末で下記を実行すると、`world`と`base_link`の差を`tf`に送信します。（ゼロにしたので、`world`と`base_link`の中央点は一緒だと示しています。）
@@ -227,7 +227,7 @@ _必ずこの情報を保存してください。これからの手順に必要�
 パッケージは、`catkin_create_pkg`で作成します。依存する他パッケージとして、launchファイルで利用する他パッケージをしていします。直接依存するパッケージのみの指定が必要です。非直接の依存パッケージは他パッケージの依存関係で`catkin_make`が対応してくれます。
 
 ```shell
-$ catkin_create_pkg rsj_2017_application pick_and_placer block_finder \
+$ catkin_create_pkg rsj_2017_application pick_and_placer rsj_2017_block_finder \
     crane_plus_description crane_plus_hardware usb_cam
 Created file rsj_2017_application/package.xml
 Created file rsj_2017_application/CMakeLists.txt
@@ -393,7 +393,7 @@ launchファイルでこの機能を利用するために、`<node>`タグ内に
 最後に、`block_finder`を起動します。こちらにもトピック名をtopic remappingで変更します。
 
 ```xml
-  <node name="block_finder" pkg="block_finder" type="block_finder" output="screen">
+  <node name="block_finder" pkg="rsj_2017_block_finder" type="block_finder" output="screen">
     <remap from="/usb_cam_node/camera_info" to="/camera/camera_info"/>
     <remap from="/usb_cam_node/image_raw" to="/camera/image_raw"/>
   </node>
