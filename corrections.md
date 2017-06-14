@@ -30,14 +30,12 @@ date: 2017-06-13
      $ cd ~/rsj_2017_application_ws/src
      $ git clone https://github.com/Suzuki1984/image_processing.git
      ```
-     _注意：パッケージ名が自分製パッケージと異なります。下記の説明で`block_finder`と書いているところに`rsj_block_finder`を利用してください。_
 
    修正後
    : ```shell
      $ cd ~/rsj_2017_application_ws/src
      $ git clone https://github.com/Suzuki1984/rsj_2017_block_finder  # <- 変更
      ```
-     _注意：パッケージ名が自分製パッケージと異なります。下記の説明で`block_finder`と書いているところに`rsj_2017_block_finder`を利用してください。_
 
 1. 「ワークスペースのセットアップ」で、本セミナーに利用するカメラノードのリポジトリが移動されました。
 
