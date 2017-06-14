@@ -38,3 +38,23 @@ date: 2017-06-13
      $ git clone https://github.com/Suzuki1984/rsj_2017_block_finder  # <- 変更
      ```
      _注意：パッケージ名が自分製パッケージと異なります。下記の説明で`block_finder`と書いているところに`rsj_2017_block_finder`を利用してください。_
+
+1. 「ワークスペースのセットアップ」で、本セミナーに利用するカメラノードのリポジトリが移動されました。
+
+   修正前
+   : 他の必要なノードもワークスペースに入れます.
+
+     ```shell
+     $ cd ~/rsj_2017_application_ws/src
+     $ git clone https://github.com/gbiggs/crane_plus_arm.git
+     $ git clone https://github.com/ros-drivers/usb_cam.git
+     ```
+
+   修正後
+   : 他の必要なノードもワークスペースに入れます.
+
+     ```shell
+     $ cd ~/rsj_2017_application_ws/src
+     $ git clone https://github.com/gbiggs/crane_plus_arm.git
+     $ git clone https://github.com/ros-drivers/usb_cam.git  # <- 変更
+     ```

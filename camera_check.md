@@ -11,7 +11,7 @@ date: 2017-05-29
 
    ```shell
    $ cd ~/catkin_ws/src
-   $ git clone https://github.com/bosch-ros-pkg/usb_cam.git
+   $ git clone https://github.com/ros-drivers/usb_cam.git
    $ cd ..
    $ catkin_make
    ```

@@ -56,7 +56,7 @@ $ cp -r ~/block_finder_ws/src/rsj_2017_block_finder .
 ```shell
 $ cd ~/rsj_2017_application_ws/src
 $ git clone https://github.com/gbiggs/crane_plus_arm.git
-$ git clone https://github.com/bosch-ros-pkg/usb_cam.git
+$ git clone https://github.com/ros-drivers/usb_cam.git
 ```
 
 最後に、ワークスペースをビルドします。（今はしなくてもいいが、ワークスペースに入れたソフトウェアのビルドに問題がないかを確認するためです。）
