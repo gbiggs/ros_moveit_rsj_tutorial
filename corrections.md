@@ -56,3 +56,25 @@ date: 2017-06-13
      $ git clone https://github.com/gbiggs/crane_plus_arm.git
      $ git clone https://github.com/ros-drivers/usb_cam.git  # <- 変更
      ```
+
+1. 「カメラ姿勢のカリブレーション」で、カメラの起動する方法が変更されました。
+
+   修正前
+   : カメラも起動することが必要です。新しい端末で下記を実行します。
+
+     ```shell
+     $ cd ~/rsj_2017_application_ws
+     $ source devel/setup.bash
+     $ roslaunch rsj_2017_block_finder start_camera.launch
+     ```
+
+   修正後
+   : カメラも起動することが必要です。新しい端末で下記を実行します。
+
+     ```shell
+     $ cd ~/rsj_2017_application_ws
+     $ source devel/setup.bash
+     $ rosrun usb_cam usb_cam_node __name:=camera _camera_name:="elecom_ucam" \
+         _camera_frame_id:="camera_link" _video_device:="/dev/video0" _image_width:=640 \
+         _image_height480 _pixel_format:=yuyv _io_method:=mmap
+     ```

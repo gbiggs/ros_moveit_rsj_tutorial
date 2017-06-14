@@ -129,7 +129,9 @@ $ roslaunch crane_plus_hardware start_arm_standalone.launch
 ```shell
 $ cd ~/rsj_2017_application_ws
 $ source devel/setup.bash
-$ roslaunch rsj_2017_block_finder start_camera.launch
+$ rosrun usb_cam usb_cam_node __name:=camera _camera_name:="elecom_ucam" \
+    _camera_frame_id:="camera_link" _video_device:="/dev/video0" _image_width:=640 \
+    _image_height480 _pixel_format:=yuyv _io_method:=mmap
 ```
 
 カメラは`world`座標系に対してカリブレーションします。でも、`crane_plus_hardware`の`start_arm_standalone.launch`はマニピュレータを`base_link`座標系に置きます。一時的に`world`と`base_link`の関係を示すことが必要です。新しい端末で下記を実行すると、`world`と`base_link`の差を`tf`に送信します。（ゼロにしたので、`world`と`base_link`の中央点は一緒だと示しています。）
