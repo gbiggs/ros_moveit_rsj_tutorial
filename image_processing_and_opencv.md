@@ -53,6 +53,11 @@ sudo apt-get install ros-kinetic-cv-camera
 ```
 IplはIntel Image Processing Libraryの略で、バージョン1で使用されている型になります。そのため、本セミナーでは更にIplImageをMatへ変換します。
 
+# キャリブレーション
+
+1. チェスボードの頂点の数と大きさを確認します。このとき、四角形の数を数えないように注意してください。
+
+
 # セミナー用画像処理パッケージの作成
 
 新しいワークスペースを作成します。
@@ -116,16 +121,16 @@ CMakeLists.txt  launch  package.xml  readme.md  rsj_2017_block_finder.rviz  src
 ```
 
 `usb_cam_node`
-: 画像メッセージを配信する。
+: 画像メッセージを配信します。
 
 `block_finder`
-: 画像メッセージを購読し、処理し、世界座標系におけるブロックの位置を配信する。
+: 画像メッセージを購読し、処理し、世界座標系におけるブロックの位置を配信します。
 
 `camera_transform_publisher`
-: 世界座標系の原点から見たカメラ座標系の原点の位置を配信する。
+: 世界座標系の原点から見たカメラ座標系の原点の位置を配信します。
 
 `rviz`
-: 世界座標、カメ座標系、ブロックの位置関係を確認する。
+: 世界座標、カメ座標系、ブロックの位置関係を確認します。
 
 # セミナー用画像処理プログラムの内容
 
@@ -150,21 +155,40 @@ PointStampedはHeaderとPointが組み合わさったメッセージで、Header
 
 ## ブロックの検出
 
-まず、関数「threshold」で入力画像を２値化する。第３引数が閾値となり、スライドバーで変更する。
+まず、関数「threshold」で入力画像を２値化します。第３引数が閾値となり、スライドバーで変更します。
 
-次に、関数findContoursを使用する。第３引数が近似手法となり、現在はCV_CHAIN_APPROX_NONEとなっています。CV_CHAIN_APPROX_SIMPLEやCV_CHAIN_APPROX_TC89_L1に変更して、結果の違いを確認してください。
+次に、関数findContoursを使用します。第３引数が近似手法となり、現在はCV_CHAIN_APPROX_NONEとなっています。CV_CHAIN_APPROX_SIMPLEやCV_CHAIN_APPROX_TC89_L1に変更して、結果の違いを確認してください。
 
 roslaunch rsj_2017_block_finder block_finder.launch method:=1
 
-## 結果の表示
+## 画像の表示
 
-OpenCVではinshow関数を使用して画像を表示する。関数「imshow」を使用したあとに関数「waitKey」を使用することで、画像が表示される。
+OpenCVではinshow関数を使用して画像を表示します。関数「imshow」を使用したあとに関数「waitKey」を使用することで、画像が表示される。
 
-# 発展
 
-これまでの輪郭検出処理では、チェスボードの四角形を誤認識してしまう可能性がある。そのため、チェスボードの上でもスポンジを検出できるように改良する。
+## データの表示
 
-ここでは背景差分を利用する。
+コマンド『rostopic echo』を使用して、トピックのデータを確認します。
+
+別のターミナルを開いて、下記のとおり実行します。
+
+```shell
+$ rostopic echo　/block_finder/pose
+```
+
+また、画像上の位置は下記のとおり実行します。
+
+```shell
+$ rostopic echo　/block_finder/pose_image
+```
+
+# 発展編
+
+基本編で使用した輪郭検出処理では、チェスボードの四角形をスポンジと誤認識してしまいます。そのため、チェスボードの上でもスポンジを検出できるように改良します。
+
+## 背景差分
+
+ここでは背景差分を利用します。
 
 
 （特に動的背景差分）
