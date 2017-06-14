@@ -63,7 +63,7 @@ date: 2017-05-29
 
 - 必要に応じて、カメラを切り替えます。
 
-   ```shell
+   ```
 　　　#デフォルトのmjpegからyuyvへ変更する。
    $ rosparam set usb_cam/video_device "/dev/video1"
    ```
