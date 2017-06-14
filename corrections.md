@@ -78,3 +78,19 @@ date: 2017-06-13
          _camera_frame_id:="camera_link" _video_device:="/dev/video0" _image_width:=640 \
          _image_height480 _pixel_format:=yuyv _io_method:=mmap
      ```
+
+1. 「カメラ姿勢のカリブレーション」で、`world`座標系と`base_link`座標系をつなげるためのコマンドが抜けました。
+
+   修正前
+   : カメラは`world`座標系に対してカリブレーションします。でも、`crane_plus_hardware`の`start_arm_standalone.launch`はマニピュレータを`base_link`座標系に置きます。一時的に`world`と`base_link`の関係を示すことが必要です。新しい端末で下記を実行すると、`world`と`base_link`の差を`tf`に送信します。（ゼロにしたので、`world`と`base_link`の中央点は一緒だと示しています。）
+
+     ```shell
+     $ rosrun
+     ```
+
+   修正前
+   : カメラは`world`座標系に対してカリブレーションします。でも、`crane_plus_hardware`の`start_arm_standalone.launch`はマニピュレータを`base_link`座標系に置きます。一時的に`world`と`base_link`の関係を示すことが必要です。新しい端末で下記を実行すると、`world`と`base_link`の差を`tf`に送信します。（ゼロにしたので、`world`と`base_link`の中央点は一緒だと示しています。）
+
+     ```shell
+     $ rosrun tf static_transform_publisher 0 0 0 0 0 0 world base_link 10
+     ```

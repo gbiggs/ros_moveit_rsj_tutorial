@@ -137,7 +137,7 @@ $ rosrun usb_cam usb_cam_node __name:=camera _camera_name:="elecom_ucam" \
 カメラは`world`座標系に対してカリブレーションします。でも、`crane_plus_hardware`の`start_arm_standalone.launch`はマニピュレータを`base_link`座標系に置きます。一時的に`world`と`base_link`の関係を示すことが必要です。新しい端末で下記を実行すると、`world`と`base_link`の差を`tf`に送信します。（ゼロにしたので、`world`と`base_link`の中央点は一緒だと示しています。）
 
 ```shell
-$ rosrun 
+$ rosrun tf static_transform_publisher 0 0 0 0 0 0 world base_link 10
 ```
 
 そして、カリブレーションプロセス自体を始めます。上記と同じ端末で下記を実行します。
