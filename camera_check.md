@@ -59,6 +59,22 @@ date: 2017-05-29
 
    『Ctrl』キー＋『c』キーで終了します。
 
+## 補足
+
+- 必要に応じて、カメラを切り替えます。
+
+   ```shell
+　　　#デフォルトのmjpegからyuyvへ変更する。
+   $ rosparam set usb_cam/video_device "/dev/video1"
+   ```
+
+- 必要に応じて、カメラのパラメーターを設定します。
+
+   ```shell
+　　　#デフォルトのmjpegからyuyvへ変更する。
+   $ rosparam set usb_cam/pixel_format yuyv
+   ```
+
 以上
 
 
