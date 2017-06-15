@@ -78,7 +78,7 @@ title: 日本ロボット学会　第106回 ロボットの作り方 ～ROSを�
 
 詳しくは下記のウェブページをご確認ください。
 
-<http://www.tsukuba-koseikai.com/>
+- <http://www.tsukuba-koseikai.com/>
 
 また、下記の資料も参考にしてください。
 
