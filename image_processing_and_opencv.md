@@ -140,7 +140,7 @@ CMakeLists.txt  launch  package.xml  readme.md  rsj_2017_block_finder.rviz  src
 $ roslaunch rsj_2017_block_finder block_finder.launch
 ```
 
-![Block Finder GUI](images/bf01.png)
+![Block Finder GUI](images/block_finder_area.png)
 
 次に、チェスボードを退かし、黄色の四角形に収まるようにブロックを置きます。
 
@@ -186,7 +186,7 @@ $ rostopic echo　/block_finder/pose_image
 
 基本編で使用した輪郭検出処理では、チェスボードの四角形をスポンジと誤認識してしまいます。そのため、チェスボードの上でもスポンジを検出できるように改良します。
 
-## 背景差分
+## 背景差分法
 
 本セミナーでは背景差分（特に動的背景差分）を利用します。OpenCVでは下記の手法が実装されています。
 
@@ -212,7 +212,7 @@ createBackgroundSubtractorMOG2は下記のとおり３つの引数を指定す�
 
 第３引数では、影の影響を考慮するかどうかを指定することができる。trueにすると計算速度が若干低下するが、精度を向上することができる。
 
-それでは、下記の部分を修正し、結果の違いを確認してみます。
+それでは、下記の部分を修正し、結果の違いを確認してみましょう。
 
 > pMOG2 = cv::createBackgroundSubtractorMOG2();
 
@@ -220,7 +220,7 @@ createBackgroundSubtractorMOG2は下記のとおり３つの引数を指定す�
 
 > pMOG2 = cv::createBackgroundSubtractorMOG2(1000, 8);
 
-#補足
+# 補足
 
 OpenCVには多くのサンプルプログラムが用意されており、研究初期の検討段階において、様々な手法を試すことができます。そして、同サンプルプログラムをROSノード化したROSパッケージ『opencv_apps』があります。
 
