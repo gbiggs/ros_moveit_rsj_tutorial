@@ -94,7 +94,7 @@ $ source devel/setup.bash
 
 これでセミナー用画像処理のパッケージ「rsj_2017_block_finder」が利用可能になりました。
 
-# セミナー用画像処理パッケージの内容
+# 基礎編
 
 セミナー用画像処理パッケージの内容を確認します。
 
@@ -153,34 +153,61 @@ PointStampedはHeaderとPointが組み合わさったメッセージで、Header
 -0.165 -0.036 0.468 -0.307 -0.113 -0.175 0.929
 をそのまま貼り付ける。
 
-## ブロックの検出
+## World座標系
 
-まず、関数「threshold」で入力画像を２値化します。第３引数が閾値となり、スライドバーで変更します。
+   このセッションでは、world座標系からcamera座標系までの変換ベクトルを下記のとおり与えます。（※最後のセッションではROSパッケージ『crane_plus_camera_calibration』を利用して同ベクトルを求め、利用します。）
+   
+   rosrun tf static_transform_publisher 0 0 0 0 0 0 world camera_link 1
 
-次に、関数findContoursを使用します。第３引数が近似手法となり、現在はCV_CHAIN_APPROX_NONEとなっています。CV_CHAIN_APPROX_SIMPLEやCV_CHAIN_APPROX_TC89_L1に変更して、結果の違いを確認してください。
+## 画像処理法
 
-roslaunch rsj_2017_block_finder block_finder.launch method:=1
+   ブロックを検出するための画像処理について見ていきます。
+
+   まず、関数『GaussianBlur』で平滑化を行います。平滑化を行うことで、後述の２値化処理が安定します。第３引数ではフィルタのサイズを指定することができ、cv::Size(5, 5)やcv::Size(13, 13)などと、正の奇数で指定します。
+   
+   それでは、実際に値を変更してみましょう。値を変更し、ファイルを上書きしたら、下記のとおりコンパイルし、実行します。
+   
+   ```shell
+   $ cd ~/block_finder_ws/
+   $ catkin_make
+   $ roslaunch rsj_2017_block_finder block_finder.launch method:=1
+   ```
+   
+   次に、関数『threshold』で２値化します。第３引数が閾値となり、この閾値を境に各ピクセルに０と１の値を与えていきます。本セミナーではトラックバーを使用して動的に変更できるようにしてあります。トラックバーを直接ドラッグするほか、トラックバーの左右をクリックすることで５刻みで値を増減することもできます。
+
+   そして、関数『findContours』を使用してブロックを認識します。第３引数が近似手法となり、現在はCV_CHAIN_APPROX_NONEとなっています。CV_CHAIN_APPROX_SIMPLEやCV_CHAIN_APPROX_TC89_L1に変更して、結果の違いを確認してください。
 
 ## 画像の表示
 
-OpenCVではinshow関数を使用して画像を表示します。関数「imshow」を使用したあとに関数「waitKey」を使用することで、画像が表示される。
+   OpenCVでは関数『inshow』を使用して画像を表示します。関数『imshow』のあとに関数『waitKey』を呼び出することで、画像が表示されます。関数『waitKey』は一定時間キー入力を待つ関数ですが、ここではスリープ関数のような意味を持ちます。なお、繰り返し処理でない画像処理の場合、０として指定することで、キー入力が行われるまで画像を表示しておくことができます。
+   
+   なお、ウィンドウの名前は関数『namedWindow』で、ウィンドウの位置は関数『moveWindow』で指定することができます。
+   
+   デストラクタ『~BlockFinder』の中に関数『destroyWindow』を記述しておくことで、メモリの開放忘れを予防することができます。関数『destroyAllWindows』もあります。
 
+## ブロック位置のPublish
 
-## データの表示
+   ２次元画像上でブロックの位置を認識したあとは、下図のとおりワールド座標系での位置へ変換し、Publishする。
 
-コマンド『rostopic echo』を使用して、トピックのデータを確認します。
+   ![Block Finder GUI](images/block_finder_transform.png)
 
-別のターミナルを開いて、下記のとおり実行します。
+   OpenCVの関数『projectPoints』を利用することで、２次元画像上の位置とボードの左上を原点とした３次元空間（target_frame）上の位置の対応関係を得ることができる。
 
-```shell
-$ rostopic echo　/block_finder/pose
-```
+   次に、tfの関数『transformPoint』を利用することで、ボード座標系（target_frame）の位置を、カメラ座標系（camera_frame）を経由して、ワールド座標系（fixed_frame）の位置へ変換する。
 
-また、画像上の位置は下記のとおり実行します。
+   最終的にPublishされている３次元座標値をコマンド『rostopic echo』を使用して確認します。別のターミナルを開いて、下記のとおり実行します。
 
-```shell
-$ rostopic echo　/block_finder/pose_image
-```
+   ```shell
+   $ rostopic echo /block_finder/pose
+   ```
+
+   なお、２次元画像上の位置は下記のとおり実行することで確認できます。
+
+   ```shell
+   $ rostopic echo /block_finder/pose_image
+   ```
+
+   『Ctrl』キー＋『c』キーで終了します。
 
 # 発展編
 
@@ -188,58 +215,58 @@ $ rostopic echo　/block_finder/pose_image
 
 ## 背景差分法
 
-本セミナーでは背景差分（特に動的背景差分）を利用します。OpenCVでは下記の手法が実装されています。
+   本セミナーでは背景差分（特に動的背景差分）を利用します。OpenCVでは下記の手法が実装されています。
 
-- 混合正規分布法（MoG：Mixture of Gaussian Distribution）
-	- createBackgroundSubtractorMOG2
-- k近傍法（kNN：k-nearest neighbor）
-	- createBackgroundSubtractorKNN
+   - 混合正規分布法（MoG：Mixture of Gaussian Distribution）
+       - createBackgroundSubtractorMOG2
+   - k近傍法（kNN：k-nearest neighbor）
+       - createBackgroundSubtractorKNN
 
-また、OpenCVにはopencv_contribという追加モジュール群が存在します。このモジュールにもインストールすることで下記の手法も使用することができます。
+   また、OpenCVにはopencv_contribという追加モジュール群が存在します。このモジュールにもインストールすることで下記の手法も使用することができます。
 
-- ベイズ推定法（GMG: Godbehere、Matsukawa、Goldberg）
-	- createBackgroundSubtractorGMG
+   - ベイズ推定法（GMG: Godbehere、Matsukawa、Goldberg）
+       - createBackgroundSubtractorGMG
 
 ## 混合正規分布法
 
-createBackgroundSubtractorMOG2は下記のとおり３つの引数を指定することができます。
+   createBackgroundSubtractorMOG2は下記のとおり３つの引数を指定することができます。
 
-> Ptr<BackgroundSubtractorMOG2> cv::createBackgroundSubtractorMOG2	(int history = 500, double varThreshold = 16, bool detectShadows = true)
+   > Ptr<BackgroundSubtractorMOG2> cv::createBackgroundSubtractorMOG2	(int history = 500, double varThreshold = 16, bool detectShadows = true)
 
-第１引数では、過去何フレームまでを分布推定（モデル推定）に利用するかを指定することができる。
+   第１引数では、過去何フレームまでを分布推定（モデル推定）に利用するかを指定することができる。
 
-第２引数では、各ピクセルが背景モデルに含まれるかどうかを判断するための閾値を指定することができる。
+   第２引数では、各ピクセルが背景モデルに含まれるかどうかを判断するための閾値を指定することができる。
 
-第３引数では、影の影響を考慮するかどうかを指定することができる。trueにすると計算速度が若干低下するが、精度を向上することができる。
+   第３引数では、影の影響を考慮するかどうかを指定することができる。trueにすると計算速度が若干低下するが、精度を向上することができる。
 
-それでは、下記の部分を修正し、結果の違いを確認してみましょう。
+   それでは、下記の部分を修正し、結果の違いを確認してみましょう。
 
-> pMOG2 = cv::createBackgroundSubtractorMOG2();
+   > pMOG2 = cv::createBackgroundSubtractorMOG2();
 
-> pMOG2 = cv::createBackgroundSubtractorMOG2(1000);
+   > pMOG2 = cv::createBackgroundSubtractorMOG2(1000);
 
-> pMOG2 = cv::createBackgroundSubtractorMOG2(1000, 8);
+   > pMOG2 = cv::createBackgroundSubtractorMOG2(1000, 8);
 
 # 補足
 
 OpenCVには多くのサンプルプログラムが用意されており、研究初期の検討段階において、様々な手法を試すことができます。そして、同サンプルプログラムをROSノード化したROSパッケージ『opencv_apps』があります。
 
-インストールは下記のとおり行います。
+   インストールは下記のとおり行います。
 
-```shell
-$ sudo apt-get install ros-kinetic-opencv-apps
-```
+   ```shell
+   $ sudo apt-get install ros-kinetic-opencv-apps
+   ```
 
-画像内から円形を抽出するサンプルプログラムは下記のとおり実行します。
+   画像内から円形を抽出するサンプルプログラムは下記のとおり実行します。
 
-```shell
-$ roslaunch opencv_apps hough_circles.launch image:=/usb_cam_node/image_raw
-```
+   ```shell
+   $ roslaunch opencv_apps hough_circles.launch image:=/usb_cam_node/image_raw
+   ```
 
-画像内から人間の顔を抽出するサンプルプログラムは下記のとおり実行します。
+   画像内から人間の顔を抽出するサンプルプログラムは下記のとおり実行します。
 
-```shell
-$ roslaunch opencv_apps face_detection.launch image:=/usb_cam_node/image_raw
-```
+   ```shell
+   $ roslaunch opencv_apps face_detection.launch image:=/usb_cam_node/image_raw
+   ```
 
 以上
