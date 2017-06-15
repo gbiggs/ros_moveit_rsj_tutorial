@@ -5,7 +5,7 @@ date: 2017-06-01
 
 本セクションでは、前セクションで取得した画像を処理する方法について説明します。特にOpenCVを用いて処理する方法について説明します。
 
-本セクションでは、ブロックを見つけ、その位置（Ｘ座標とＹ座標）を出力する一連の処理について説明します。
+本セクションでは、画像に基づきブロックを見つけ、その位置を出力する一連の処理について説明します。
 
 # OpenCV
 
@@ -14,49 +14,58 @@ OpenCV（Open Source Computer Vision Library）は無料の画像処理ライブ
 ROSでOpenCVを利用するときの注意点としては、バージョン管理があります。ROSがリリースされたときの最新バージョンのOpenCVを使用することになります。ROSのバージョンとOpenCVのバージョンの対応表をまとめておきます。本セミナーはROS16.04を使用しているため、OpenCV3を利用することになります。
 
 |ROSのバージョン|OpenCVのバージョン|
-|17.04 (Lunar Loggerhead)|3|
-|16.04 (Kinetic Kame)|3|
-|15.04 (Jade Turtle)|2|
+|17.04 (Lunar Loggerhead)|3.2.0|
+|16.04 (Kinetic Kame)|3.1.0|
+|15.04 (Jade Turtle)|2.4.11|
 |14.04 (Indigo Igloo)|2.4.8|
-
-OpenCVはバージョンが変わると、記述方法や機能が大幅に変更されます。例えば、2から3へバージョンが変わったときは、KNNなどの画像処理が追加されましたが、フレーム間差分などの画像処理などはcontribなどの追加パッケージへ移動されました。
-
-
-
-
 
 # 事前準備
 
-まず、OpenCVをインストールします。
+   まず、OpenCVをインストールします。
 
-```shell
-sudo apt-get install ros-kinetic-vision-opencv 
-sudo apt-get install python-opencv
-sudo apt-get install libopencv-dev
-```
+   ```shell
+   sudo apt-get install ros-kinetic-vision-opencv 
+   sudo apt-get install python-opencv
+   sudo apt-get install libopencv-dev
+   ```
 
-次に、OpenCVと正しくmakeできるようにCMakeLists.txtを修正します。
+   次に、OpenCVと正しくmakeできるようにCMakeLists.txtを修正します。
 
->find_package(OpenCV REQUIRED)
->include_directories(/usr/local/include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} )
->target_link_libraries(dfollow ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} )
+   > find_package(OpenCV REQUIRED)
+   > include_directories(/usr/local/include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} )
+   > target_link_libraries(dfollow ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} )
 
-また、package.xmlも修正します。OpenCV3を使用しますが、互換性を保つためにopencv2とします。
+   また、package.xmlも修正します。OpenCV3を使用しますが、互換性を保つためにopencv2と指定します。
 
-><build_depend>opencv2</build_depend>
-><run_depend>opencv2</run_depend>
+   > <build_depend>opencv2</build_depend>
+   > <run_depend>opencv2</run_depend>
 
-本セミナーではパッケージ『cv_bridge』を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、IplImageへ変換し、処理を施し、Image Messageへ戻すという一連の処理を記述することができます。
+   本セミナーではパッケージ『cv_bridge』を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、IplImageへ変換し、処理を施し、Image Messageへ戻すという一連の処理を記述することができます。
 
-```shell
-sudo apt-get install ros-kinetic-cv-camera
-```
-IplはIntel Image Processing Libraryの略で、バージョン1で使用されている型になります。そのため、本セミナーでは更にIplImageをMatへ変換します。
+   ```shell
+   sudo apt-get install ros-kinetic-cv-camera
+   ```
 
-# キャリブレーション
+   ※IplはIntel Image Processing Libraryの略で、バージョン1で使用されている型になります。そのため、本セミナーではIplImageをバージョン2以降で使用されている型『Mat』へ変換し、画像処理を行います。
 
-1. チェスボードの頂点の数と大きさを確認します。このとき、四角形の数を数えないように注意してください。
+# キャリブレーション（内部パラメーター）
 
+   1. チェスボードの頂点の数と大きさを確認します。このとき、四角形の数を数えないように注意してください。
+   1. ROSパッケージ『camera_calibration』をインストールします。
+   ```shell
+   $ sudo apt-get install ros-kinetic-camera-calibration
+   ```
+   1. ROSパッケージ『camera_calibration』を実行します。
+   ```shell
+   # １つ目のターミナル
+   $ roslaunch usb_cam usb_cam-test.launch
+   # ２つ目のターミナル
+   $ rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.0285 image:=/usb_cam/image_raw camera:=/usb_cam
+   ```
+   1. カメラを動かす。（あるいはチェッカーボードを上下左右や遠近に移動したり傾けたりする。）
+   1. X, Y, Sizeが全て右端まで伸びたらCALIBRATEボタンを押す。
+   1. チェッカーボードの直線が画面上でも直線になっていることを確認する。
+   1. COMMITボタンを押す。   
 
 # セミナー用画像処理パッケージの作成
 
@@ -175,7 +184,11 @@ PointStampedはHeaderとPointが組み合わさったメッセージで、Header
    
    次に、関数『threshold』で２値化します。第３引数が閾値となり、この閾値を境に各ピクセルに０と１の値を与えていきます。本セミナーではトラックバーを使用して動的に変更できるようにしてあります。トラックバーを直接ドラッグするほか、トラックバーの左右をクリックすることで５刻みで値を増減することもできます。
 
-   そして、関数『findContours』を使用してブロックを認識します。第３引数が近似手法となり、現在はCV_CHAIN_APPROX_NONEとなっています。CV_CHAIN_APPROX_SIMPLEやCV_CHAIN_APPROX_TC89_L1に変更して、結果の違いを確認してください。
+   そして、関数『findContours』を使用してブロックを認識します。第３引数では近似手法を指定することができ、現在はCV_CHAIN_APPROX_NONEとなっています。CV_CHAIN_APPROX_SIMPLEやCV_CHAIN_APPROX_TC89_L1に変更し、結果の違いを確認してみてください。
+   
+   - CV_CHAIN_APPROX_NONEは、全ての点を保存します。
+   - CV_CHAIN_APPROX_SIMPLEは、端点のみを保存します。つまり、輪郭を表現する点群を圧縮します。
+   - CV_CHAIN_APPROX_TC89_L1は、Teh-Chinアルゴリズムで、NONEとSIMPLEの中間に当たる。
 
 ## 画像の表示
 
@@ -227,6 +240,8 @@ PointStampedはHeaderとPointが組み合わさったメッセージで、Header
    - ベイズ推定法（GMG: Godbehere、Matsukawa、Goldberg）
        - createBackgroundSubtractorGMG
 
+   OpenCVはバージョンが変わると、記述方法や機能が大幅に変更されます。例えば、2から3へバージョンが変わったときは、KNNなどが追加されましたが、GMGなどはcontribへ移動されました。注意してください。
+
 ## 混合正規分布法
 
    createBackgroundSubtractorMOG2は下記のとおり３つの引数を指定することができます。
@@ -240,12 +255,20 @@ PointStampedはHeaderとPointが組み合わさったメッセージで、Header
    第３引数では、影の影響を考慮するかどうかを指定することができる。trueにすると計算速度が若干低下するが、精度を向上することができる。
 
    それでは、下記の部分を修正し、結果の違いを確認してみましょう。
-
+   
    > pMOG2 = cv::createBackgroundSubtractorMOG2();
 
    > pMOG2 = cv::createBackgroundSubtractorMOG2(1000);
 
    > pMOG2 = cv::createBackgroundSubtractorMOG2(1000, 8);
+   
+   roslaunchを実行するときにmethod:=2と変更し、実行してください。これにより、ROSパラメータ『method』が2に上書きされた状態でプログラムを実行することができます。
+
+   ```shell
+   $ cd ~/block_finder_ws/
+   $ catkin_make
+   $ roslaunch rsj_2017_block_finder block_finder.launch method:=2
+   ```
 
 # 補足
 
