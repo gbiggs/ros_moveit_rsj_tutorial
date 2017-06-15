@@ -50,7 +50,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
    ※IplはIntel Image Processing Libraryの略で、バージョン1で使用されている型になります。そのため、本セミナーではIplImageをバージョン2以降で使用されている型『Mat』へ変換し、画像処理を行います。
 
-# キャリブレーション（内部パラメーター）
+# カメラのキャリブレーション（内部パラメーターの設定）
 
    1. チェスボードの頂点の数と大きさを確認します。このとき、四角形の数を数えないように注意してください。
    1. ROSパッケージ『camera_calibration』をインストールします。
@@ -69,39 +69,38 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    1. チェッカーボードの直線が画面上でも直線になっていることを確認する。
    1. COMMITボタンを押す。   
 
-# セミナー用画像処理パッケージの作成
+# 画像処理パッケージの作成
 
-新しいワークスペースを作成します。
+1. 最初に新しいワークスペースを作成します。
 
-```shell
-$ mkdir -p ~/block_finder_ws/src/
-$ cd ~/block_finder_ws/src/
-$ catkin_init_workspace
-$　ls
-CMakeLists.txt
-```
+   ```shell
+   $ mkdir -p ~/block_finder_ws/src/
+   $ cd ~/block_finder_ws/src/
+   $ catkin_init_workspace
+   $　ls
+   CMakeLists.txt
+   ```
 
-次にセミナー用画像処理のROSパッケージをダウンロードします。
+1. 次に、セミナー用画像処理のROSパッケージをダウンロードします。ディレクトリ『rsj_2017_block_finder』が存在することを確認します。
 
-```shell
-$ git clone git@github.com:Suzuki1984/rsj_2017_block_finder.git
+   ```shell
+   $ git clone git@github.com:Suzuki1984/rsj_2017_block_finder.git
+   $ ls
+   CMakeLists.txt  rsj_2017_block_finder
+   ```
 
-stl-ws2017@stl-ws2017:~/block_finder_ws/src$ ls
-CMakeLists.txt  rsj_2017_block_finder
-```
+1. コンパイルします。エラーが出ず、[100%]となることを確認します。
 
-コンパイルします。エラーが出ず、[100%]となることを確認します。
+   ```shell
+   $ cd ~/block_finder_ws/
+   $ catkin_make 
+   ```
 
-```shell
-$ cd ~/block_finder_ws/
-$ catkin_make 
-```
+1. ワークスペース内のROSパッケージが利用できるようにワークスペースをソースします。
 
-ワークスペース内のパッケージが利用できるようにワークスペースをソースします。
-
-```shell
-$ source devel/setup.bash
-```
+   ```shell
+   $ source devel/setup.bash
+   ```
 
 これでセミナー用画像処理のパッケージ「rsj_2017_block_finder」が利用可能になりました。
 
