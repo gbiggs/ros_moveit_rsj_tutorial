@@ -188,10 +188,58 @@ $ rostopic echo　/block_finder/pose_image
 
 ## 背景差分
 
-ここでは背景差分を利用します。
+本セミナーでは背景差分（特に動的背景差分）を利用します。OpenCVでは下記の手法が実装されています。
 
+- 混合正規分布法（MoG：Mixture of Gaussian Distribution）
+	- createBackgroundSubtractorMOG2
+- k近傍法（kNN：k-nearest neighbor）
+	- createBackgroundSubtractorKNN
 
-（特に動的背景差分）
+また、OpenCVにはopencv_contribという追加モジュール群が存在します。このモジュールにもインストールすることで下記の手法も使用することができます。
 
+- ベイズ推定法（GMG: Godbehere、Matsukawa、Goldberg）
+	- createBackgroundSubtractorGMG
 
+## 混合正規分布法
 
+createBackgroundSubtractorMOG2は下記のとおり３つの引数を指定することができます。
+
+> Ptr<BackgroundSubtractorMOG2> cv::createBackgroundSubtractorMOG2	(int history = 500, double varThreshold = 16, bool detectShadows = true)
+
+第１引数では、過去何フレームまでを分布推定（モデル推定）に利用するかを指定することができる。
+
+第２引数では、各ピクセルが背景モデルに含まれるかどうかを判断するための閾値を指定することができる。
+
+第３引数では、影の影響を考慮するかどうかを指定することができる。trueにすると計算速度が若干低下するが、精度を向上することができる。
+
+それでは、下記の部分を修正し、結果の違いを確認してみます。
+
+> pMOG2 = cv::createBackgroundSubtractorMOG2();
+
+> pMOG2 = cv::createBackgroundSubtractorMOG2(1000);
+
+> pMOG2 = cv::createBackgroundSubtractorMOG2(1000, 8);
+
+#補足
+
+OpenCVには多くのサンプルプログラムが用意されており、研究初期の検討段階において、様々な手法を試すことができます。そして、同サンプルプログラムをROSノード化したROSパッケージ『opencv_apps』があります。
+
+インストールは下記のとおり行います。
+
+```shell
+$ sudo apt-get install ros-kinetic-opencv-apps
+```
+
+画像内から円形を抽出するサンプルプログラムは下記のとおり実行します。
+
+```shell
+$ roslaunch opencv_apps hough_circles.launch image:=/usb_cam_node/image_raw
+```
+
+画像内から人間の顔を抽出するサンプルプログラムは下記のとおり実行します。
+
+```shell
+$ roslaunch opencv_apps face_detection.launch image:=/usb_cam_node/image_raw
+```
+
+以上
