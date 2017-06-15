@@ -32,13 +32,15 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    次に、OpenCVと正しくmakeできるようにCMakeLists.txtを修正します。
 
    > find_package(OpenCV REQUIRED)
+   
    > include_directories(/usr/local/include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} )
+   
    > target_link_libraries(dfollow ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} )
 
    また、package.xmlも修正します。OpenCV3を使用しますが、互換性を保つためにopencv2と指定します。
 
-   > <build_depend>opencv2</build_depend>
-   > <run_depend>opencv2</run_depend>
+   > '<build_depend>opencv2</build_depend>'
+   > '<run_depend>opencv2</run_depend>'
 
    本セミナーではパッケージ『cv_bridge』を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、IplImageへ変換し、処理を施し、Image Messageへ戻すという一連の処理を記述することができます。
 
