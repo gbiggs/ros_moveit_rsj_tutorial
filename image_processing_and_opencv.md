@@ -148,7 +148,7 @@ CMakeLists.txt  launch  package.xml  readme.md  rsj_2017_block_finder.rviz  src
 カメラを接続し、チェスボードを机の上に置いたあと、下記のコマンドで実行します。入力画像、出力画像、RVizの３つの画面が開きます。チェスボード上に黄色の四角形が表示されていれば正常に起動しています。
 
 ```shell
-$ roslaunch rsj_2017_block_finder block_finder.launch
+$ roslaunch rsj_2017_block_finder block_finder.launch method:=1
 ```
 
 ![Block Finder GUI](images/block_finder_area.png)
