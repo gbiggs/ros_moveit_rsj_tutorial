@@ -216,7 +216,7 @@ $ rosrun rsj_tutorial_2017_ros_basics greeter
 
 上述が表示されれば成功です。
 
-ソースコードにパラメータを利用したので、コマンドラインからパラメータの設定をためして見ましょう。ノードの端末（__注意：`roscore`の端末ではなくて__{: style="color: red" } ）に__Ctrl+c__{: style="border: 1px solid black" } を入力してノードを終了します。そして以下を実行してください。
+ソースコードにパラメータを利用したので、コマンドラインからパラメータの設定をためして見ましょう。ノードの端末（__注意：`roscore`の端末ではなくて__{: style="color: red" } ）に __Ctrl+c__{: style="border: 1px solid black" } を入力してノードを終了します。そして以下を実行してください。
 
 ```shell
 $ rosrun rsj_tutorial_2017_ros_basics greeter _hello_text:=gidday _world_name:=planet
