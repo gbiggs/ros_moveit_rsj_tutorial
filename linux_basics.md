@@ -3,6 +3,9 @@ title: Linuxの基本操作
 date: 2017-05-29
 ---
 
+- Table of contents
+{:toc}
+
 基本的なLinuxの端末操作方法を学習します。
 
 最初は端末を起動します。
