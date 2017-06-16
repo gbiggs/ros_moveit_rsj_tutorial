@@ -56,7 +56,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    $ cd ~/block_finder_ws/src
    $ git clone git@github.com:Suzuki1984/rsj_2017_block_finder.git
    $ ls
-   CMakeLists.txt  rsj_2017_block_finder usb_cam
+   CMakeLists.txt  rsj_2017_block_finder  usb_cam
    ```
 
 1. コンパイルします。エラーが出ず、[100%]となることを確認します。
@@ -142,7 +142,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    `rviz`
    : World座標系、Camera座標系、ブロックの位置を表示します。
 
-# セミナー用画像処理プログラムの内容
+## 画像処理プログラムの概要
 
 カメラを接続し、チェッカーボードを机の上に置いたあと、下記のコマンドで実行します。カラー画像、グレー画像、RVizの３つの画面が開きます。チェッカーボード上に黄色の四角形が表示されていれば正常に起動しています。
 
@@ -194,7 +194,7 @@ $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
    
    デストラクタ『~BlockFinder』の中に関数『destroyWindow』を記述しておくことで、メモリの開放忘れを予防することができます。関数『destroyAllWindows』もあります。
 
-## ブロック位置のPublish
+## ブロック位置の出力
 
    ２次元画像上でブロックの位置を認識したあとは、下図のとおりWorld座標系での位置へ変換し、Publishする。
 
@@ -270,19 +270,19 @@ $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
 
 OpenCVには多くのサンプルプログラムが用意されており、研究初期の検討段階において、様々な手法を試すことができます。そして、同サンプルプログラムをROSノード化したROSパッケージ『opencv_apps』があります。
 
-   インストールは下記のとおり行います。
+1. インストールは下記のとおり行います。
 
    ```shell
    $ sudo apt-get install ros-kinetic-opencv-apps
    ```
 
-   画像内から円形を抽出するサンプルプログラムは下記のとおり実行します。
+1. 画像内から円形を抽出するサンプルプログラムは下記のとおり実行します。
 
    ```shell
    $ roslaunch opencv_apps hough_circles.launch image:=/usb_cam_node/image_raw
    ```
 
-   画像内から人間の顔を抽出するサンプルプログラムは下記のとおり実行します。
+1. 画像内から人間の顔を抽出するサンプルプログラムは下記のとおり実行します。
 
    ```shell
    $ roslaunch opencv_apps face_detection.launch image:=/usb_cam_node/image_raw
