@@ -456,6 +456,11 @@ $ rviz
 
 ![Picking and placing](images/full_application_running.png)
 
+<video width="712" height="400" controls poster="files/pick_and_place.png" markdown="0">
+  <source src="files/pick_and_place.webm" type="video/webm; codecs=vp9,vorbis" markdown="0">
+  <source src="files/pick_and_place.mp4" type="video/mp4" markdown="0">
+</video markdown="0">
+
 下記は本アプリケーションの起動中のノードとトピックです。既存のパッケージを利用すると、URDF一つとlaunchファイル一つでこのような複雑なシステムの実現は可能です。
 
 ![The full application's graph](images/full_application_graph_full.png)
