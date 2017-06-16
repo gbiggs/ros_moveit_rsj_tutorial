@@ -414,6 +414,7 @@ MoveIt!はどの座標系で制御するかを指定することが必要です�
 ノードをコンパイルします。端末で以下を実行します。
 
 ```shell
+$ cd ~/crane_plus_ws/
 $ catkin_make
 Base path: /home/username/crane_plus_ws
 Source space: /home/username/crane_plus_ws/src
@@ -536,6 +537,7 @@ geometry_msgs/Pose pose
 もう一度コンパイルして実行します。
 
 ```shell
+$ cd ~/crane_plus_ws/
 $ catkin_make
 Base path: /home/username/crane_plus_ws
 Source space: /home/username/crane_plus_ws/src
