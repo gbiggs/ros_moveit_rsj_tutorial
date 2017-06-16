@@ -52,7 +52,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
 # カメラのキャリブレーション（内部パラメーターの設定）
 
-   1. チェスボードの頂点の数と大きさを確認します。このとき、四角形の数を数えないように注意してください。
+   1. チェッカーボードの頂点の数と大きさを確認します。このとき、四角形の数を数えないように注意してください。
    1. ROSパッケージ『camera_calibration』をインストールします。
    ```shell
    $ sudo apt-get install ros-kinetic-camera-calibration
@@ -137,7 +137,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
 # セミナー用画像処理プログラムの内容
 
-カメラを接続し、チェスボードを机の上に置いたあと、下記のコマンドで実行します。入力画像、出力画像、RVizの３つの画面が開きます。チェスボード上に黄色の四角形が表示されていれば正常に起動しています。
+1. カメラを接続し、チェッカーボードを机の上に置いたあと、下記のコマンドで実行します。入力画像、出力画像、RVizの３つの画面が開きます。チェッカーボード上に黄色の四角形が表示されていれば正常に起動しています。
 
 ```shell
 $ roslaunch rsj_2017_block_finder block_finder.launch method:=1
@@ -145,7 +145,7 @@ $ roslaunch rsj_2017_block_finder block_finder.launch method:=1
 
 ![Block Finder GUI](images/block_finder_area.png)
 
-次に、チェスボードを退かし、黄色の四角形に収まるようにブロックを置きます。
+次に、チェッカーボードを退かし、黄色の四角形に収まるようにブロックを置きます。
 
 TFは座標系を表示し、R色がX軸、G色がY軸、B色がZ軸を表します。
 
@@ -194,13 +194,13 @@ PointStampedはHeaderとPointが組み合わさったメッセージで、Header
 
 ## ブロック位置のPublish
 
-   ２次元画像上でブロックの位置を認識したあとは、下図のとおりワールド座標系での位置へ変換し、Publishする。
+   ２次元画像上でブロックの位置を認識したあとは、下図のとおりWorld座標系での位置へ変換し、Publishする。
 
    ![Block Finder GUI](images/block_finder_transform.png)
 
    OpenCVの関数『projectPoints』を利用することで、２次元画像上の位置とボードの左上を原点とした３次元空間（target_frame）上の位置の対応関係を得ることができる。
 
-   次に、tfの関数『transformPoint』を利用することで、ボード座標系（target_frame）の位置を、カメラ座標系（camera_frame）を経由して、ワールド座標系（fixed_frame）の位置へ変換する。
+   次に、tfの関数『transformPoint』を利用することで、ボード座標系（target_frame）の位置を、Camera座標系（camera_frame）を経由して、World座標系（fixed_frame）の位置へ変換する。
 
    最終的にPublishされている３次元座標値をコマンド『rostopic echo』を使用して確認します。別のターミナルを開いて、下記のとおり実行します。
 
@@ -218,7 +218,7 @@ PointStampedはHeaderとPointが組み合わさったメッセージで、Header
 
 # 発展編
 
-基本編で使用した輪郭検出処理では、チェスボードの四角形をスポンジと誤認識してしまいます。そのため、チェスボードの上でもスポンジを検出できるように改良します。
+基本編で使用した輪郭検出処理では、チェッカーボードの四角形をスポンジと誤認識してしまいます。そのため、チェッカーボードの上でもスポンジを検出できるように改良します。
 
 ## 背景差分法
 
