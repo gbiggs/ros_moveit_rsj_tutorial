@@ -27,6 +27,7 @@ date: 2017-06-16
    $ git clone https://github.com/ros-drivers/usb_cam.git
    $ cd ~/block_finder_ws
    $ catkin_make
+   $ source devel/setup.bash
    ```
 
 1. パッケージ『v4l-utils』をインストールします。
