@@ -51,11 +51,13 @@ date: 2017-06-16
 1. 外付けカメラが取得している画像を表示します。
 
 　　　* デバイス番号が0の場合
+
      ```shell
      $ roslaunch usb_cam usb_cam-test.launch
      ```
 
 　　　* デバイス番号が0以外の場合
+
      ```shell
      $ cd ~/block_finder_ws/launch/
      $ cp usb_cam-test.launch usb_cam-test_rsj.launch
