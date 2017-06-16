@@ -108,7 +108,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 1. まず、セミナー用画像処理パッケージの内容を確認します。
 
    ```shell
-   $ cd rsj_2017_block_finder
+   $ cd ~/block_finder_ws/src/rsj_2017_block_finder
    $ ls
    CMakeLists.txt  config  launch  package.xml  readme.md  src
    ```
@@ -178,7 +178,7 @@ $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
    ```shell
    $ cd ~/block_finder_ws/
    $ catkin_make
-   $ roslaunch rsj_2017_block_finder block_finder.launch method:=1
+   $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
    ```
    
 次に、関数『threshold』で２値化します。第３引数が閾値となり、この閾値を境に各ピクセルに０と１の値を与えていきます。本セミナーではトラックバーを使用して動的に変更できるようにしてあります。トラックバーを直接ドラッグするほか、トラックバーの左右をクリックすることで５刻みで値を増減することもできます。
@@ -277,7 +277,7 @@ $ rostopic echo /block_finder/block_size_max
    ```shell
    $ cd ~/block_finder_ws/
    $ catkin_make
-   $ roslaunch rsj_2017_block_finder block_finder.launch method:=2
+   $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=2
    ```
 
 # 参考情報
