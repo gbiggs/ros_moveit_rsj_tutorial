@@ -49,24 +49,31 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    sudo apt-get install ros-kinetic-cv-camera
    ```
 
-# カメラのキャリブレーション（内部パラメーターの設定）
+# カメラのキャリブレーション
 
-   1. チェッカーボードの頂点の数と大きさを確認します。このとき、四角形の数を数えないように注意してください。
-   1. ROSパッケージ『camera_calibration』をインストールします。
+カメラの内部パラメーターを設定します。
+
+1. チェッカーボードの頂点の数と大きさを確認します。このとき、四角形の数を数えないように注意してください。また、長さの単位がメートルであることにも注意してください。
+
+1. ROSパッケージ『camera_calibration』をインストールします。
+
    ```shell
    $ sudo apt-get install ros-kinetic-camera-calibration
    ```
-   1. ROSパッケージ『camera_calibration』を実行します。
+
+1. ROSパッケージ『camera_calibration』を実行します。
+
    ```shell
    # １つ目のターミナル
    $ roslaunch usb_cam usb_cam-test.launch
    # ２つ目のターミナル
    $ rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.0285 image:=/usb_cam/image_raw camera:=/usb_cam
    ```
-   1. カメラを動かす。（あるいはチェッカーボードを上下左右や遠近に移動したり傾けたりする。）
-   1. X, Y, Sizeが全て右端まで伸びたらCALIBRATEボタンを押す。
-   1. チェッカーボードの直線が画面上でも直線になっていることを確認する。
-   1. COMMITボタンを押す。
+
+1. カメラの位置や姿勢を動かします。（あるいはチェッカーボードを上下左右や遠近に移動したり傾けたりします。）
+1. X, Y, Sizeが全て右端まで伸びたらCALIBRATEボタンを押します。
+1. チェッカーボードの直線が画面上でも直線になっていることを確認します。
+1. COMMITボタンを押します。
 
 # 画像処理パッケージの作成
 
@@ -117,7 +124,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    >     <param name="pixel_format" value="yuyv"/>
    >     <param name="io_method" value="mmap"/>
    >   </node>
-   >   <node pkg="tf" type="static_transform_publisher" name="camera_transform_publisher" args="0 0 -0.478 0 0 0 1 /world /camera_link 1"/>
+   >   <node pkg="tf" type="static_transform_publisher" name="camera_transform_publisher" args="0 0 0 0 0 0 1 /world /camera_link 1"/>
    >   <node pkg="rsj_2017_block_finder" type="block_finder" name="block_finder" args="$(arg method)" output="screen"/>
    >   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find rsj_2017_block_finder)/config/rsj_2017_block_finder.rviz"/>
    > </launch>
@@ -136,32 +143,25 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
 # セミナー用画像処理プログラムの内容
 
-1. カメラを接続し、チェッカーボードを机の上に置いたあと、下記のコマンドで実行します。カラー画像、グレー画像、RVizの３つの画面が開きます。チェッカーボード上に黄色の四角形が表示されていれば正常に起動しています。
+カメラを接続し、チェッカーボードを机の上に置いたあと、下記のコマンドで実行します。カラー画像、グレー画像、RVizの３つの画面が開きます。チェッカーボード上に黄色の四角形が表示されていれば正常に起動しています。
 
-   ```shell
-   $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
-   ```
+```shell
+$ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
+```
 
-   ![Block Finder GUI](images/block_finder_area.png)
+![Block Finder GUI](images/block_finder_area.png)
 
-1. 次に、チェッカボードの上に厚紙を置いたりチェッカーボードを退かしたりします。
-1. そして、黄色の四角形の中に収まるようにブロックを置きます。
+チェッカーボードが見つかると、ターミナルに「Camera座標系からBoard座標系までの変換ベクトル」が表示されます。３番目の値（Ｚ軸の値）の正負を置き換えた値をstatic_transform_publisherの３番目の値にすると結果が確認しやすくなります。例えば、次のとおりに設定します。
 
+> args="0 0 -0.478 0 0 0 1 /world /camera_link 1"
 
-1. RVizを確認しましょう。TFは座標系を表示し、R色がX軸、G色がY軸、B色がZ軸を表します。
+次に、チェッカーボードの上に厚紙を置いたりチェッカーボードを退かしたりします。
 
-PointStampedはHeaderとPointが組み合わさったメッセージで、Headerで位置データを取得した時刻、Pointで位置データを表現することができます。
+そして、黄色の四角形の中に収まるようにブロックを置きます。
 
+ここでRVizを確認しましょう。TFは座標系を表示し、R色がX軸、G色がY軸、B色がZ軸を表します。なお、PointStampedはHeaderとPointが組み合わさったメッセージで、Headerで位置データを取得した時刻、Pointで位置データを表現することができます。
 
-
--0.165 -0.036 0.468 -0.307 -0.113 -0.175 0.929
-をそのまま貼り付ける。
-
-## World座標系
-
-   このセッションでは、world座標系からcamera座標系までの変換ベクトルを下記のとおり与えます。（※最後のセッションではROSパッケージ『crane_plus_camera_calibration』を利用して同ベクトルを求め、利用します。）
-   
-   rosrun tf static_transform_publisher 0 0 0 0 0 0 world camera_link 1
+ここでは、上述のとおり、World座標系からCamera座標系までの変換ベクトルを適当に与えています。最後のセクションではROSパッケージ『crane_plus_camera_calibration』を利用して同ベクトルを求め、マニピュレーターがブロックを正しく把持できるようにします。
 
 ## 画像処理法
 
