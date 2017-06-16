@@ -21,7 +21,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
 # 事前準備
 
-   まず、OpenCVをインストールします。
+1. まず、OpenCVをインストールします。
 
    ```shell
    sudo apt-get install ros-kinetic-vision-opencv 
@@ -29,7 +29,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    sudo apt-get install libopencv-dev
    ```
 
-   次に、OpenCVと正しくmakeできるようにCMakeLists.txtを修正します。
+1. 次に、OpenCVと正しくmakeできるようにCMakeLists.txtを修正します。
 
    > find_package(OpenCV REQUIRED)
    
@@ -37,18 +37,17 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    
    > target_link_libraries(dfollow ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} )
 
-   また、package.xmlも修正します。OpenCV3を使用しますが、互換性を保つためにopencv2と指定します。
+1. また、package.xmlも修正します。OpenCV3を使用しますが、互換性を保つためにopencv2と指定します。
 
    > '<build_depend>opencv2</build_depend>'
    > '<run_depend>opencv2</run_depend>'
 
-   本セミナーではパッケージ『cv_bridge』を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、IplImageへ変換し、処理を施し、Image Messageへ戻すという一連の処理を記述することができます。
+1. 本セミナーではパッケージ『cv_bridge』を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、IplImageへ変換し、処理を施し、Image Messageへ戻すという一連の処理を記述することができます。
+   :    ※IplはIntel Image Processing Libraryの略で、バージョン1で使用されている型になります。そのため、本セミナーではIplImageをバージョン2以降で使用されている型『Mat』へ変換し、画像処理を行います。
 
    ```shell
    sudo apt-get install ros-kinetic-cv-camera
    ```
-
-   ※IplはIntel Image Processing Libraryの略で、バージョン1で使用されている型になります。そのため、本セミナーではIplImageをバージョン2以降で使用されている型『Mat』へ変換し、画像処理を行います。
 
 # カメラのキャリブレーション（内部パラメーターの設定）
 
