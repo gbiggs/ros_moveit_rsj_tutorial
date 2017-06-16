@@ -28,20 +28,20 @@ title: 日本ロボット学会　第106回 ロボットの作り方 ～ROSを�
 ### １日目（6/17）
 
 |10:00-11:00|講義１ 「ROS概論」　講師：Geoffrey BIGGS （産業技術総合研究所）|
-|11:00-11:30|Linuxの基本操作|
-|11:30-12:00|講習環境の整備とマニピュレータの動作確認|
+|11:00-11:30|[Linuxの基本操作](linux_basics.html)|
+|11:30-12:00|[講習環境の整備とマニピュレータの動作確認](manipulator_check.html)|
 |12:00-13:00|昼休み|
 |13:00-14:00|講義２ 「マニピュレータとTF概論」　講師：朝原佳昭 （トヨタ自動車）|
-|14:00-15:00|ROSの基本操作|
-|15:00-17:30|マニピュレータ制御|
+|14:00-15:00|[ROSの基本操作](ros_basics.html)|
+|15:00-17:30|[マニピュレータ制御](manipulators_and_moveit.html)|
 
 ### ２日目（6/18）
 
-|10:00-10:15|カメラの動作確認|
-|10:15-12:00|画像処理|
+|10:00-10:15|[カメラの動作確認](camera_check.html)|
+|10:15-12:00|[画像処理](image_processing_and_opencv.html)|
 |12:00-13:00|昼休み|
-|13:00-13:30|ROSの便利機能|
-|13:30-16:30|画像処理とマニピュレーションの組み合わせ|
+|13:00-13:30|[ROSの便利機能](ros_useful_stuff.html)|
+|13:30-16:30|[画像処理とマニピュレーションの組み合わせ](full_application.html)|
 |16:30-17:00|課題と質疑|
 
 スケジュールは、演習の進行に応じて多少変更する場合があります。
@@ -53,11 +53,11 @@ title: 日本ロボット学会　第106回 ロボットの作り方 ～ROSを�
 つくば駅および東京駅からの推奨ルートは下記のとおりとなっています。
 
 - 「つくば駅」（つくばエクスプレス線）から路線バス（「つくばセンター行き（筑波大学循環）」か「筑波大学中央行き」）で10〜20分、「第三エリア前」で下車する。料金は**270**円です。
-	- 参考ウェブページ：<http://kantetsu.co.jp/bus/timetable_tsukuba.html>
-	- 参考資料：<http://kantetsu.co.jp/bus/timetable_files/center/center06.pdf>
+  - 参考ウェブページ：<http://kantetsu.co.jp/bus/timetable_tsukuba.html>
+  - 参考資料：<http://kantetsu.co.jp/bus/timetable_files/center/center06.pdf>
 - 「東京駅」（各線）から高速バス（筑波大学行き）で約75分、「大学会館」で下車する。料金は現金とICカードで異なり、現金の場合は**1180円**で、ICカードの場合は**1130円**（下り）／**950円**（上り）です。
-	- 参考ウェブページ：<http://kantetsu.co.jp/bus/highway_tsukuba_tokyo.html>
-	- 参考資料：<http://kantetsu.co.jp/img/bus/highway/tsukuba_tokyo/timetable_.pdf>
+  - 参考ウェブページ：<http://kantetsu.co.jp/bus/highway_tsukuba_tokyo.html>
+  - 参考資料：<http://kantetsu.co.jp/img/bus/highway/tsukuba_tokyo/timetable_.pdf>
 
 その他、筑波大学のウェブサイトを参考にしてください。
 
