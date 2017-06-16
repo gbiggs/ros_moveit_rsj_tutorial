@@ -19,7 +19,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 |15.04 (Jade Turtle)|2.4.11|
 |14.04 (Indigo Igloo)|2.4.8|
 
-# 事前準備
+# OpenCVの設定
 
 1. まず、OpenCVをインストールします。
 
@@ -49,6 +49,33 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    sudo apt-get install ros-kinetic-cv-camera
    ```
 
+# 画像処理パッケージの設定
+
+1. セミナー用画像処理のROSパッケージをダウンロードします。ディレクトリ『rsj_2017_block_finder』が存在することを確認します。
+
+   ```shell
+   $ cd ~/block_finder_ws/src
+   $ git clone git@github.com:Suzuki1984/rsj_2017_block_finder.git
+   $ ls
+   CMakeLists.txt  rsj_2017_block_finder usb_cam
+   ```
+
+1. コンパイルします。エラーが出ず、[100%]となることを確認します。
+
+   ```shell
+   $ cd ~/block_finder_ws/
+   $ catkin_make 
+   ```
+
+1. ワークスペース内のROSパッケージが利用できるようにワークスペースをソースします。
+
+   ```shell
+   $ source devel/setup.bash
+   ```
+
+これでセミナー用画像処理のパッケージ「rsj_2017_block_finder」が利用可能になりました。
+
+
 # カメラのキャリブレーション
 
 カメラの内部パラメーターを設定します。
@@ -75,31 +102,6 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 1. チェッカーボードの直線が画面上でも直線になっていることを確認します。
 1. COMMITボタンを押します。
 
-# 画像処理パッケージの作成
-
-1. セミナー用画像処理のROSパッケージをダウンロードします。ディレクトリ『rsj_2017_block_finder』が存在することを確認します。
-
-   ```shell
-   $ cd ~/block_finder_ws/src
-   $ git clone git@github.com:Suzuki1984/rsj_2017_block_finder.git
-   $ ls
-   CMakeLists.txt  rsj_2017_block_finder usb_cam
-   ```
-
-1. コンパイルします。エラーが出ず、[100%]となることを確認します。
-
-   ```shell
-   $ cd ~/block_finder_ws/
-   $ catkin_make 
-   ```
-
-1. ワークスペース内のROSパッケージが利用できるようにワークスペースをソースします。
-
-   ```shell
-   $ source devel/setup.bash
-   ```
-
-これでセミナー用画像処理のパッケージ「rsj_2017_block_finder」が利用可能になりました。
 
 # 基礎編
 
