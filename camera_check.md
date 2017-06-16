@@ -61,7 +61,8 @@ date: 2017-06-16
       ```shell
       $ cd ~/block_finder_ws/src/usb_cam/launch
       $ cp usb_cam-test.launch usb_cam-test_rsj.launch
-      $ gedit usb_cam-test_rsj.launch （※video_deviceを/dev/video1などに変更し、保存する。）
+      $ gedit usb_cam-test_rsj.launch
+      # video_deviceを/dev/video1などに変更し、保存する。
       $ roslaunch usb_cam usb_cam-test_rsj.launch
       ```
 
