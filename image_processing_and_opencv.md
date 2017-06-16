@@ -1,6 +1,6 @@
 ---
 title: 画像処理とOpenCVの利用
-date: 2017-06-01
+date: 2017-06-16
 ---
 
 本セクションでは、前セクションで取得した画像を処理する方法について説明します。特にOpenCVを用いて処理する方法について説明します。
@@ -67,7 +67,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    1. カメラを動かす。（あるいはチェッカーボードを上下左右や遠近に移動したり傾けたりする。）
    1. X, Y, Sizeが全て右端まで伸びたらCALIBRATEボタンを押す。
    1. チェッカーボードの直線が画面上でも直線になっていることを確認する。
-   1. COMMITボタンを押す。   
+   1. COMMITボタンを押す。
 
 # 画像処理パッケージの作成
 
@@ -106,14 +106,15 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
 # 基礎編
 
-セミナー用画像処理パッケージの内容を確認します。
+1. セミナー用画像処理パッケージの内容を確認します。
 
-```shell
-$ ls
-CMakeLists.txt  launch  package.xml  readme.md  rsj_2017_block_finder.rviz  src
-```
+   ```shell
+   $ cd rsj_2017_block_finder
+   $ ls
+   CMakeLists.txt  config  launch  package.xml  readme.md  src
+   ```
 
-ディレクト「launch」の中にはblock_finder.launchがあります。このlaunchファイルでは4つのノードを起動します。配信（publish）と購読（listen）の関係性を以下に示します。
+1. ディレクトリ『launch』の中にはblock_finder.launchとblock_finder_w_stp.launchがあります。このlaunchファイルでは4つのノードを起動します。配信（publish）と購読（listen）の関係性を以下に示します。
 
 ```shell
 <?xml version="1.0"?>

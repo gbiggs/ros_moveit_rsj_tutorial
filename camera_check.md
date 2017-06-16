@@ -50,19 +50,19 @@ date: 2017-06-16
 
 1. 外付けカメラが取得している画像を表示します。
 
-　　　1. デバイス番号が0の場合
+   1. デバイス番号が0の場合
 
       ```shell
       $ roslaunch usb_cam usb_cam-test.launch
       ```
 
-　　　1. デバイス番号が0以外の場合
+   1. デバイス番号が0以外の場合
 
       ```shell
       $ cd ~/block_finder_ws/launch/
       $ cp usb_cam-test.launch usb_cam-test_rsj.launch
       $ gedit usb_cam-test_rsj.launch （※video_deviceを/dev/video1などに変更し、保存する。）
-　　　   $ roslaunch usb_cam usb_cam-test_rsj.launch
+      $ roslaunch usb_cam usb_cam-test_rsj.launch
       ```
 
 1. 次のようなユーザーインターフェースが表示されたら、正しく動作しています。また、このユーザーインターフェースのボタンを利用することで、画像を保存することができます。
