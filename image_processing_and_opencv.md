@@ -77,7 +77,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    $ mkdir -p ~/block_finder_ws/src/
    $ cd ~/block_finder_ws/src/
    $ catkin_init_workspace
-   $　ls
+   $ ls
    CMakeLists.txt
    ```
 
@@ -106,7 +106,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
 # 基礎編
 
-1. セミナー用画像処理パッケージの内容を確認します。
+1. まず、セミナー用画像処理パッケージの内容を確認します。
 
    ```shell
    $ cd rsj_2017_block_finder
@@ -114,34 +114,35 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    CMakeLists.txt  config  launch  package.xml  readme.md  src
    ```
 
-1. ディレクトリ『launch』の中にはblock_finder.launchとblock_finder_w_stp.launchがあります。このlaunchファイルでは4つのノードを起動します。配信（publish）と購読（listen）の関係性を以下に示します。
+1. ディレクトリ『launch』の中にはblock_finder.launchとblock_finder_w_stp.launchがあります。ここでは後者のファイルを確認します。後者のlaunchファイルでは4つのノードを起動します。配信（publish）と購読（listen）の関係性を以下に示します。
 
-```shell
-<?xml version="1.0"?>
-<launch>
- <node pkg="usb_cam" type="usb_cam_node" name="usb_cam_node" output="screen">
-  <param name="image_width" value="640"/>
-  <param name="image_height" value="480"/>
-  <param name="pixel_format" value="yuyv"/>
-  <param name="camera_frame_id" value="camera_link"/>
- </node>
- <node pkg="rsj_2017_block_finder" type="block_finder" name="block_finder" output="screen"/>
- <node pkg="tf" type="static_transform_publisher" name="camera_transform_publisher" args="-0.118 -0.039 0.474 -0.293 -0.075 -0.191 0.934 /camera_link /world 100"/>
- <node pkg="rviz" type="rviz" name="rviz" args="-d $(find rsj_2017_block_finder)/rsj_2017_block_finder.rviz"/>
-</launch>
-```
+   > <?xml version="1.0"?>
+   > <launch>
+   >   <node pkg="usb_cam" type="usb_cam_node" name="camera" output="screen">
+   >     <param name="camera_name" value="elecom_ucam"/>
+   >     <param name="camera_frame_id" value="camera_link"/>
+   >     <param name="video_device" value="/dev/video0"/>
+   >     <param name="image_width" value="640"/>
+   >     <param name="image_height" value="480"/>
+   >     <param name="pixel_format" value="yuyv"/>
+   >     <param name="io_method" value="mmap"/>
+   >   </node>
+   >   <node pkg="tf" type="static_transform_publisher" name="camera_transform_publisher" args="0 0 -0.478 0 0 0 1 /world /camera_link 1"/>
+   >   <node pkg="rsj_2017_block_finder" type="block_finder" name="block_finder" args="$(arg method)" output="screen"/>
+   >   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find rsj_2017_block_finder)/config/rsj_2017_block_finder.rviz"/>
+   > </launch>
 
-`usb_cam_node`
-: 画像メッセージを配信します。
+   `camera`
+   : 画像メッセージを配信します。
 
-`block_finder`
-: 画像メッセージを購読し、処理し、世界座標系におけるブロックの位置を配信します。
+   `camera_transform_publisher`
+   : World座標系の原点から見たCamera座標系の原点の位置を配信します。
 
-`camera_transform_publisher`
-: 世界座標系の原点から見たカメラ座標系の原点の位置を配信します。
+   `block_finder`
+   : 画像メッセージを購読し、処理し、World座標系におけるブロックの位置を配信します。
 
-`rviz`
-: 世界座標、カメ座標系、ブロックの位置関係を確認します。
+   `rviz`
+   : World座標系、Camera座標系、ブロックの位置を表示します。
 
 # セミナー用画像処理プログラムの内容
 

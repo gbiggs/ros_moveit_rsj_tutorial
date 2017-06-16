@@ -7,10 +7,19 @@ date: 2017-06-16
 
 ## 準備
 
-1. ROSパッケージ『usb_cam』をコンパイルします。
+1. 最初に新しいワークスペースを作成します。
 
    ```shell
    $ mkdir -p ~/block_finder_ws/src/
+   $ cd ~/block_finder_ws/src/
+   $ catkin_init_workspace
+   $ ls
+   CMakeLists.txt
+   ```
+
+1. ROSパッケージ『usb_cam』をコンパイルします。
+
+   ```shell
    $ cd ~/block_finder_ws/src
    $ git clone https://github.com/ros-drivers/usb_cam.git
    $ cd ~/block_finder_ws
