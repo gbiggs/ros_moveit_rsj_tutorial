@@ -144,7 +144,9 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
 ## 画像処理プログラムの概要
 
-カメラを接続し、チェッカーボードを机の上に置いたあと、下記のコマンドで実行します。カラー画像、グレー画像、RVizの３つの画面が開きます。チェッカーボード上に黄色の四角形が表示されていれば正常に起動しています。
+カメラを接続し、カメラのデバイス番号を確認します。デバイス番号が0以外の場合はlaunchファイルを修正してください。
+
+チェッカーボードを机の上に置いたあと、下記のコマンドで実行します。カラー画像、グレー画像、RVizの３つの画面が開きます。チェッカーボード上に黄色の四角形が表示されていれば正常に起動しています。
 
 ```shell
 $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
@@ -160,17 +162,17 @@ $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
 
 そして、黄色の四角形の中に収まるようにブロックを置きます。
 
-ここでRVizを確認しましょう。TFは座標系を表示し、R色がX軸、G色がY軸、B色がZ軸を表します。なお、PointStampedはHeaderとPointが組み合わさったメッセージで、Headerで位置データを取得した時刻、Pointで位置データを表現することができます。
+ここでRVizを確認しましょう。TFは座標系を表示し、R色がX軸、G色がY軸、B色がZ軸を表します。「Global　Options」→「Fixed Frame」で基準とするFrameを切り替えることができます。 なお、PointStampedはHeaderとPointが組み合わさったメッセージで、Headerで位置データを取得した時刻、Pointで位置データを表現することができます。
 
 ここでは、上述のとおり、World座標系からCamera座標系までの変換ベクトルを適当に与えています。最後のセクションではROSパッケージ『crane_plus_camera_calibration』を利用して同ベクトルを求め、マニピュレーターがブロックを正しく把持できるようにします。
 
 ## 画像処理法
 
-   ブロックを検出するための画像処理について見ていきます。
+ブロックを検出するための画像処理について見ていきます。
 
-   まず、関数『GaussianBlur』で平滑化を行います。平滑化を行うことで、後述の２値化処理が安定します。第３引数ではフィルタのサイズを指定することができ、cv::Size(5, 5)やcv::Size(13, 13)などと、正の奇数で指定します。
+まず、関数『GaussianBlur』で平滑化を行います。平滑化を行うことで、後述の２値化処理が安定します。第３引数ではフィルタのサイズを指定することができ、cv::Size(5, 5)やcv::Size(13, 13)などと、正の奇数で指定します。
    
-   それでは、実際に値を変更してみましょう。値を変更し、ファイルを上書きしたら、下記のとおりコンパイルし、実行します。
+それでは、実際に値を変更してみましょう。値を変更し、ファイルを上書きしたら、下記のとおりコンパイルし、実行します。
    
    ```shell
    $ cd ~/block_finder_ws/
@@ -178,45 +180,56 @@ $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
    $ roslaunch rsj_2017_block_finder block_finder.launch method:=1
    ```
    
-   次に、関数『threshold』で２値化します。第３引数が閾値となり、この閾値を境に各ピクセルに０と１の値を与えていきます。本セミナーではトラックバーを使用して動的に変更できるようにしてあります。トラックバーを直接ドラッグするほか、トラックバーの左右をクリックすることで５刻みで値を増減することもできます。
+次に、関数『threshold』で２値化します。第３引数が閾値となり、この閾値を境に各ピクセルに０と１の値を与えていきます。本セミナーではトラックバーを使用して動的に変更できるようにしてあります。トラックバーを直接ドラッグするほか、トラックバーの左右をクリックすることで５刻みで値を増減することもできます。
 
-   そして、関数『findContours』を使用してブロックを認識します。第３引数では近似手法を指定することができ、現在はCV_CHAIN_APPROX_NONEとなっています。CV_CHAIN_APPROX_SIMPLEやCV_CHAIN_APPROX_TC89_L1に変更し、結果の違いを確認してみてください。
+そして、関数『findContours』を使用してブロックを認識します。第３引数では近似手法を指定することができ、現在はCV_CHAIN_APPROX_NONEとなっています。CV_CHAIN_APPROX_SIMPLEやCV_CHAIN_APPROX_TC89_L1に変更し、結果の違いを確認してみてください。
    
-   - CV_CHAIN_APPROX_NONEは、全ての点を保存します。
-   - CV_CHAIN_APPROX_SIMPLEは、端点のみを保存します。つまり、輪郭を表現する点群を圧縮します。
-   - CV_CHAIN_APPROX_TC89_L1は、Teh-Chinアルゴリズムで、NONEとSIMPLEの中間に当たる。
+- CV_CHAIN_APPROX_NONE
+  : 全ての点を保存します。
+- CV_CHAIN_APPROX_SIMPLE
+  : 端点のみを保存します。つまり、輪郭を表現する点群を圧縮します。
+- CV_CHAIN_APPROX_TC89_L1
+  : Teh-Chinアルゴリズムで、NONEとSIMPLEの中間に当たる。
 
 ## 画像の表示
 
-   OpenCVでは関数『inshow』を使用して画像を表示します。関数『imshow』のあとに関数『waitKey』を呼び出することで、画像が表示されます。関数『waitKey』は一定時間キー入力を待つ関数ですが、ここではスリープ関数のような意味を持ちます。なお、繰り返し処理でない画像処理の場合、０として指定することで、キー入力が行われるまで画像を表示しておくことができます。
+OpenCVでは関数『inshow』を使用して画像を表示します。関数『imshow』のあとに関数『waitKey』を呼び出することで、画像が表示されます。関数『waitKey』は一定時間キー入力を待つ関数ですが、ここではスリープ関数のような意味を持ちます。なお、繰り返し処理でない画像処理の場合、０として指定することで、キー入力が行われるまで画像を表示しておくことができます。
    
-   なお、ウィンドウの名前は関数『namedWindow』で、ウィンドウの位置は関数『moveWindow』で指定することができます。
+なお、ウィンドウの名前は関数『namedWindow』で、ウィンドウの位置は関数『moveWindow』で指定することができます。
    
-   デストラクタ『~BlockFinder』の中に関数『destroyWindow』を記述しておくことで、メモリの開放忘れを予防することができます。関数『destroyAllWindows』もあります。
+デストラクタ『~BlockFinder』の中に関数『destroyWindow』を記述しておくことで、メモリの開放忘れを予防することができます。関数『destroyAllWindows』もあります。
 
 ## ブロック位置の出力
 
-   ２次元画像上でブロックの位置を認識したあとは、下図のとおりWorld座標系での位置へ変換し、Publishする。
+２次元画像上でブロックの位置を認識したあとは、下図のとおりWorld座標系での位置へ変換し、Publishする。
 
-   ![Block Finder GUI](images/block_finder_transform.png)
+![Block Finder GUI](images/block_finder_transform.png)
 
-   OpenCVの関数『projectPoints』を利用することで、２次元画像上の位置とボードの左上を原点とした３次元空間（target_frame）上の位置の対応関係を得ることができる。
+OpenCVの関数『projectPoints』を利用することで、２次元画像上の位置とボードの左上を原点とした３次元空間（target_frame）上の位置の対応関係を得ることができる。
 
-   次に、tfの関数『transformPoint』を利用することで、ボード座標系（target_frame）の位置を、Camera座標系（camera_frame）を経由して、World座標系（fixed_frame）の位置へ変換する。
+次に、tfの関数『transformPoint』を利用することで、ボード座標系（target_frame）の位置を、Camera座標系（camera_frame）を経由して、World座標系（fixed_frame）の位置へ変換する。
 
-   最終的にPublishされている３次元座標値をコマンド『rostopic echo』を使用して確認します。別のターミナルを開いて、下記のとおり実行します。
+最終的にPublishされている３次元座標値をコマンド『rostopic echo』を使用して確認します。別のターミナルを開いて、下記のとおり実行します。
 
-   ```shell
-   $ rostopic echo /block_finder/pose
-   ```
 
-   なお、２次元画像上の位置は下記のとおり実行することで確認できます。
+```shell
+$ rostopic echo /block_finder/pose
+```
 
-   ```shell
-   $ rostopic echo /block_finder/pose_image
-   ```
+なお、２次元画像上の位置は下記のとおり実行することで確認できます。
 
-   『Ctrl』キー＋『c』キーで終了します。
+
+```shell
+$ rostopic echo /block_finder/pose_image
+```
+
+また、ブロック領域の面積を下記のとおり実行することで確認できます。このプログラムでは、大きすぎる場合や小さすぎる場合はPublishしないようにしています。
+
+```shell
+$ rostopic echo /block_finder/block_size_max
+```
+
+『Ctrl』キー＋『c』キーで終了します。
 
 # 発展編
 
