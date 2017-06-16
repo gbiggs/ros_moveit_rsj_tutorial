@@ -39,11 +39,10 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
 1. また、package.xmlも修正します。OpenCV3を使用しますが、互換性を保つためにopencv2と指定します。
 
-   > '<build_depend>opencv2</build_depend>'
-   > '<run_depend>opencv2</run_depend>'
+   > `<build_depend>opencv2</build_depend>`
+   > `<run_depend>opencv2</run_depend>`
 
-1. 本セミナーではパッケージ『cv_bridge』を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、IplImageへ変換し、処理を施し、Image Messageへ戻すという一連の処理を記述することができます。
-   : IplはIntel Image Processing Libraryの略で、バージョン1で使用されている型になります。そのため、本セミナーではIplImageをバージョン2以降で使用されている型『Mat』へ変換し、画像処理を行います。
+1. 本セミナーではパッケージ『cv_bridge』を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、IplImageへ変換し、処理を施し、Image Messageへ戻すという一連の処理を記述することができます。（※IplはIntel Image Processing Libraryの略で、バージョン1で使用されている型になります。そのため、本セミナーではIplImageをバージョン2以降で使用されている型『Mat』へ変換し、画像処理を行います。）
 
    ```shell
    sudo apt-get install ros-kinetic-cv-camera
@@ -267,7 +266,7 @@ $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
    $ roslaunch rsj_2017_block_finder block_finder.launch method:=2
    ```
 
-# 補足
+# 参考情報
 
 OpenCVには多くのサンプルプログラムが用意されており、研究初期の検討段階において、様々な手法を試すことができます。そして、同サンプルプログラムをROSノード化したROSパッケージ『opencv_apps』があります。
 
