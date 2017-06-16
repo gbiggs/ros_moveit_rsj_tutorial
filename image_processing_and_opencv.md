@@ -40,6 +40,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 1. また、package.xmlも修正します。OpenCV3を使用しますが、互換性を保つためにopencv2と指定します。
 
    > `<build_depend>opencv2</build_depend>`
+
    > `<run_depend>opencv2</run_depend>`
 
 1. 本セミナーではパッケージ『cv_bridge』を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、IplImageへ変換し、処理を施し、Image Messageへ戻すという一連の処理を記述することができます。（※IplはIntel Image Processing Libraryの略で、バージョン1で使用されている型になります。そのため、本セミナーではIplImageをバージョン2以降で使用されている型『Mat』へ変換し、画像処理を行います。）
@@ -91,9 +92,9 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
    ```shell
    # １つ目のターミナル
-   $ roslaunch usb_cam usb_cam-test.launch
+   $ roslaunch rsj_2017_block_finder usb_cam_calib.launch
    # ２つ目のターミナル
-   $ rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.0285 image:=/usb_cam/image_raw camera:=/usb_cam
+   $ rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.0285 image:=/camera/image_raw camera:=/camera
    ```
 
 1. カメラの位置や姿勢を動かします。（あるいはチェッカーボードを上下左右や遠近に移動したり傾けたりします。）
