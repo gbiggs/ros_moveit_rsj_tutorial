@@ -42,7 +42,7 @@ date: 2017-06-16
 
    __各自の環境（ハードウェア）によりデバイス番号が変わります。例えば、ノートパソコンなどで内蔵カメラがある場合は/dev/video1などとなります。__
 
-1. 外付けカメラが対応している解像度などを確認します。（※デバイス番号が0の場合の例を示します。）
+1. 外付けカメラが対応している解像度などを確認します。（※デバイス番号が0の場合の例を示します。デバイス番号が0以外の場合は、オプション『d』の値を変更してください。）
 
    ```shell
    $ v4l2-ctl -d 0 --list-formats-ext
@@ -59,7 +59,7 @@ date: 2017-06-16
    1. デバイス番号が0以外の場合
 
       ```shell
-      $ cd ~/block_finder_ws/launch/
+      $ cd ~/block_finder_ws/src/usb_cam/launch
       $ cp usb_cam-test.launch usb_cam-test_rsj.launch
       $ gedit usb_cam-test_rsj.launch （※video_deviceを/dev/video1などに変更し、保存する。）
       $ roslaunch usb_cam usb_cam-test_rsj.launch
