@@ -1,6 +1,6 @@
 ---
 title: カメラの動作確認
-date: 2017-05-29
+date: 2017-06-16
 ---
 
 既存のROSパッケージを使用してカメラの動作を確認します。
@@ -10,9 +10,10 @@ date: 2017-05-29
 1. ROSパッケージ『usb_cam』をコンパイルします。
 
    ```shell
-   $ cd ~/catkin_ws/src
+   $ mkdir -p ~/block_finder_ws/src/
+   $ cd ~/block_finder_ws/src
    $ git clone https://github.com/ros-drivers/usb_cam.git
-   $ cd ..
+   $ cd ~/block_finder_ws
    $ catkin_make
    ```
 
@@ -30,7 +31,7 @@ date: 2017-05-29
    $ ls /dev/video*
    ```
 
-1. カメラをUSBでパソコンに繋げます。
+1. 外付けカメラをUSBでパソコンに繋げます。
 
 1. 外付けカメラのデバイス番号を確認します。
 
@@ -41,7 +42,7 @@ date: 2017-05-29
 
    __各自の環境（ハードウェア）によりデバイス番号が変わります。例えば、ノートパソコンなどで内蔵カメラがある場合は/dev/video1などとなります。__
 
-1. 外付けカメラが対応している解像度を確認します。（※デバイス番号が0の場合の例を示します。）
+1. 外付けカメラが対応している解像度などを確認します。（※デバイス番号が0の場合の例を示します。）
 
    ```shell
    $ v4l2-ctl -d 0 --list-formats-ext
@@ -49,29 +50,25 @@ date: 2017-05-29
 
 1. 外付けカメラが取得している画像を表示します。
 
+　　　* デバイス番号が0の場合
    ```shell
    $ roslaunch usb_cam usb_cam-test.launch
    ```
 
-   次のようなユーザーインターフェースが表示されたら、正しく動作しています。また、このユーザーインターフェースのボタンを利用することで、画像を保存することができます。
+　　　* デバイス番号が0以外の場合
+   ```shell
+   $ cd ~/block_finder_ws/launch/
+   $ cp usb_cam-test.launch usb_cam-test_rsj.launch
+   $ gedit usb_cam-test_rsj.launch
+   # video_deviceを/dev/video1などに変更し、保存する。
+　　　$ roslaunch usb_cam usb_cam-test_rsj.launch
+   ```
+
+1. 次のようなユーザーインターフェースが表示されたら、正しく動作しています。また、このユーザーインターフェースのボタンを利用することで、画像を保存することができます。
 
    ![usb_cam](images/usb_cam.png)
 
-   『Ctrl』キー＋『c』キーで終了します。
-
-## 補足
-
-- 必要に応じて、カメラを切り替えます。
-
-   ```shell
-   $ rosparam set usb_cam/video_device "/dev/video1"
-   ```
-
-- 必要に応じて、カメラのパラメーターを設定します。例えば、デフォルトのmjpegからyuyvへ変更します。
-
-   ```shell
-   $ rosparam set usb_cam/pixel_format yuyv
-   ```
+1. 『Ctrl』キー＋『c』キーで終了します。
 
 以上
 
