@@ -32,15 +32,15 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    sudo apt-get install libopencv-dev
    ```
 
-1. 次に、OpenCVと正しくmakeできるようにCMakeLists.txtを修正します。
+1. 次に、OpenCVと正しくmakeできるように、OpenCVを利用するパッケージではCMakeLists.txtを修正します。
 
-   > find_package(OpenCV REQUIRED)
+   > `find_package(OpenCV REQUIRED)`
    
-   > include_directories(/usr/local/include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} )
+   > `include_directories(/usr/local/include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} )`
    
-   > target_link_libraries(dfollow ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} )
+   > `target_link_libraries(dfollow ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} )`
 
-1. また、package.xmlも修正します。OpenCV3を使用しますが、互換性を保つためにopencv2と指定します。
+1. また、package.xmlも修正します。ROS16.04ではOpenCV3を使用しますが、互換性を保つためにopencv2と指定します。
 
    > `<build_depend>opencv2</build_depend>`
 
@@ -91,19 +91,21 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    $ sudo apt-get install ros-kinetic-camera-calibration
    ```
 
-1. ROSパッケージ『camera_calibration』を実行します。
+1. ROSパッケージ『camera_calibration』を実行します。デバイス番号が0以外の場合はusb_cam_calib.launchを修正してください。
 
    ```shell
    # １つ目のターミナル
    $ roslaunch rsj_2017_block_finder usb_cam_calib.launch
+   ```
+   ```shell
    # ２つ目のターミナル
    $ rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.0285 image:=/camera/image_raw camera:=/camera
    ```
 
 1. カメラの位置や姿勢を動かします。（あるいはチェッカーボードを上下左右や遠近に移動したり傾けたりします。）
-1. X, Y, Sizeが全て右端まで伸びたらCALIBRATEボタンを押します。
+1. X, Y, Sizeが全て右端まで伸びたらCALIBRATEボタンを押します。（※数分かかる場合があります。）
 1. チェッカーボードの直線が画面上でも直線になっていることを確認します。
-1. COMMITボタンを押します。
+1. COMMITボタンを押します。（~/.ros/camera_info/elecom_ucam.yamlが作成されます。）
 
 
 # 基礎編
@@ -166,7 +168,9 @@ $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
 
 そして、黄色の四角形の中に収まるようにブロックを置きます。
 
-ここでRVizを確認しましょう。TFは座標系を表示し、R色がX軸、G色がY軸、B色がZ軸を表します。「Global　Options」→「Fixed Frame」で基準とするFrameを切り替えることができます。 なお、PointStampedはHeaderとPointが組み合わさったメッセージで、Headerで位置データを取得した時刻、Pointで位置データを表現することができます。
+ここでRVizを確認しましょう。TFは座標系を表示し、R色がX軸、G色がY軸、B色がZ軸を表します。「Global Options」→「Fixed Frame」で基準とするFrameを切り替えることができます。 また、「Grid」→「Reference Frame」で、Gridを表示する平面を指定することができます。表示の設定を変更し、現在の設定を保存したい場合はRVizの「File」→「Save Config」で行える。なお、PointStampedはHeaderとPointが組み合わさったメッセージで、Headerで位置データを取得した時刻、Pointで位置データを表現することができます。
+
+![Block Finder GUI](images/block_finder_tf.png)
 
 ここでは、上述のとおり、World座標系からCamera座標系までの変換ベクトルを適当に与えています。最後のセクションではROSパッケージ『crane_plus_camera_calibration』を利用して同ベクトルを求め、マニピュレーターがブロックを正しく把持できるようにします。
 
