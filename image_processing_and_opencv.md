@@ -32,15 +32,15 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    sudo apt-get install libopencv-dev
    ```
 
-1. 次に、OpenCVと正しくmakeできるようにCMakeLists.txtを修正します。
+1. 次に、OpenCVと正しくmakeできるように、OpenCVを利用するパッケージではCMakeLists.txtを修正します。
 
-   > find_package(OpenCV REQUIRED)
+   > `find_package(OpenCV REQUIRED)`
    
-   > include_directories(/usr/local/include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} )
+   > `include_directories(/usr/local/include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} )`
    
-   > target_link_libraries(dfollow ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} )
+   > `target_link_libraries(dfollow ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} )`
 
-1. また、package.xmlも修正します。OpenCV3を使用しますが、互換性を保つためにopencv2と指定します。
+1. また、package.xmlも修正します。ROS16.04ではOpenCV3を使用しますが、互換性を保つためにopencv2と指定します。
 
    > `<build_depend>opencv2</build_depend>`
 
