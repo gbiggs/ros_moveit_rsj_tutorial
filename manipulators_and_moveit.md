@@ -361,23 +361,43 @@ int main(int argc, char **argv) {
 
 ### マニピュレータを保存された姿勢に移動
 
-最初は、５行目（`ros::NodeHandle nh;`）の後に以下を追加します。MoveIt!はアシンクロナスな計算をしないといけないので、このコードによりROSのアシンクロナスな機能を初期化します。
+最初は、ファイルの上に以下のヘッダーをインクルードします。
+
+```c++
+#include <ros/ros.h>
+/***** ここから追加 *****/
+#include <moveit/move_group_interface/move_group_interface.h>
+/***** ここまで追加 *****/
+
+int main(int argc, char **argv) {
+```
+
+７行目（`ros::NodeHandle nh;`）の後に以下を追加します。MoveIt!はアシンクロナスな計算をしないといけないので、このコードによりROSのアシンクロナスな機能を初期化します。
+
+```c++
+  ros::init(argc, argv, "pickandplacer");
+  ros::NodeHandle nh;
+
+  /***** ここから追加 *****/
+  ros::AsyncSpinner spinner(2);
+  spinner.start();
+  /***** ここまで追加 *****/
+
+  ros::shutdown();
+  return 0;
+```
+
+次はMoveIt!のAPIの初期化です。そして`main`関数に以下の変数を追加します。
 
 ```c++
   ros::AsyncSpinner spinner(2);
   spinner.start();
-```
 
-次はMoveIt!のAPIの初期化です。ファイルの上に以下のヘッダーをインクルードします。
-
-```c++
-#include <moveit/move_group_interface/move_group_interface.h>
-```
-
-そして`main`関数に以下の変数を追加します。
-
-```c++
+  /***** ここから追加 *****/
   moveit::planning_interface::MoveGroupInterface arm("arm");
+  /***** ここまで追加 *****/
+
+  ros::shutdown();
 ```
 
 MoveIt!は「MoveGroup」という存在を制御します。「MoveGroup」とは、ロボット内の複数のジョイントのグループです。CRANE+には２つのMoveGroupがあります。「arm」は手首の部分までのジョイントを制御し、「gripper」は指のジョイントのみを制御します。以下は「arm」のMoveGroupです。
@@ -389,7 +409,12 @@ MoveIt!は「MoveGroup」という存在を制御します。「MoveGroup」と�
 MoveIt!はどの座標系で制御するかを指定することが必要です。今回ロボットのベースに基づいた「`base_link`」座標系を利用します。位置制御の座標等はロボットのベースから図るという意味です。
 
 ```c++
+  moveit::planning_interface::MoveGroupInterface arm("arm");
+  /***** ここから追加 *****/
   arm.setPoseReferenceFrame("base_link");
+  /***** ここまで追加 *****/
+
+  ros::shutdown();
 ```
 
 これでマニピュレータは制御できるようになりました。
@@ -405,13 +430,24 @@ MoveIt!はどの座標系で制御するかを指定することが必要です�
 `vertical`ポーズを利用してマニピュレータを立ちます。
 
 ```c++
+  arm.setPoseReferenceFrame("base_link");
+
+  /***** ここから追加 *****/
   arm.setNamedTarget("vertical");
+  /***** ここまで追加 *****/
+
+  ros::shutdown();
 ```
 
 移動先を設定した後、MoveIt!にプラン作成を移動命令を出します。
 
 ```c++
+  arm.setNamedTarget("vertical");
+  /***** ここから追加 *****/
   arm.move();
+  /***** ここまで追加 *****/
+
+  ros::shutdown();
 ```
 
 ノードをコンパイルします。端末で以下を実行します。
@@ -476,11 +512,48 @@ $ rosrun pick_and_placer pick_and_placer
 
 成功であれば、マニピュレータは立ちます。
 
+下記は今回のソース変更です。２箇所を編集しました。
+
+```c++
+#include <ros/ros.h>
+/***** ここから追加 *****/
+#include <moveit/move_group_interface/move_group_interface.h>
+/***** ここまで追加 *****/
+
+int main(int argc, char **argv) {
+  ros::init(argc, argv, "pickandplacer");
+  ros::NodeHandle nh;
+
+  /***** ここから追加 *****/
+  ros::AsyncSpinner spinner(2);
+  spinner.start();
+
+  moveit::planning_interface::MoveGroupInterface arm("arm");
+  arm.setPoseReferenceFrame("base_link");
+  arm.setNamedTarget("vertical");
+  arm.move();
+  /***** ここまで追加 *****/
+
+  ros::shutdown();
+  return 0;
+}
+```
+
 ![CRANE+ vertical named pose](images/crane_plus_vertical_pose.png)
 
 _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/named_pose>
+
+下記のように自分のワークスペースに入れて利用できます。
+
+```shell
+$ cd ~/crane_plus_ws/src
+$ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/named_pose
+$ cd ~/crane_plus_ws
+$ catkin_make
+$ rosrun rsj_2017_pick_and_placer pick_and_placer
+```
 
 _編集されたC++ファイルは以下です。_
 
@@ -490,9 +563,17 @@ _編集されたC++ファイルは以下です。_
 
 MoveIt!によってマニピュレータのグリッパーを任意の姿勢に移動します。
 
-グリッパーの姿勢を指定するために、位置と角度を指定することが必要です。作成したソースから`arm.move()`の行を削除し、以下を追加します。
+グリッパーの姿勢を指定するために、位置と角度を指定することが必要です。作成したソースから`arm.setNamedTarget("vertical");`と`arm.move();`の２行を削除し、以下を追加します。
 
 ```c++
+  moveit::planning_interface::MoveGroupInterface arm("arm");
+  arm.setPoseReferenceFrame("base_link");
+  // ここから削除
+  arm.setNamedTarget("vertical");
+  arm.move();
+  // ここまで削除
+
+  /***** ここから追加 *****/
   // Prepare
   ROS_INFO("Moving to prepare pose");
   geometry_msgs::PoseStamped pose;
@@ -510,6 +591,10 @@ MoveIt!によってマニピュレータのグリッパーを任意の姿勢に�
     ROS_WARN("Could not move to prepare pose");
     return 1;
   }
+  /***** ここまで追加 *****/
+
+  ros::shutdown();
+  return 0;
 ```
 
 上記のソースの前半はグリッパーの姿勢を設定します。`geometry_msgs/PoseStamped`メッセージを利用します：
@@ -562,9 +647,60 @@ $
 
 ![CRANE+ pick pre-grasp pose](images/crane_plus_pick_pre_grasp_pose.png)
 
+下記は今回のソース変更です。１箇所を編集しました。
+
+```c++
+#include <ros/ros.h>
+#include <moveit/move_group_interface/move_group_interface.h>
+
+int main(int argc, char **argv) {
+  ros::init(argc, argv, "pickandplacer");
+  ros::NodeHandle nh;
+
+  ros::AsyncSpinner spinner(2);
+  spinner.start();
+
+  moveit::planning_interface::MoveGroupInterface arm("arm");
+  arm.setPoseReferenceFrame("base_link");
+
+  /***** ここから追加 *****/
+  // Prepare
+  ROS_INFO("Moving to prepare pose");
+  geometry_msgs::PoseStamped pose;
+  pose.header.frame_id = "base_link";
+  pose.pose.position.x = 0.2;
+  pose.pose.position.y = 0.0;
+  pose.pose.position.z = 0.1;
+  pose.pose.orientation.x = 0.0;
+  pose.pose.orientation.y = 0.707106;
+  pose.pose.orientation.z = 0.0;
+  pose.pose.orientation.w = 0.707106;
+
+  arm.setPoseTarget(pose);
+  if (!arm.move()) {
+    ROS_WARN("Could not move to prepare pose");
+    return 1;
+  }
+  /***** ここまで追加 *****/
+
+  ros::shutdown();
+  return 0;
+}
+```
+
 _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/specified_pose>
+
+下記のように自分のワークスペースに入れて利用できます。
+
+```shell
+$ cd ~/crane_plus_ws/src
+$ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/specified_pose
+$ cd ~/crane_plus_ws
+$ catkin_make
+$ rosrun rsj_2017_pick_and_placer pick_and_placer
+```
 
 _編集されたC++ファイルは以下です。_
 
@@ -591,22 +727,40 @@ control_msgs/GripperCommand command
 まずはヘッダーファイルに下記を追加します。
 
 ```c++
+#include <ros/ros.h>
+#include <moveit/move_group_interface/move_group_interface.h>
+/***** ここから追加 *****/
 #include <actionlib/client/simple_action_client.h>
 #include <control_msgs/GripperCommandAction.h>
+/***** ここまで追加 *****/
 ```
 
 つぎにノードの初期化あたりに下記でグリッパーのアクションクリアンとを初期化します。
 
 ```c++
+  arm.setPoseReferenceFrame("base_link");
+
+  /***** ここから追加 *****/
   actionlib::SimpleActionClient<control_msgs::GripperCommandAction> gripper(
       "/crane_plus_gripper/gripper_command",
       "true");
   gripper.waitForServer();
+  /***** ここまで追加 *****/
+
+  // Prepare
+  ROS_INFO("Moving to prepare pose");
+  geometry_msgs::PoseStamped pose;
 ```
 
 最後に、マニピュレータを移動したあとに下記を追加してグリッパーを開けます。
 
 ```c++
+  if (!arm.move()) {
+    ROS_WARN("Could not move to prepare pose");
+    return 1;
+  }
+
+  /***** ここから追加 *****/
   // Open gripper
   ROS_INFO("Opening gripper");
   control_msgs::GripperCommandGoal goal;
@@ -617,15 +771,91 @@ control_msgs/GripperCommand command
     ROS_WARN("Gripper open action did not complete");
     return 1;
   }
+  /***** ここまで追加 *****/
+
+  ros::shutdown();
+  return 0;
 ```
 
 ノードをコンパイルし実行すると以下のようにグリッパーが開きます。
 
 ![CRANE+ pick open gripper](images/crane_plus_pick_open_gripper.png)
 
+下記は今回のソース変更です。３箇所を編集しました。
+
+```c++
+#include <ros/ros.h>
+#include <moveit/move_group_interface/move_group_interface.h>
+/***** ここから追加 *****/
+#include <actionlib/client/simple_action_client.h>
+#include <control_msgs/GripperCommandAction.h>
+/***** ここまで追加 *****/
+
+int main(int argc, char **argv) {
+  ros::init(argc, argv, "pickandplacer");
+  ros::NodeHandle nh;
+
+  ros::AsyncSpinner spinner(2);
+  spinner.start();
+
+  moveit::planning_interface::MoveGroupInterface arm("arm");
+  arm.setPoseReferenceFrame("base_link");
+
+  /***** ここから追加 *****/
+  actionlib::SimpleActionClient<control_msgs::GripperCommandAction> gripper(
+      "/crane_plus_gripper/gripper_command",
+      "true");
+  gripper.waitForServer();
+  /***** ここまで追加 *****/
+
+  // Prepare
+  ROS_INFO("Moving to prepare pose");
+  geometry_msgs::PoseStamped pose;
+  pose.header.frame_id = "base_link";
+  pose.pose.position.x = 0.2;
+  pose.pose.position.y = 0.0;
+  pose.pose.position.z = 0.1;
+  pose.pose.orientation.x = 0.0;
+  pose.pose.orientation.y = 0.707106;
+  pose.pose.orientation.z = 0.0;
+  pose.pose.orientation.w = 0.707106;
+
+  arm.setPoseTarget(pose);
+  if (!arm.move()) {
+    ROS_WARN("Could not move to prepare pose");
+    return 1;
+  }
+
+  /***** ここから追加 *****/
+  ROS_INFO("Opening gripper");
+  control_msgs::GripperCommandGoal goal;
+  goal.command.position = 0.1;
+  gripper.sendGoal(goal);
+  bool finishedBeforeTimeout = gripper.waitForResult(ros::Duration(30));
+  if (!finishedBeforeTimeout) {
+    ROS_WARN("Gripper open action did not complete");
+    return 1;
+  }
+  /***** ここまで追加 *****/
+
+  ros::shutdown();
+  return 0;
+}
+```
+
 _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/open_gripper>
+
+下記のように自分のワークスペースに入れて利用できます。
+
+```shell
+$ cd ~/crane_plus_ws/src
+$ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/open_gripper
+$ cd ~/crane_plus_ws
+$ catkin_make
+$ rosrun rsj_2017_pick_and_placer pick_and_placer
+```
 
 _編集されたC++ファイルは以下です。_
 
@@ -670,6 +900,13 @@ _編集されたC++ファイルは以下です。_
 前セクションでステップ１と２を実装しました。次に下記のソースをノードに追加してステップ３から５を実装します。
 
 ```c++
+  bool finishedBeforeTimeout = gripper.waitForResult(ros::Duration(30));
+  if (!finishedBeforeTimeout) {
+    ROS_WARN("Gripper open action did not complete");
+    return 1;
+  }
+
+  /***** ここから追加 *****/
   // Approach
   ROS_INFO("Executing approach");
   pose.pose.position.z = 0.05;
@@ -697,15 +934,114 @@ _編集されたC++ファイルは以下です。_
     ROS_WARN("Could not move to retreat pose");
     return 1;
   }
+  /***** ここまで追加 *****/
+
+  ros::shutdown();
+  return 0;
 ```
 
 ノードをコンパイルして実行してみましょう。成功であればマニピュレータはピッキングタスクを行います。
 
 これでROS上でMoveIt!とマニピュレータを利用して、ピック・アンド・プレースの前半が実装できました。
 
+下記は今回のソース変更です。３箇所を編集しました。
+
+```c++
+#include <ros/ros.h>
+#include <moveit/move_group_interface/move_group_interface.h>
+#include <actionlib/client/simple_action_client.h>
+#include <control_msgs/GripperCommandAction.h>
+
+int main(int argc, char **argv) {
+  ros::init(argc, argv, "pickandplacer");
+  ros::NodeHandle nh;
+
+  ros::AsyncSpinner spinner(2);
+  spinner.start();
+
+  moveit::planning_interface::MoveGroupInterface arm("arm");
+  arm.setPoseReferenceFrame("base_link");
+
+  actionlib::SimpleActionClient<control_msgs::GripperCommandAction> gripper(
+      "/crane_plus_gripper/gripper_command",
+      "true");
+  gripper.waitForServer();
+
+  // Prepare
+  ROS_INFO("Moving to prepare pose");
+  geometry_msgs::PoseStamped pose;
+  pose.header.frame_id = "base_link";
+  pose.pose.position.x = 0.2;
+  pose.pose.position.y = 0.0;
+  pose.pose.position.z = 0.1;
+  pose.pose.orientation.x = 0.0;
+  pose.pose.orientation.y = 0.707106;
+  pose.pose.orientation.z = 0.0;
+  pose.pose.orientation.w = 0.707106;
+  arm.setPoseTarget(pose);
+  if (!arm.move()) {
+    ROS_WARN("Could not move to prepare pose");
+    return 1;
+  }
+
+  ROS_INFO("Opening gripper");
+  control_msgs::GripperCommandGoal goal;
+  goal.command.position = 0.1;
+  gripper.sendGoal(goal);
+  bool finishedBeforeTimeout = gripper.waitForResult(ros::Duration(30));
+  if (!finishedBeforeTimeout) {
+    ROS_WARN("Gripper open action did not complete");
+    return 1;
+  }
+
+  /***** ここから追加 *****/
+  // Approach
+  ROS_INFO("Executing approach");
+  pose.pose.position.z = 0.05;
+  arm.setPoseTarget(pose);
+  if (!arm.move()) {
+    ROS_WARN("Could not move to grasp pose");
+    return 1;
+  }
+
+  // Grasp
+  ROS_INFO("Grasping object");
+  goal.command.position = 0.015;
+  gripper.sendGoal(goal);
+  finishedBeforeTimeout = gripper.waitForResult(ros::Duration(30));
+  if (!finishedBeforeTimeout) {
+    ROS_WARN("Gripper close action did not complete");
+    return 1;
+  }
+
+  // Retreat
+  ROS_INFO("Retreating");
+  pose.pose.position.z = 0.1;
+  arm.setPoseTarget(pose);
+  if (!arm.move()) {
+    ROS_WARN("Could not move to retreat pose");
+    return 1;
+  }
+  /***** ここまで追加 *****/
+
+  ros::shutdown();
+  return 0;
+}
+```
+
 _上述のソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/picking>
+
+下記のように自分のワークスペースに入れて利用できます。
+
+```shell
+$ cd ~/crane_plus_ws/src
+$ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/picking
+$ cd ~/crane_plus_ws
+$ catkin_make
+$ rosrun rsj_2017_pick_and_placer pick_and_placer
+```
 
 _編集されたC++ファイルは以下です。_
 
