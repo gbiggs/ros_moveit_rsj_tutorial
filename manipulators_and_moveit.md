@@ -568,10 +568,10 @@ MoveIt!によってマニピュレータのグリッパーを任意の姿勢に�
 ```c++
   moveit::planning_interface::MoveGroupInterface arm("arm");
   arm.setPoseReferenceFrame("base_link");
-  // ここから削除
+  /***** ここから削除 *****/
   arm.setNamedTarget("vertical");
   arm.move();
-  // ここまで削除
+  /***** ここまで削除 *****/
 
   /***** ここから追加 *****/
   // Prepare
