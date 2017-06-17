@@ -91,11 +91,13 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    $ sudo apt-get install ros-kinetic-camera-calibration
    ```
 
-1. ROSパッケージ『camera_calibration』を実行します。
+1. ROSパッケージ『camera_calibration』を実行します。デバイス番号が0以外の場合はusb_cam_calib.launchを修正してください。
 
    ```shell
    # １つ目のターミナル
    $ roslaunch rsj_2017_block_finder usb_cam_calib.launch
+   ```
+   ```shell
    # ２つ目のターミナル
    $ rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.0285 image:=/camera/image_raw camera:=/camera
    ```
