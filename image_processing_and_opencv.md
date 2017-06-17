@@ -58,7 +58,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
    ```shell
    $ cd ~/block_finder_ws/src
-   $ git clone git@github.com:Suzuki1984/rsj_2017_block_finder.git
+   $ git clone https://github.com/Suzuki1984/rsj_2017_block_finder.git
    $ ls
    CMakeLists.txt  rsj_2017_block_finder  usb_cam
    ```
