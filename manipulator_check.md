@@ -115,7 +115,7 @@ date: 2017-06-16
 
    ```shell
    $ cd ~/Downloads/dynamixel_servo_check/build/
-   $ sudo ./servo_check 1
+   $ ./servo_check 1
    Opened port
    Changed buadrate
    Dynamixel has been successfully connected
