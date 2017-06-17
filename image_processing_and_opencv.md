@@ -168,7 +168,7 @@ $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
 
 そして、黄色の四角形の中に収まるようにブロックを置きます。
 
-ここでRVizを確認しましょう。TFは座標系を表示し、R色がX軸、G色がY軸、B色がZ軸を表します。「Global Options」→「Fixed Frame」で基準とするFrameを切り替えることができます。 また、「Grid」→「Reference Frame」で、Gridを表示する平面を指定することができます。なお、PointStampedはHeaderとPointが組み合わさったメッセージで、Headerで位置データを取得した時刻、Pointで位置データを表現することができます。
+ここでRVizを確認しましょう。TFは座標系を表示し、R色がX軸、G色がY軸、B色がZ軸を表します。「Global Options」→「Fixed Frame」で基準とするFrameを切り替えることができます。 また、「Grid」→「Reference Frame」で、Gridを表示する平面を指定することができます。表示の設定を変更し、現在の設定を保存したい場合はRVizの「File」→「Save Config」で行える。なお、PointStampedはHeaderとPointが組み合わさったメッセージで、Headerで位置データを取得した時刻、Pointで位置データを表現することができます。
 
 ![Block Finder GUI](images/block_finder_tf.png)
 
