@@ -114,6 +114,7 @@ date: 2017-06-16
    _注意：プログラムを実行すると指定したサーボは高速で真ん中の位置に移動します。電源を入れる前にマニピュレータをまっすぐ上向きに近い姿勢にしてください。_{:style="color: red"}
 
    ```shell
+   $ cd ~/Downloads/dynamixel_servo_check/build/
    $ sudo ./servo_check 1
    Opened port
    Changed buadrate
