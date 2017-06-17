@@ -512,6 +512,8 @@ $ rosrun pick_and_placer pick_and_placer
 
 成功であれば、マニピュレータは立ちます。
 
+![CRANE+ vertical named pose](images/crane_plus_vertical_pose.png)
+
 下記は今回のソース変更です。２箇所を編集しました。
 
 ```c++
@@ -538,8 +540,6 @@ int main(int argc, char **argv) {
   return 0;
 }
 ```
-
-![CRANE+ vertical named pose](images/crane_plus_vertical_pose.png)
 
 _このソースは以下のURLでダウンロード可能です。_
 
