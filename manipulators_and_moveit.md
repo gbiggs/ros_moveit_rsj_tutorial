@@ -1063,7 +1063,11 @@ float64 y
 float64 theta
 ```
 
-`theta`を無視して、`x`と`y`だけでブロックの位置を示す。`geometry_msgs/Pose2D`のヘッダーは`geometry_msgs/Pose2D.h`です。
+`theta`を無視して、`x`と`y`だけでブロックの位置を示す。`geometry_msgs/Pose2D`のヘッダーは`geometry_msgs/Pose2D.h`です。下記のように追加します。
+
+```c++
+#include <geometry_msgs/Pose2D.h>
+```
 
 ノードにブロックの位置を送信するために、`rostopic`が利用できます。例えばトピックの名は`block`であれば、端末で以下を実行するとノードに位置情報が送信できます。
 
@@ -1092,6 +1096,81 @@ ros::Subscriber sub = node_handle.subscribe("/block", 1, &PickNPlacer::DoPick, t
 
 `this`
 : `msg`以外のコールバックに渡す変数を指定します。`this`は、クラスへのポインターです。クラスメソッドの最初の変数は実はクラスポインターですが、普段コンパイラーが隠すので見えません。この場合は指定しないとクラスのデータにアクセスできません。
+
+`DoPick()`は、[ROSの基本](ros_basics.html)で実習したコールバックと同じように書きます。例えば下記は受信したポーズを端末で表示します。
+
+```c++
+void DoPick(geometry_msgs::Pose2D::ConstPtr const& msg) {
+  ROS_INFO("Received pose:");
+  ROS_INFO("X: %f", msg->x);
+  ROS_INFO("Y: %f", msg->y);
+  ROS_INFO("Theta: %f", msg->theta);
+}
+```
+
+下記はROSノードをクラスとして実装することの形です。下記のノードは`/block`トピックに受信するポーズにマニピュレータを移動させます。
+
+```c++
+#include <ros/ros.h>
+
+class PickNPlacer {
+ public:
+  explicit PickNPlacer(ros::NodeHandle& node_handle)
+      : arm_("arm") // クラスのメンバー変数の初期化
+      {
+    // クラスの初期化
+    arm_.setPoseReferenceFrame("base_link");
+    arm_.setNamedTarget("vertical");
+    arm_.move();
+
+    // トピックにサブスクライブ
+    // メッセージを受信すると、MoveToPose()関数が呼ばれる
+    sub_ = node_handle.subscribe("/block", 1, &PickNPlacer::MoveToPose, this);
+  }
+
+  // トピックのコールバック
+  void MoveToPose(geometry_msgs::Pose2D::ConstPtr const& msg) {
+    // 受信したポースに移動する
+    ROS_INFO("Moving to pose %f, %f, %f", msg->x, msg->y, msg->y);
+    geometry_msgs::PoseStamped pose;
+    pose.header.frame_id = "base_link";
+    pose.pose.position.x = msg->x;
+    pose.pose.position.y = msg->y;
+    pose.pose.position.z = msg->z;
+    pose.pose.orientation.x = 0.0;
+    pose.pose.orientation.y = 0.707106;
+    pose.pose.orientation.z = 0.0;
+    pose.pose.orientation.w = 0.707106;
+    arm_.setPoseTarget(pose);
+    if (!arm_.move()) {
+      ROS_WARN("Could not move to prepare pose");
+      return;
+    }
+  }
+
+ private:
+  // クラスのメンバー変数（クラスの中に存在し、クラスのメソッドでアクセスできる）
+  moveit::planning_interface::MoveGroupInterface arm_;
+  ros::Subscriber sub_;
+};
+
+int main(int argc, char **argv) {
+  ros::init(argc, argv, "pickandplacer");
+
+  ros::AsyncSpinner spinner(2);
+  spinner.start();
+
+  ros::NodeHandle nh;
+  // ノードの機能を実装するクラスのインスタンスを作成する
+  PickNPlacer pnp(nh);
+
+  // ノードが終了されるまでに待つ（この間にクラスが振る舞えを行う）
+  ros::waitForShutdown();
+
+  ros::shutdown();
+  return 0;
+}
+```
 
 __注意：変更し始める前に、ソースのバックアップを作りましょう。__{: style="color: red" }
 
