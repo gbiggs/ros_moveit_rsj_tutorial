@@ -12,9 +12,9 @@ date: 2017-06-16
 
 ## OpenCV
 
-OpenCV（Open Source Computer Vision Library）は無料の画像処理ライブラリーです。Linuzの他、WiondowsやMacOSでも利用することができ、現在、多くの画像処理研究で利用されてます。例えば、OpenCVを利用することで、従来手法との精度比較を簡単に行うことができます。
+OpenCV（Open Source Computer Vision Library）は無料の画像処理ライブラリーです。Linuxの他、WindowsやMacOSでも利用することができ、現在、多くの画像処理研究で利用されてます。例えば、OpenCVを利用することで、従来手法との精度比較を簡単に行うことができます。
 
-ROSでOpenCVを利用するときの注意点としては、バージョン管理があります。ROSがリリースされたときの最新バージョンのOpenCVを使用することになります。ROSのバージョンとOpenCVのバージョンの対応表をまとめておきます。本セミナーはROS16.04を使用しているため、OpenCV3を利用することになります。
+ROSでOpenCVを利用するときの注意点としては、バージョン管理があります。基本的に、使用するROSがリリースされたときの最新バージョンのOpenCVを使用することになります。ROSのバージョンとOpenCVのバージョンの対応表をまとめておきます。本セミナーはROS16.04を使用しているため、OpenCV3.2を利用することになります。
 
 |ROSのバージョン|OpenCVのバージョン|
 |17.04 (Lunar Loggerhead)|3.2.0|
@@ -32,7 +32,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    sudo apt-get install libopencv-dev
    ```
 
-1. 次に、OpenCVと正しくmakeできるように、OpenCVを利用するパッケージではCMakeLists.txtを修正します。
+1. 次に、OpenCVと正しくmakeできるように、OpenCVを利用するパッケージでは下記のとおりCMakeLists.txtを修正します。
 
    > `find_package(OpenCV REQUIRED)`
    
@@ -46,7 +46,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
    > `<run_depend>opencv2</run_depend>`
 
-1. 本セミナーではパッケージ『cv_bridge』を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、IplImageへ変換し、処理を施し、Image Messageへ戻すという一連の処理を記述することができます。（※IplはIntel Image Processing Libraryの略で、バージョン1で使用されている型になります。そのため、本セミナーではIplImageをバージョン2以降で使用されている型『Mat』へ変換し、画像処理を行います。）
+1. 本セミナーではパッケージ『cv_bridge』を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、IplImageへ変換し、処理を施し、Image Messageへ戻すという一連の処理を記述することができます。（※IplはIntel Image Processing Libraryの略で、OpenCV1で使用されている型になります。そのため、本セミナーではIplImageをOpenCV2以降で使用されている型『Mat』へ変換し、画像処理を行います。）
 
    ```shell
    sudo apt-get install ros-kinetic-cv-camera
