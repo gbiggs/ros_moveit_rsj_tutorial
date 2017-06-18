@@ -1115,6 +1115,9 @@ ros::Subscriber sub = node_handle.subscribe("/block", 1, &PickNPlacer::DoPick, t
 
 class PickNPlacer {
  public:
+  // コンストラクタ
+  // クラスを初期化するための関数
+  // クラスのインスタンスを作成すると自動的に呼ばれる
   explicit PickNPlacer(ros::NodeHandle& node_handle)
       : arm_("arm") // クラスのメンバー変数の初期化
       {
