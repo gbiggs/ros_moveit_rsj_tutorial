@@ -1097,15 +1097,15 @@ ros::Subscriber sub = node_handle.subscribe("/block", 1, &PickNPlacer::DoPick, t
 `this`
 : `msg`以外のコールバックに渡す変数を指定します。`this`は、クラスへのポインターです。クラスメソッドの最初の変数は実はクラスポインターですが、普段コンパイラーが隠すので見えません。この場合は指定しないとクラスのデータにアクセスできません。
 
-`DoPick()`は、[ROSの基本](ros_basics.html)で実習したコールバックと同じように書きます。例えば下記は受信したポーズを端末で表示します。
+`DoPick()`は、[ROSの基本](ros_basics.html#ノードを作成-1)で実習したコールバックと同じように書きます。例えば下記は受信したポーズを端末で表示します。
 
 ```c++
-void DoPick(geometry_msgs::Pose2D::ConstPtr const& msg) {
-  ROS_INFO("Received pose:");
-  ROS_INFO("X: %f", msg->x);
-  ROS_INFO("Y: %f", msg->y);
-  ROS_INFO("Theta: %f", msg->theta);
-}
+  void PickNPlace::DoPick(geometry_msgs::Pose2D::ConstPtr const& msg) {
+    ROS_INFO("Received pose:");
+    ROS_INFO("X: %f", msg->x);
+    ROS_INFO("Y: %f", msg->y);
+    ROS_INFO("Theta: %f", msg->theta);
+  }
 ```
 
 下記はROSノードをクラスとして実装することの形です。下記のノードは`/block`トピックに受信するポーズにマニピュレータを移動させます。
