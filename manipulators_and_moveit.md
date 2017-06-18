@@ -1143,7 +1143,7 @@ class PickNPlacer {
     pose.pose.orientation.w = 0.707106;
     arm_.setPoseTarget(pose);
     if (!arm_.move()) {
-      ROS_WARN("Could not move to prepare pose");
+      ROS_WARN("Could not move to pose");
       return;
     }
   }
