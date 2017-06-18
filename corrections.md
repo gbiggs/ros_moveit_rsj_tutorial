@@ -3,6 +3,26 @@ title: 資料の修正
 date: 2017-06-15
 ---
 
+## 画像処理とOpenCVの利用
+
+1. 「画像処理パッケージの設定」でソースのURLが修正されました。
+
+   修正前
+   : ```shell
+     $ cd ~/block_finder_ws/src
+     $ git clone git@github.com:Suzuki1984/rsj_2017_block_finder.git
+     $ ls
+     CMakeLists.txt  rsj_2017_block_finder  usb_cam
+     ```
+
+   修正後
+   : ```shell
+     $ cd ~/block_finder_ws/src
+     $ git clone https://github.com/Suzuki1984/rsj_2017_block_finder.git
+     $ ls
+     CMakeLists.txt  rsj_2017_block_finder  usb_cam
+     ```
+
 ## 画像処理とマニピュレータの組み合わせ
 
 1. 「ワークスペースのセットアップ」で、自分のワークスペースからのパッケージを利用する場合に、「block_finder」のパッケージ名が変更されました。
