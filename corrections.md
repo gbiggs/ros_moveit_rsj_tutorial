@@ -52,6 +52,24 @@ date: 2017-06-15
 
    従って、全ページで「block_finder」パッケージ名を「rsj_2017_block_finder」に変更されました。
 
+1. 「ワークスペースのセットアップ」で、本セミナーに用意されたノードの利用する場合の「pick_and_placer」をクローンするところでは、`cd` の先が修正されました。
+
+   修正前
+   : ```shell
+     $ cd ~/rsj_2017_application_ws/src
+     $ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer.git
+     $ cd ~/rsj_2017_pick_and_placer
+     $ git checkout full_application_version
+     ```
+
+   修正後
+   : ```shell
+     $ cd ~/rsj_2017_application_ws/src
+     $ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer.git
+     $ cd rsj_2017_pick_and_placer           # <- 変更
+     $ git checkout full_application_version
+     ```
+
 1. 「ワークスペースのセットアップ」で、本セミナーに用意されたノードの利用する場合の「block_finder」をクローンするところでは、URLが変更されました。
 
    修正前

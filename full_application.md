@@ -42,7 +42,7 @@ $ cp -r ~/block_finder_ws/src/rsj_2017_block_finder .
 : ```shell
   $ cd ~/rsj_2017_application_ws/src
   $ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer.git
-  $ cd ~/rsj_2017_pick_and_placer
+  $ cd rsj_2017_pick_and_placer
   $ git checkout full_application_version
   ```
   _注意：パッケージ名が自分製パッケージと異なります。下記の説明で`pick_and_placer`と書いているところに`rsj_2017_pick_and_placer`を利用してください。_
