@@ -10,7 +10,7 @@ date: 2017-06-16
 
 本セクションでは、画像に基づきブロックを見つけ、その位置を出力する一連の処理について説明します。
 
-# OpenCV
+## OpenCV
 
 OpenCV（Open Source Computer Vision Library）は無料の画像処理ライブラリーです。Linuzの他、WiondowsやMacOSでも利用することができ、現在、多くの画像処理研究で利用されてます。例えば、OpenCVを利用することで、従来手法との精度比較を簡単に行うことができます。
 
@@ -22,7 +22,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 |15.04 (Jade Turtle)|2.4.11|
 |14.04 (Indigo Igloo)|2.4.8|
 
-# OpenCVの設定
+## OpenCVの設定
 
 1. まず、OpenCVをインストールします。
 
@@ -52,7 +52,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    sudo apt-get install ros-kinetic-cv-camera
    ```
 
-# 画像処理パッケージの設定
+## 画像処理パッケージの設定
 
 1. セミナー用画像処理のROSパッケージをダウンロードします。ディレクトリ『rsj_2017_block_finder』が存在することを確認します。
 
@@ -79,7 +79,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 これでセミナー用画像処理のパッケージ「rsj_2017_block_finder」が利用可能になりました。
 
 
-# カメラのキャリブレーション
+## カメラのキャリブレーション
 
 カメラの内部パラメーターを設定します。
 
@@ -108,7 +108,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 1. COMMITボタンを押します。（~/.ros/camera_info/elecom_ucam.yamlが作成されます。）
 
 
-# 基礎編
+## 基礎編
 
 1. まず、セミナー用画像処理パッケージの内容を確認します。
 
@@ -239,7 +239,7 @@ $ rostopic echo /block_finder/block_size_max
 
 『Ctrl』キー＋『c』キーで終了します。
 
-# 発展編
+## 発展編
 
 基本編で使用した輪郭検出処理では、チェッカーボードの四角形をスポンジと誤認識してしまいます。そのため、チェッカーボードの上でもスポンジを検出できるように改良します。
 
@@ -287,7 +287,7 @@ $ rostopic echo /block_finder/block_size_max
    $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=2
    ```
 
-# 参考情報
+## 参考情報
 
 OpenCVには多くのサンプルプログラムが用意されており、研究初期の検討段階において、様々な手法を試すことができます。そして、同サンプルプログラムをROSノード化したROSパッケージ『opencv_apps』があります。
 
