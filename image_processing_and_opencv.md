@@ -287,9 +287,13 @@ $ rostopic echo /block_finder/block_size_max
    $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=2
    ```
 
+## 課題
+
+
+
 ## 参考情報
 
-OpenCVには多くのサンプルプログラムが用意されており、研究初期の検討段階において、様々な手法を試すことができます。そして、同サンプルプログラムをROSノード化したROSパッケージ『opencv_apps』があります。
+OpenCVには多くのサンプルプログラムが用意されており、研究初期の検討段階において、様々な手法を試すことができます。そして、同サンプルプログラムをROSノード化したROSパッケージ『opencv_apps』があります。（→http://wiki.ros.org/opencv_apps）
 
 1. インストールは下記のとおり行います。
 
