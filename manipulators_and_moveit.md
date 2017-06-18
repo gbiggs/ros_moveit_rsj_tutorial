@@ -1100,7 +1100,7 @@ ros::Subscriber sub = node_handle.subscribe("/block", 1, &PickNPlacer::DoPick, t
 `DoPick()`は、[ROSの基本](ros_basics.html#ノードのソースの作成-1)で実習したコールバックと同じように書きます。例えば下記は受信したポーズを端末で表示します。
 
 ```c++
-  void PickNPlace::DoPick(geometry_msgs::Pose2D::ConstPtr const& msg) {
+  void DoPick(geometry_msgs::Pose2D::ConstPtr const& msg) {
     ROS_INFO("Received pose:");
     ROS_INFO("X: %f", msg->x);
     ROS_INFO("Y: %f", msg->y);
