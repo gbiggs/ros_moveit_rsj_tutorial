@@ -142,9 +142,11 @@ $ rosrun usb_cam usb_cam_node __name:=camera _camera_name:="elecom_ucam" \
 $ rosrun tf static_transform_publisher 0 0 0 0 0 0 world base_link 10
 ```
 
-そして、カリブレーションプロセス自体を始めます。上記と同じ端末で下記を実行します。
+そして、カリブレーションプロセス自体を始めます。
 
 ```shell
+$ cd ~/rsj_2017_application_ws
+$ source devel/setup.bash
 $ roslaunch crane_plus_camera_calibration calibrate.launch
 （省略）
 [ INFO] [1496372099.962924251]: [calibrate] Initialized.
