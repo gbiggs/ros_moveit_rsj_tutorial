@@ -23,6 +23,15 @@ date: 2017-06-15
      CMakeLists.txt  rsj_2017_block_finder  usb_cam
      ```
 
+## ROSの便利機能
+
+1. シミュレータ上でCRANE+を利用するために新しく必要になったパッケージがあります。シミュレータを起動する前に下記でこのパッケージをインストールしてください。
+
+   ```shell
+   $ sudo apt-get install ros-kinetic-joint-trajectory-controllers
+   $ sudo apt-get install ros-kinetic-effort-controllers
+   ```
+
 ## 画像処理とマニピュレータの組み合わせ
 
 1. 「ワークスペースのセットアップ」で、自分のワークスペースからのパッケージを利用する場合に、「block_finder」のパッケージ名が変更されました。
