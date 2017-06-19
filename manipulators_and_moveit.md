@@ -1,6 +1,6 @@
 ---
 title: マニピュレータの制御とMoveIt!の利用
-date: 2017-06-16
+date: 2017-06-18
 ---
 
 - Table of contents

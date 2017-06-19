@@ -1,6 +1,6 @@
 ---
 title: カメラの動作確認
-date: 2017-06-16
+date: 2017-06-17
 ---
 
 - Table of contents
