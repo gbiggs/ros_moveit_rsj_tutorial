@@ -1470,10 +1470,10 @@ class PickNPlacer {
 
 ```c++、
     pose.header.frame_id = "base_link";
-  /***** ここから変更 *****/
+    /***** ここから変更 *****/
     pose.pose.position.x = place_x_;
     pose.pose.position.y = place_y_;
-  /***** ここまで変更 *****/
+    /***** ここまで変更 *****/
     pose.pose.position.z = 0.1;
     pose.pose.orientation.x = 0.0;
     pose.pose.orientation.y = 0.707106;
@@ -1529,7 +1529,7 @@ MoveIt!はピック・アンド・プレースを行うソースが含まれて�
 #include <moveit_msgs/Grasp.h>
 ```
 
-`DoPick`関数の中身は下記のとおりになります。
+`DoPick`関数の中身は下記の通りに変更します。
 
 ```c++
   bool DoPick(geometry_msgs::Pose2D::ConstPtr const& msg) {
@@ -1578,7 +1578,7 @@ MoveIt!はピック・アンド・プレースを行うソースが含まれて�
 
 本方法の特に便利なことは、周りの物体で当たってもいい物が指定できます。このシナリオの場合には、テーブルとブロックが接触してもいいと指定しています。
 
-`DoPlace`関数の中身は下記の通りになります。
+`DoPlace`関数の中身は下記の通りに変更します。
 
 ```c++
   bool DoPlace() {
