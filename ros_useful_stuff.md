@@ -223,6 +223,24 @@ publishing and latching message for 3.0 seconds
 
   `-1`を利用すると一回のみ送信します。`-1`を削除すると`rostopic`は __Ctrl+c__{: style="border: 1px solid black" } を入力するまでに送信し続きます。
 
+## rosbag
+
+ROSで提供されている`rosbag`ツールを用いると、ROS上で送信、受信されているデータ(メッセージ)を記録・再生することができます。
+
+- データを記録（マニピュレータの一つのサーボステートとロボットの前ジョイントステートを記録する例）
+
+  ```shell
+  $ rosbag record /elbow_servo_controller/state /joint_states
+  ```
+
+  記録の終了は、__Ctrl+c__{: style="border: 1px solid black" } で行います。記録されたデータは、「日付時刻.bag」のファイル名で保存されています。 
+
+- データを再生する
+
+  ```shell
+  $ rosbag play ファイル名.bag
+  ```
+
 ## RViz
 
 ROSでは、RVizという、データ可視化ツール(ビューワ)が提供されています。今回のセミナーの環境にも、インストールされており、マニピュレータの姿勢等を表示することができます。ロボットをPCに接続して、[マニピュレータの制御とMoveIt!の利用](manipulators_and_moveit.html)で説明したようにシステムを実行し、その状態で下記コマンドを実行してみましょう。
@@ -280,24 +298,6 @@ $ rviz
 ```shell
 $ echo "export LIBGL_ALWAYS_SOFTWARE=1" >> ~/.bashrc
 ```
-
-## rosbag
-
-ROSで提供されている`rosbag`ツールを用いると、ROS上で送信、受信されているデータ(メッセージ)を記録・再生することができます。
-
-- データを記録（マニピュレータの一つのサーボステートとロボットの前ジョイントステートを記録する例）
-
-  ```shell
-  $ rosbag record /elbow_servo_controller/state /joint_states
-  ```
-
-  記録の終了は、__Ctrl+c__{: style="border: 1px solid black" } で行います。記録されたデータは、「日付時刻.bag」のファイル名で保存されています。 
-
-- データを再生する
-
-  ```shell
-  $ rosbag play ファイル名.bag
-  ```
 
 ## シミュレータ
 
