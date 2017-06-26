@@ -1523,10 +1523,19 @@ MoveIt!はピック・アンド・プレースを行うソースが含まれて�
 
 ノードのソースを編集して、MoveIt!の「pick」と「place」アクションを利用しましょう。
 
+_注意：下記のソースは、[]()のソースから編集します。プラニングシーンの初期化を行わないとMoveIt!のピックアンドプレース機能は利用できません。_{:style="color: red"}
+
 下記のヘッダーファイルを追加します。
 
 ```c++
+#include <moveit_msgs/CollisionObject.h>
+#include <shape_msgs/SolidPrimitive.h>
+/***** ここから追加 *****/
 #include <moveit_msgs/Grasp.h>
+/***** ここまで追加 *****/
+
+#include <string>
+#include <vector>
 ```
 
 `DoPick`関数の中身は下記の通りに変更します。
