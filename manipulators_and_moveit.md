@@ -1468,7 +1468,7 @@ class PickNPlacer {
 
 パラメータの利用として、`DoPlace()`内の`pose`変数を初期化するところに`pose.pose.position.x`と`pose.pose.position.y`の値をパラメータからとるように変更します。
 
-```c++、
+```c++
     pose.header.frame_id = "base_link";
     /***** ここから変更 *****/
     pose.pose.position.x = place_x_;
