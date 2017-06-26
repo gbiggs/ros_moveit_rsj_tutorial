@@ -1080,9 +1080,9 @@ float64 theta
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <actionlib/client/simple_action_client.h>
 #include <control_msgs/GripperCommandAction.h>
-  /***** ここから追加 *****/
+/***** ここから追加 *****/
 #include <geometry_msgs/Pose2D.h>
-  /***** ここまで追加 *****/
+/***** ここまで追加 *****/
 
 int main(int argc, char **argv) {
 ```
@@ -1092,7 +1092,7 @@ int main(int argc, char **argv) {
 ```c++
 #include <geometry_msgs/Pose2D.h>
 
-  /***** ここから追加 *****/
+/***** ここから追加 *****/
 class PickNPlacer {
  public:
   // コンストラクタ
@@ -1106,7 +1106,7 @@ class PickNPlacer {
  private:
   // クラスのメンバー変数（クラスの中に存在し、クラスのメソッドでアクセスできる）
 };
-  /***** ここまで追加 *****/
+/***** ここまで追加 *****/
 
 int main(int argc, char **argv) {
 ```
@@ -1229,7 +1229,6 @@ class PickNPlacer {
       return;
     }
   }
-
   /***** ここまで追加 *****/
 
  private:
@@ -1280,19 +1279,135 @@ _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/topic_picker>
 
+_編集されたC++ファイルは以下です。_
+
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/topic_picker/src/pick_and_placer.cpp>
+
 ### プレースタスクも行う
 
-ピッキングタスクの逆は「place」（プレース、置くこと）です。動きは基本的にピッイングの逆ですが、物体の置き方により動きは代わることがあります。
+ピッキングタスクの逆は「place」（プレース、置くこと）です。
 
-CRANE+と本セミナーの物体（すなわちスポンジのブロック）の場合は、プレースはピッキングの逆で問題ありません。（落とすことでも問題ありませんが、少し無粋でしょう。）
+プレースの動きは基本的にピッイングの逆ですが、物体の置き方により動きは代わることもあります。CRANE+と本セミナーの物体（スポンジのブロック）の場合は、プレースはピッキングの逆で問題ありません。（落とすことでも問題ありませんが、少し無粋でしょう。）
 
 ノードにピッキング後にプレースを行うソースを実装してみましょう。
 
-__注意：変更し始める前に、ソースのバックアップを作りましょう。__{: style="color: red" }
+まずはプレースを行うメンバー関数、`DoPlace()`、をノードのクラスに追加します。
+
+```c++
+    ROS_INFO("Pick complete");
+    return true;
+  }
+
+  /***** ここから追加 *****/
+  bool DoPlace() {
+    // Prepare
+    ROS_INFO("Moving to prepare pose");
+    geometry_msgs::PoseStamped pose;
+    pose.header.frame_id = "base_link";
+    pose.pose.position.x = 0.1;
+    pose.pose.position.y = -0.2;
+    pose.pose.position.z = 0.1;
+    pose.pose.orientation.x = 0.0;
+    pose.pose.orientation.y = 0.707106;
+    pose.pose.orientation.z = 0.0;
+    pose.pose.orientation.w = 0.707106;
+    arm_.setPoseTarget(pose);
+    if (!arm_.move()) {
+      ROS_WARN("Could not move to prepare pose");
+      return false;
+    }
+
+    // Approach
+    ROS_INFO("Executing approach");
+    pose.pose.position.z = 0.05;
+    arm_.setPoseTarget(pose);
+    if (!arm_.move()) {
+      ROS_WARN("Could not move to place pose");
+      return false;
+    }
+
+    // Release
+    ROS_INFO("Opening gripper");
+    control_msgs::GripperCommandGoal goal;
+    goal.command.position = 0.1;
+    gripper_.sendGoal(goal);
+    bool finishedBeforeTimeout = gripper_.waitForResult(ros::Duration(30));
+    if (!finishedBeforeTimeout) {
+      ROS_WARN("Gripper open action did not complete");
+      return false;
+    }
+
+    // Retreat
+    ROS_INFO("Retreating");
+    pose.pose.position.z = 0.1;
+    arm_.setPoseTarget(pose);
+    if (!arm_.move()) {
+      ROS_WARN("Could not move to retreat pose");
+      return false;
+    }
+
+    // Rest
+    goal.command.position = 0.015;
+    gripper_.sendGoal(goal);
+    arm_.setNamedTarget("vertical");
+    arm_.move();
+
+    ROS_INFO("Place complete");
+    return true;
+  }
+  /***** ここまで追加 *****/
+
+ private:
+  moveit::planning_interface::MoveGroupInterface arm_;
+```
+
+次にピックとプレースを連続に行うメンバー関数を追加します。この関数はトピックのコールバックになるので、`msg`という引数をもらうようにします。
+
+```c++
+    sub_ = node_handle.subscribe("/block", 1, &PickNPlacer::DoPickAndPlace, this);
+  }
+
+  /***** ここから追加 *****/
+  void DoPickAndPlace(geometry_msgs::Pose2D::ConstPtr const& msg) {
+    if (DoPick(msg)) {
+      DoPlace();
+    }
+  }
+  /***** ここまで追加 *****/
+
+  bool DoPick(geometry_msgs::Pose2D::ConstPtr const& msg) {
+    // Prepare
+    ROS_INFO("Moving to prepare pose");
+    geometry_msgs::PoseStamped pose;
+```
+
+最後に、コンストラクタでトピックにサブスクライブするところで指定しているコールバックを変更します。`DoPickAndPlace()`メンバー関数にします。
+
+```c++
+    arm_.move();
+    gripper_.waitForServer();
+
+  /***** ここから変更 *****/
+    sub_ = node_handle.subscribe("/block", 1, &PickNPlacer::DoPickAndPlace, this);
+  /***** ここまで変更 *****/
+  }
+
+  void DoPickAndPlace(geometry_msgs::Pose2D::ConstPtr const& msg) {
+```
+
+ノードをコンパイルし実行し、別の端末で下記を実行するとマニピュレータはブロックを取って、違う所で置きます。
+
+```shell
+$ rostopic pub -1 /block geometry_msgs/Pose2D "{x: 0.1, y: 0.0}"
+```
 
 _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/pickandplace>
+
+_編集されたC++ファイルは以下です。_
+
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/pickandplace/src/pick_and_placer.cpp>
 
 ### パラメータで振る舞えを変更
 
@@ -1300,43 +1415,74 @@ _このソースは以下のURLでダウンロード可能です。_
 
 プレースの場所を簡単に変更してアプリケーションに合わせるノードを作りましょう。プレースの場所をパラメータで設定できるようにします。
 
-パラメータを利用するために、まずはノードがパラメータをロードする機能を追加します。`ros::param::param()`関数を利用します。
-
-ノードのクラスのセットアップするところ（コンストラクタなど）に、最初に`ros::param::param()`を呼びプレース座標を読み込む行を追加します。`arm_`を作成する前に入れます。
+パラメータの値を保存する変数が必要です。クラスの他のメンバー変数と同じ所に追加します。パラメータサーバから読み込んだ値はここで保存し、実行中にここから利用します。
 
 ```c++
+ private:
+  moveit::planning_interface::MoveGroupInterface arm_;
+  actionlib::SimpleActionClient<control_msgs::GripperCommandAction> gripper_;
+  ros::Subscriber sub_;
+  /***** ここから追加 *****/
+  float place_x_;
+  float place_y_;
+  /***** ここまで追加 *****/
+};
+
+int main(int argc, char **argv) {
+```
+
+パラメータのロードをクラスのコンストラクタで行います。`ros::param::param()`関数を利用して、パラメータサーバから読み込みます。
+
+```c++
+class PickNPlacer {
+ public:
+  explicit PickNPlacer(ros::NodeHandle& node_handle)
+      : arm_("arm"),
+        gripper_("/crane_plus_gripper/gripper_command", "true") {
+    /***** ここから追加 *****/
     ros::param::param<float>(
       "~place_x",
       place_x_,
       0.1);
     ros::param::param<float>("~place_y", place_y_, -0.2);
+    /***** ここまで追加 *****/
+    arm_.setPoseReferenceFrame(scene_task_frame_);
+    arm_.setNamedTarget("vertical");
 ```
 
-１行目は関数を呼びます。テンプレート関数のでパラメータのデータ型を指定します。
+７行目から１０行目は一つのパラメータの読み込みです。
 
-２行目でパラメータ名を指定します。パラメータサーバからこのパラメータを読み込みます。`~`で始まる理由は、ノードのネームスペース内のパラメータだと指定します。基本的に一つのノードだけで利用するパラメータはノードのネームスペース内に置くべきです。
+`ros::param::param<float>(`
+: 関数を呼びます。テンプレート関数のでパラメータのデータ型（`float`）を指定します。
 
-３行目は保存先を指定します。メンバー変数`place_x_`に保存します。
+`"~place_x"`
+: パラメータサーバ上のパラメータ名を指定します。`~`で始まるので、ノードのネームスペース内のパラメータだと指定します。基本的に一つのノードだけで利用するパラメータはノードのネームスペース内に置くべきです。`~`を指定しないことはグローバルパラメータを利用するということです。
 
-４行目はディフォルト値です。パラメータサーバに指定したパラメータがなかったら、この値は`place_x_`に入れられます。
+`place_x_`
+: 保存先を指定します。メンバー変数`place_x_`に保存します。
 
-5行目はY座標のパラメータを同様に読み込みます。
+`0.1`
+: ディフォルト値です。パラメータサーバに指定したパラメータがなかったら、この値は`place_x_`に入れられます。
 
-クラスのプライベートな変数も追加します。
+１１行目はY座標のパラメータを同様に読み込みます。
 
-```c++
-  float place_x_;
-  float place_y_;
-```
+パラメータの利用として、`DoPlace()`内の`pose`変数を初期化するところに`pose.pose.position.x`と`pose.pose.position.y`の値をパラメータからとるように変更します。
 
-実装の最後として、`DoPlace()`内で`pose`変数を初期化するところに、`pose.pose.position.x`と`pose.pose.position.y`の値をパラメータからとるように変更します。
-
-```c++
+```c++、
+    pose.header.frame_id = "base_link";
+  /***** ここから変更 *****/
     pose.pose.position.x = place_x_;
     pose.pose.position.y = place_y_;
+  /***** ここまで変更 *****/
+    pose.pose.position.z = 0.1;
+    pose.pose.orientation.x = 0.0;
+    pose.pose.orientation.y = 0.707106;
+    pose.pose.orientation.z = 0.0;
+    pose.pose.orientation.w = 0.707106;
+    arm_.setPoseTarget(pose);
 ```
 
-パラメータの設定は、「ROSの基本操作」で学んだように、ノードの起動時に行います。
+パラメータの設定は「ROSの基本操作」で学んだようにノードの起動時に行います。
 
 ```shell
 $ rosrun pick_and_placer pick_and_placer _place_x:='0.1' _place_y:='-0.2'
@@ -1344,7 +1490,7 @@ $ rosrun pick_and_placer pick_and_placer _place_x:='0.1' _place_y:='-0.2'
 
 _パラメータ名の頭にアンダーバーを付けている理由は、パラメータはノードのネームスペース内であるからです。_
 
-下記のように、パラメータをlaunchファイルに指定することも可能です。
+下記のように、パラメータをlaunchファイルに指定することも可能です。`<node>`タグ内のでノードのネームスペース内になります。
 
 ```xml
   <node name="pickandplace" pkg="pick_and_placer" type="pick_and_placer" output="screen">
@@ -1366,6 +1512,10 @@ _パラメータ名の頭にアンダーバーを付けている理由は、パ�
 _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/parameterised>
+
+_編集されたC++ファイルは以下です。_
+
+<https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/parameterised/src/pick_and_placer.cpp>
 
 ### MoveIt!のピックアンドプレース機能を利用
 
