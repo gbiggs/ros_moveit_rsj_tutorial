@@ -1047,13 +1047,23 @@ _編集されたC++ファイルは以下です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/picking/src/pick_and_placer.cpp>
 
-## 小課題
+## 追加の課題
+
+以上はMoveIt!の基本操作です。下記は、MoveIt!とROSをより効率的に利用するための説明です。
 
 ### トピックでピックの場所を受信
 
-実装したノードはすでに決まっている所（`(x: 0.2, y: 0.0)`）にしかピッキングできません。従来のロボットワークセルでは、決まっている所にタスクを行うことが普通です。しかし、将来の産業ロボットには、そしてサービスロボットにも、センサーデータによって物体の場所を判断して、そしてピッキングします。
+実装したノードは決まっている所（`(x: 0.2, y: 0.0)`）にしかピッキングできません。従来のロボットワークセルでは、決まっている所にタスクを行うことが普通です。しかし、将来の産業ロボットには、そしてサービスロボットにも、センサーデータによって物体の場所を判断して、そしてピッキングします。
 
-上記で実装したノードを、ROSのトピックから受信した場所にあるブロックをピッキングするように変更してみましょう。
+上記で実装したノードを、ROSのトピックから受信した場所にあるブロックをピッキングするように変更しましょう。ROSトピックでデータを受信することは[ROSの基本操作の「サーボの状態を確認」セクション](ros_basics.html#サーボの状態を確認)で学んだように、コールバックを利用します。
+
+ノードは、`arm`等の変数を利用しています。トピックコールバックでマニピュレータを操作したいので、`arm`等をコールバックで利用することが必要です。しかし、コールバックは違う関数ので`main`関数にある`arm`や`gripper`の変数にアクセスできません。
+
+何かのデータを持って、トピックにサブスクライブして、そしてトピックコールバックでそのデータを利用するノードは基本的に暮らすとして実装します。（グローバル変数の利用も可能ですが、将来のメンテナンスの観点から考えるとグローバル変数は利用しない方がいいです。）
+
+_本セミナーでC++のクラス作成方法を説明しません。[C++の参照文書](http://en.cppreference.com/w/cpp/language/classes)（教科書等）に参照してください。_
+
+ということで、ピッキングタスクを行うノードの実装をクラスに変更し、トピックからブロックの位置を受信するようにします。
 
 トピックのメッセージタイプに`geometry_msgs/Pose2D`は利用できます。
 
@@ -1066,113 +1076,202 @@ float64 theta
 `theta`を無視して、`x`と`y`だけでブロックの位置を示す。`geometry_msgs/Pose2D`のヘッダーは`geometry_msgs/Pose2D.h`です。下記のように追加します。
 
 ```c++
-#include <geometry_msgs/Pose2D.h>
-```
-
-ノードにブロックの位置を送信するために、`rostopic`が利用できます。例えばトピックの名は`block`であれば、端末で以下を実行するとノードに位置情報が送信できます。
-
-```shell
-$ rostopic pub -1 /block geometry_msgs/Pose2D "{x: 0.1, y: 0.0}"
-```
-
-ノードはトピックにサブスクライブして、コールバックでピッキングタスクを行います。
-
-ノードの機能をクラスで実装するとき、ROSの初期化はどこにすればいいでしょうか。`main`関数にしても、クラスのコンストラクターのしても構いません。
-
-コールバックは`main`関数にある`arm`や`gripper`の変数にアクセスできません。この場合はグローバル変数にするか、ノードをクラスとして実装するかという２つのオプションがあります。メンテナンスの観点からグローバル変数は利用しない方がいいので、C++が分かるかたはクラスで実装することがおすすめです。
-
-クラスとして実装すると`arm`や`gripper`はクラスのメンバー変数して、クラスメソッドをコールバックとして利用して、そしてコールバックからクラスのメンバー変数である`arm`と`gripper`へアクセスすることが可能になります。
-
-サブスクライバのコールバックにクラスメソッドを利用するとき、`nh.subscribe()`関数へ渡す変数は少し変わります。
-
-```c++
-ros::Subscriber sub = node_handle.subscribe("/block", 1, &PickNPlacer::DoPick, this);
-```
-
-3番目の変数は代わり、4番目の変数が追加しました。
-
-`&PickNPlace::DoPick'
-: コールバックになるクラスメソッドをクラス名（`PickNPlace`）から指定します。
-
-`this`
-: `msg`以外のコールバックに渡す変数を指定します。`this`は、クラスへのポインターです。クラスメソッドの最初の変数は実はクラスポインターですが、普段コンパイラーが隠すので見えません。この場合は指定しないとクラスのデータにアクセスできません。
-
-`DoPick()`は、[ROSの基本](ros_basics.html#ノードのソースの作成-1)で実習したコールバックと同じように書きます。例えば下記は受信したポーズを端末で表示します。
-
-```c++
-  void DoPick(geometry_msgs::Pose2D::ConstPtr const& msg) {
-    ROS_INFO("Received pose:");
-    ROS_INFO("X: %f", msg->x);
-    ROS_INFO("Y: %f", msg->y);
-    ROS_INFO("Theta: %f", msg->theta);
-  }
-```
-
-下記はROSノードをクラスとして実装することの形です。下記のノードは`/block`トピックに受信するポーズにマニピュレータを移動させます。
-
-```c++
 #include <ros/ros.h>
+#include <moveit/move_group_interface/move_group_interface.h>
+#include <actionlib/client/simple_action_client.h>
+#include <control_msgs/GripperCommandAction.h>
+  /***** ここから追加 *****/
+#include <geometry_msgs/Pose2D.h>
+  /***** ここまで追加 *****/
 
+int main(int argc, char **argv) {
+```
+
+次にクラスのスケルトンを追加します。`main`関数の前に下記を追加します。
+
+```c++
+#include <geometry_msgs/Pose2D.h>
+
+  /***** ここから追加 *****/
 class PickNPlacer {
  public:
   // コンストラクタ
   // クラスを初期化するための関数
   // クラスのインスタンスを作成すると自動的に呼ばれる
   explicit PickNPlacer(ros::NodeHandle& node_handle)
-      : arm_("arm") // クラスのメンバー変数の初期化
-      {
+  {
     // クラスの初期化
+  }
+
+ private:
+  // クラスのメンバー変数（クラスの中に存在し、クラスのメソッドでアクセスできる）
+};
+  /***** ここまで追加 *****/
+
+int main(int argc, char **argv) {
+```
+
+クラスとして実装すると`arm`や`gripper`はクラスのメンバー変数して、クラスメソッドをコールバックとして利用して、そしてコールバックからクラスのメンバー変数である`arm`と`gripper`へアクセスすることが可能になります。
+
+クラスのメンバー変数に`arm`と`gripper`を追加します。そして、トピックにサブスクライブするので`ros::Subscriber`のインスタンツもクラスのメンバー変数に入れます。
+
+```c++
+ private:
+  // クラスのメンバー変数（クラスの中に存在し、クラスのメソッドでアクセスできる）
+  /***** ここから追加 *****/
+  moveit::planning_interface::MoveGroupInterface arm_;
+  actionlib::SimpleActionClient<control_msgs::GripperCommandAction> gripper_;
+  ros::Subscriber sub_;
+  /***** ここまで追加 *****/
+};
+
+int main(int argc, char **argv) {
+```
+
+クラスのメンバー変数の初期化はコンストラクタで行います。２つの方法があり、メンバー変数のデータ型により選択します。
+
+変数を作成する段階で初期化が必要の場合
+: コンストラクタの頭に追加します。`arm_`と`gripper_`はこのタイプです。
+
+変数に初期化を作成する関数の結果を保存する場合
+: コンストラクタのボディー内で初期化します。`sub_`は`node_handle.subscribe`を呼ぶまでに初期化できないのでこのタイプです。
+
+コンストラクタに追加する初期化は下記の通りです。コンストラクタのボディ内に他のセットアップも追加しました。
+
+```c++
+class PickNPlacer {
+ public:
+  explicit PickNPlacer(ros::NodeHandle& node_handle)
+  /***** ここから追加 *****/
+      : arm_("arm"),
+        gripper_("/crane_plus_gripper/gripper_command", "true") {
     arm_.setPoseReferenceFrame("base_link");
     arm_.setNamedTarget("vertical");
     arm_.move();
+    gripper_.waitForServer();
 
-    // トピックにサブスクライブ
-    // メッセージを受信すると、MoveToPose()関数が呼ばれる
-    sub_ = node_handle.subscribe("/block", 1, &PickNPlacer::MoveToPose, this);
+    sub_ = node_handle.subscribe("/block", 1, &PickNPlacer::DoPick, this);
+  /***** ここまで追加 *****/
+  }
+```
+
+最後の行はトピックにサブスクライブします。[ROSの基本操作の「サーボの状態を確認」セクション](ros_basics.html#サーボの状態を確認)で学んだ方法から少し変わりました。
+
+`&PickNPlace::DoPick'
+: クラスのメンバー関数をコールバックとして利用するのでコールバックになるメンバー関数をクラス名（`PickNPlace`）から指定します。
+
+`this`
+: コールバックに渡す`msg`以外の引数を指定します。`this`は、クラスへのポインターです。クラスのメンバー関数の最初の引数は実はクラスポインターですが、普段コンパイラーが隠すので見えません。ここでは指定しないとクラスのデータにアクセスできません。
+
+コールバック自体をクラスに追加します。前回の`main()`関数のソースを、ピッキングタスクの始まりからそのままコピーしました。（`ros::shutdown()`はコピーしません。）
+
+コールバックは、メッセージを`msg`という引数としてもらいます。`msg`の中のXとYデータをピッキングタスクのために利用します。
+
+```c++
+    sub_ = node_handle.subscribe("/block", 1, &PickNPlacer::DoPick, this);
   }
 
-  // トピックのコールバック
-  void MoveToPose(geometry_msgs::Pose2D::ConstPtr const& msg) {
+  /***** ここから追加 *****/
+  void DoPick(geometry_msgs::Pose2D::ConstPtr const& msg) {
+    // Prepare
+    ROS_INFO("Moving to prepare pose");
     // 受信したポースに移動する
-    ROS_INFO("Moving to pose %f, %f, %f", msg->x, msg->y, msg->y);
     geometry_msgs::PoseStamped pose;
     pose.header.frame_id = "base_link";
     pose.pose.position.x = msg->x;
     pose.pose.position.y = msg->y;
-    pose.pose.position.z = msg->z;
+    pose.pose.position.z = 0.1;
     pose.pose.orientation.x = 0.0;
     pose.pose.orientation.y = 0.707106;
     pose.pose.orientation.z = 0.0;
     pose.pose.orientation.w = 0.707106;
     arm_.setPoseTarget(pose);
     if (!arm_.move()) {
-      ROS_WARN("Could not move to pose");
+      ROS_WARN("Could not move to prepare pose");
+      return;
+    }
+
+    ROS_INFO("Opening gripper");
+    control_msgs::GripperCommandGoal goal;
+    goal.command.position = 0.1;
+    gripper_.sendGoal(goal);
+    bool finishedBeforeTimeout = gripper_.waitForResult(ros::Duration(30));
+    if (!finishedBeforeTimeout) {
+      ROS_WARN("Gripper open action did not complete");
+      return;
+    }
+
+    // Approach
+    ROS_INFO("Executing approach");
+    pose.pose.position.z = 0.05;
+    arm_.setPoseTarget(pose);
+    if (!arm_.move()) {
+      ROS_WARN("Could not move to grasp pose");
+      return;
+    }
+
+    // Grasp
+    ROS_INFO("Grasping object");
+    goal.command.position = 0.015;
+    gripper_.sendGoal(goal);
+    finishedBeforeTimeout = gripper_.waitForResult(ros::Duration(30));
+    if (!finishedBeforeTimeout) {
+      ROS_WARN("Gripper close action did not complete");
+      return;
+    }
+
+    // Retreat
+    ROS_INFO("Retreating");
+    pose.pose.position.z = 0.1;
+    arm_.setPoseTarget(pose);
+    if (!arm_.move()) {
+      ROS_WARN("Could not move to retreat pose");
       return;
     }
   }
 
- private:
-  // クラスのメンバー変数（クラスの中に存在し、クラスのメソッドでアクセスできる）
-  moveit::planning_interface::MoveGroupInterface arm_;
-  ros::Subscriber sub_;
-};
+  /***** ここまで追加 *****/
 
+ private:
+  moveit::planning_interface::MoveGroupInterface arm_;
+```
+
+最後に`main()`関数を編集します。
+
+ノードをクラスとして実装するとき、ROSとノードハンドルの初期化はどこにするかを決めないとなりません。クラスのコンストラクタにするか、`main()`関数でクラスインスタンスを作成する前にするかという２つの選択があります。基本的にどちらでもいいですが、ノードを複数のクラスとして実装するときは`main()`関数ですることが必要になることがあります。今回は`main()`関数で行います。
+
+`main()`関数の中身を削除し、以下のように変更します。
+
+```c++
 int main(int argc, char **argv) {
+  /***** ここから追加 *****/
   ros::init(argc, argv, "pickandplacer");
 
   ros::AsyncSpinner spinner(2);
   spinner.start();
 
   ros::NodeHandle nh;
-  // ノードの機能を実装するクラスのインスタンスを作成する
   PickNPlacer pnp(nh);
 
-  // ノードが終了されるまでに待つ（この間にクラスが振る舞えを行う）
+  // Wait until the node is shut down
   ros::waitForShutdown();
 
   ros::shutdown();
   return 0;
+  /***** ここまで追加 *****/
 }
+```
+
+９行目でノードの振る舞えを実装するクラスのインスタンスを作成し、ノードハンドルを渡します。１２行めで`main()`関数がすぐに終わらないように、シャットダウン信号を待ちます。ここで待っている間に、トピックコールバックがデータの到着次第呼ばれます。
+
+ノードはトピックにサブスクライブすること以外の振る舞えがあれば、`ros::waitForShutdown()`を呼ぶことの代わりにクラスでメーンロープのような関数を追加し、１２行目でそれを呼べばいいです。
+
+これでクラースでノードを実装し、トピックから受信した座標でピッキングタスクを行うようにしました。コンパイルしてノードを起動してみましょう。
+
+ノードをテストするために、ブロックの位置を送信します。このために`rostopic`は利用できます。例えば上記のソースのようにトピックの名は`block`であれば、端末で以下を実行するとノードに位置情報が送信できます。
+
+```shell
+$ rostopic pub -1 /block geometry_msgs/Pose2D "{x: 0.1, y: 0.0}"
 ```
 
 __注意：変更し始める前に、ソースのバックアップを作りましょう。__{: style="color: red" }
