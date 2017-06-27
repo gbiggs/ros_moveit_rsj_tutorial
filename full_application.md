@@ -98,6 +98,14 @@ $ roslaunch usb_cam usb_cam-test.launch
 
 カメラを正しい方向に向けたら、 __Ctrl+c__{: style="border: 1px solid black" } で終了します。
 
+次にマニピュレータのハードウェアを起動します。端末で下記を実行します。
+
+```shell
+$ cd ~/rsj_2017_application_ws
+$ source devel/setup.bash
+$ roslaunch crane_plus_hardware start_arm_standalone.launch
+```
+
 カリブレーション手順中に手でマニピュレータを移動することが必要です。しかしモータがトルクを与えている状態で手で移動すると、モータ内の歯車を壊す可能性があります。このために、カリブレーションを行う前にトルクを切ります。
 
 ```shell
@@ -116,15 +124,7 @@ Turning torque off for motor 5
 done
 ```
 
-_エラーが出る場合もあります。エラーがないようになるまでに最後のコマンドを繰り返して実行してください。_
-
-次にマニピュレータのハードウェアを起動します。端末で下記を実行します。
-
-```shell
-$ cd ~/rsj_2017_application_ws
-$ source devel/setup.bash
-$ roslaunch crane_plus_hardware start_arm_standalone.launch
-```
+_エラーが出る場合もあります。エラーがないようになるまたは前舳が手で動かせるようになるまでに最後のコマンドを繰り返して実行してください。_
 
 カメラも起動することが必要です。新しい端末で下記を実行します。
 
