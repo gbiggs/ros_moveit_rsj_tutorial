@@ -305,6 +305,13 @@ $ echo "export LIBGL_ALWAYS_SOFTWARE=1" >> ~/.bashrc
 
 そのリスクを防ぐためにシミュレータの利用がおすすめです。ROSで[Gazebo](http://gazebosim.org/)というシミュレータの利用が基本です。
 
+CRANE+のシミュレーションを利用するために、下記のパッケージのインストールが必要です。
+
+```shell
+$ sudo apt-get install ros-kinetic-joint-trajectory-controller
+$ sudo apt-get install ros-kinetic-effort-controllers
+```
+
 以下の実行でCRANE+のシミュレーションを起動します。
 
 ```shell
