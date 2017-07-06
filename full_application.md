@@ -233,6 +233,7 @@ _必ずこの情報を保存してください。これからの手順に必要�
 パッケージは、`catkin_create_pkg`で作成します。依存する他パッケージとして、launchファイルで利用する他パッケージをしていします。直接依存するパッケージのみの指定が必要です。非直接の依存パッケージは他パッケージの依存関係で`catkin_make`が対応してくれます。
 
 ```shell
+$ cd ~/rsj_2017_application_ws/src
 $ catkin_create_pkg rsj_2017_application pick_and_placer rsj_2017_block_finder \
     crane_plus_description crane_plus_hardware usb_cam
 Created file rsj_2017_application/package.xml
