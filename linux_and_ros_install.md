@@ -160,6 +160,7 @@ LinuxとROSのインストール方法を示します。
 ```shell
 sudo apt-get install ros-kinetic-moveit-*
 sudo apt-get install ros-kinetic-dynamixel-motor
+sudo apt-get install ros-kinetic-usb-cam
 ```
 
 以上、開発環境の構築が完了しました。

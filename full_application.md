@@ -54,12 +54,11 @@ $ cp -r ~/block_finder_ws/src/rsj_2017_block_finder .
   ```
   _注意：パッケージ名が自分製パッケージと異なります。下記の説明で`block_finder`と書いているところに`rsj_2017_block_finder`を利用してください。_
 
-他の必要なノードもワークスペースに入れます.
+他の必要なパッケージもワークスペースに入れます.
 
 ```shell
 $ cd ~/rsj_2017_application_ws/src
 $ git clone https://github.com/gbiggs/crane_plus_arm.git
-$ git clone https://github.com/ros-drivers/usb_cam.git
 ```
 
 最後に、ワークスペースをビルドします。（今はしなくてもいいが、ワークスペースに入れたソフトウェアのビルドに問題がないかを確認するためです。）
@@ -91,8 +90,12 @@ Install space: /home/geoff/rsj_2017_application_ws/install
 ```shell
 $ cd ~/rsj_2017_application_ws
 $ source devel/setup.bash
-$ roslaunch usb_cam usb_cam-test.launch
+$ rosrun usb_cam usb_cam_node __name:=camera _camera_name:="elecom_ucam" \
+    _camera_frame_id:="camera_link" _video_device:="/dev/video0" _image_width:=640 \
+    _image_height480 _pixel_format:=yuyv _io_method:=mmap
 ```
+
+_注意：カメラのデバイス番号は０ではない場合は、[カメラの動作確認](camera_check.html)と同様に上記のコマンドの`/dev/video0`を`/dev/video1`等に変更してください。_{:style="color: red"}
 
 ![Aligning camera](images/camera_calibration_aligning.png)
 
@@ -135,6 +138,8 @@ $ rosrun usb_cam usb_cam_node __name:=camera _camera_name:="elecom_ucam" \
     _camera_frame_id:="camera_link" _video_device:="/dev/video0" _image_width:=640 \
     _image_height480 _pixel_format:=yuyv _io_method:=mmap
 ```
+
+_注意：カメラのデバイス番号は０ではない場合は、上記のコマンドの`/dev/video0`を`/dev/video1`等に変更してください。_{:style="color: red"}
 
 カメラは`world`座標系に対してカリブレーションします。でも、`crane_plus_hardware`の`start_arm_standalone.launch`はマニピュレータを`base_link`座標系に置きます。一時的に`world`と`base_link`の関係を示すことが必要です。新しい端末で下記を実行すると、`world`と`base_link`の差を`tf`に送信します。（ゼロにしたので、`world`と`base_link`の中央点は一緒だと示しています。）
 

@@ -27,7 +27,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 1. まず、OpenCVをインストールします。
 
    ```shell
-   sudo apt-get install ros-kinetic-vision-opencv 
+   sudo apt-get install ros-kinetic-vision-opencv
    sudo apt-get install python-opencv
    sudo apt-get install libopencv-dev
    ```
@@ -35,9 +35,9 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 1. 次に、OpenCVと正しくmakeできるように、OpenCVを利用するパッケージでは下記のとおりCMakeLists.txtを修正します。
 
    > `find_package(OpenCV REQUIRED)`
-   
+
    > `include_directories(/usr/local/include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} )`
-   
+
    > `target_link_libraries(dfollow ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} )`
 
 1. また、package.xmlも修正します。ROS16.04ではOpenCV3を使用しますが、互換性を保つためにopencv2と指定します。
@@ -60,14 +60,14 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    $ cd ~/block_finder_ws/src
    $ git clone https://github.com/Suzuki1984/rsj_2017_block_finder.git
    $ ls
-   CMakeLists.txt  rsj_2017_block_finder  usb_cam
+   CMakeLists.txt  rsj_2017_block_finder
    ```
 
 1. コンパイルします。エラーが出ず、[100%]となることを確認します。
 
    ```shell
    $ cd ~/block_finder_ws/
-   $ catkin_make 
+   $ catkin_make
    ```
 
 1. ワークスペース内のROSパッケージが利用できるようにワークスペースをソースします。
@@ -85,18 +85,19 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
 1. チェッカーボードの頂点の数と大きさを確認します。このとき、四角形の数を数えないように注意してください。また、長さの単位がメートルであることにも注意してください。
 
-1. ROSパッケージ『camera_calibration』をインストールします。
+1. ROSパッケージ`camera_calibration`をインストールします。
 
    ```shell
    $ sudo apt-get install ros-kinetic-camera-calibration
    ```
 
-1. ROSパッケージ『camera_calibration』を実行します。デバイス番号が0以外の場合はusb_cam_calib.launchを修正してください。
+1. ROSパッケージ`camera_calibration`を実行します。デバイス番号が0以外の場合は`~/block_finder_ws/src/rsj_2017_block_finder/launch/usb_cam_calib.launch`を修正してください。
 
    ```shell
    # １つ目のターミナル
    $ roslaunch rsj_2017_block_finder usb_cam_calib.launch
    ```
+
    ```shell
    # ２つ目のターミナル
    $ rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.0285 image:=/camera/image_raw camera:=/camera
@@ -105,7 +106,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 1. カメラの位置や姿勢を動かします。（あるいはチェッカーボードを上下左右や遠近に移動したり傾けたりします。）
 1. X, Y, Sizeが全て右端まで伸びたらCALIBRATEボタンを押します。（※数分かかる場合があります。）
 1. チェッカーボードの直線が画面上でも直線になっていることを確認します。
-1. COMMITボタンを押します。（~/.ros/camera_info/elecom_ucam.yamlが作成されます。）
+1. COMMITボタンを押します。（`~/.ros/camera_info/elecom_ucam.yaml`が作成されます。）
 
 
 ## 基礎編
@@ -179,19 +180,19 @@ $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
 ブロックを検出するための画像処理について見ていきます。
 
 まず、関数『GaussianBlur』で平滑化を行います。平滑化を行うことで、後述の２値化処理が安定します。第３引数ではフィルタのサイズを指定することができ、cv::Size(5, 5)やcv::Size(13, 13)などと、正の奇数で指定します。
-   
+
 それでは、実際に値を変更してみましょう。値を変更し、ファイルを上書きしたら、下記のとおりコンパイルし、実行します。
-   
+
    ```shell
    $ cd ~/block_finder_ws/
    $ catkin_make
    $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
    ```
-   
+
 次に、関数『threshold』で２値化します。第３引数が閾値となり、この閾値を境に各ピクセルに０と１の値を与えていきます。本セミナーではトラックバーを使用して動的に変更できるようにしてあります。トラックバーを直接ドラッグするほか、トラックバーの左右をクリックすることで５刻みで値を増減することもできます。
 
 そして、関数『findContours』を使用してブロックを認識します。第３引数では近似手法を指定することができ、現在はCV_CHAIN_APPROX_NONEとなっています。CV_CHAIN_APPROX_SIMPLEやCV_CHAIN_APPROX_TC89_L1に変更し、結果の違いを確認してみてください。
-   
+
 - CV_CHAIN_APPROX_NONE
   : 全ての点を保存します。
 - CV_CHAIN_APPROX_SIMPLE
@@ -202,9 +203,9 @@ $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
 ## 画像の表示
 
 OpenCVでは関数『inshow』を使用して画像を表示します。関数『imshow』のあとに関数『waitKey』を呼び出することで、画像が表示されます。関数『waitKey』は一定時間キー入力を待つ関数ですが、ここではスリープ関数のような意味を持ちます。なお、繰り返し処理でない画像処理の場合、０として指定することで、キー入力が行われるまで画像を表示しておくことができます。
-   
+
 なお、ウィンドウの名前は関数『namedWindow』で、ウィンドウの位置は関数『moveWindow』で指定することができます。
-   
+
 デストラクタ『~BlockFinder』の中に関数『destroyWindow』を記述しておくことで、メモリの開放忘れを予防することができます。関数『destroyAllWindows』もあります。
 
 ## ブロック位置の出力
@@ -272,13 +273,13 @@ $ rostopic echo /block_finder/block_size_max
    第３引数では、影の影響を考慮するかどうかを指定することができる。trueにすると計算速度が若干低下するが、精度を向上することができる。
 
    それでは、下記の部分を修正し、結果の違いを確認してみましょう。
-   
+
    > pMOG2 = cv::createBackgroundSubtractorMOG2();
 
    > pMOG2 = cv::createBackgroundSubtractorMOG2(1000);
 
    > pMOG2 = cv::createBackgroundSubtractorMOG2(1000, 8);
-   
+
    roslaunchを実行するときにmethod:=2と変更し、実行してください。これにより、ROSパラメータ『method』が2に上書きされた状態でプログラムを実行することができます。
 
    ```shell

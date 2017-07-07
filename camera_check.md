@@ -20,20 +20,16 @@ date: 2017-06-17
    CMakeLists.txt
    ```
 
-1. ROSパッケージ『usb_cam』をコンパイルします。
-
-   ```shell
-   $ cd ~/block_finder_ws/src
-   $ git clone https://github.com/ros-drivers/usb_cam.git
-   $ cd ~/block_finder_ws
-   $ catkin_make
-   $ source devel/setup.bash
-   ```
-
-1. パッケージ『v4l-utils』をインストールします。
+1. パッケージ`v4l-utils`をインストールします。
 
    ```shell
    $ sudo apt-get install v4l-utils
+   ```
+
+1. ROSパッケージ`usb_cam`をインストールします。
+
+   ```shell
+   $ sudo apt-get install ros-kinetic-usb-cam
    ```
 
 ## 実行
@@ -72,8 +68,9 @@ date: 2017-06-17
    1. デバイス番号が0以外の場合
 
       ```shell
-      $ cd ~/block_finder_ws/src/usb_cam/launch
-      $ cp usb_cam-test.launch usb_cam-test_rsj.launch
+      $ roscd usb_cam/launch
+      $ cp usb_cam-test.launch ~/block_finder_ws/usb_cam-test_rsj.launch
+      $ cd ~/block_finder_ws
       $ gedit usb_cam-test_rsj.launch
       # video_deviceを/dev/video1などに変更し、保存する。
       $ roslaunch usb_cam-test_rsj.launch
@@ -86,6 +83,3 @@ date: 2017-06-17
 1. 『Ctrl』キー＋『c』キーで終了します。
 
 以上
-
-
-
