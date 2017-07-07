@@ -41,12 +41,12 @@ $ cd ~/crane_plus_ws/src/
 $ catkin_init_workspace
 Creating symlink "/home/username/crane_plus_ws/src/CMakeLists.txt" pointing to
     "/opt/ros/kinetic/share/catkin/cmake/toplevel.cmake"
-$
 ```
 
 次にCRANE+のROSパッケージをダウンロードしコンパイルします。
 
 ```shell
+$ cd ~/crane_plus_ws/src/
 $ git clone https://github.com/gbiggs/crane_plus_arm.git
 Cloning into 'crane_plus_arm'...
 remote: Counting objects: 474, done.
@@ -72,6 +72,7 @@ $
 ワークスペース内のパッケージが利用できるようにワークスペースをソースします。
 
 ```shell
+$ cd ~/crane_plus_ws/src/
 $ source devel/setup.bash
 ```
 
@@ -132,6 +133,8 @@ CRANE+を制御するために、まずはROSとハードウェアのインタ�
 CRANE+の電源を入れたから、以下を実行します。
 
 ```shell
+$ cd ~/crane_plus_ws/src/
+$ source devel/setup.bash
 $ roslaunch crane_plus_hardware start_arm_standalone.launch
 ```
 
@@ -466,12 +469,12 @@ Install space: /home/username/crane_plus_ws/install
 [100%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/
          crane_plus_camera_calibration/calibrate_camera_checkerboard
 [100%] Built target calibrate_camera_checkerboard
-$
 ```
 
 次にマニピュレータを起動します。
 
 ```shell
+$ source devel/setup.bash
 $ roslaunch crane_plus_hardware start_arm_standalone.launch
 ... logging to /home/username/.ros/log/4de82534-3e85-11e7-a03f-d8cb8ae35bff/roslaunch-alnilam-27138.log
 Checking log directory for disk usage. This may take awhile.
@@ -487,6 +490,8 @@ started roslaunch server http://alnilam:37805/
 そして、MoveIt!を起動します。別の端末で以下のコマンドを実行します。
 
 ```shell
+$ cd ~/crane_plus_ws/
+$ source devel/setup.bash
 $ roslaunch crane_plus_moveit_config move_group.launch
 ... logging to /home/username/.ros/log/4de82534-3e85-11e7-a03f-d8cb8ae35bff/roslaunch-alnilam-28429.log
 Checking log directory for disk usage. This may take awhile.
@@ -504,6 +509,8 @@ You can start planning now!
 最後に、作成したノードを起動します。別の端末で以下を実行します。
 
 ```shell
+$ cd ~/crane_plus_ws/
+$ source devel/setup.bash
 $ rosrun pick_and_placer pick_and_placer
 [ INFO] [1495413039.031396268]: Loading robot model 'crane_plus'...
 [ INFO] [1495413039.031446316]: No root/virtual joint specified in SRDF. Assuming fixed joint
@@ -642,7 +649,6 @@ $ rosrun  pick_and_placer pick_and_placer
 [ INFO] [1495423076.668768146]: Loading robot model 'crane_plus'...
 [ INFO] [1495423076.668847786]: No root/virtual joint specified in SRDF. Assuming fixed joint
 [ INFO] [1495423077.846839325]: Ready to take commands for planning group arm.
-$
 ```
 
 ![CRANE+ pick pre-grasp pose](images/crane_plus_pick_pre_grasp_pose.png)
@@ -1485,6 +1491,8 @@ class PickNPlacer {
 パラメータの設定は「ROSの基本操作」で学んだようにノードの起動時に行います。
 
 ```shell
+$ cd ~/crane_plus_ws/src/
+$ source devel/setup.bash
 $ rosrun pick_and_placer pick_and_placer _place_x:='0.1' _place_y:='-0.2'
 ```
 

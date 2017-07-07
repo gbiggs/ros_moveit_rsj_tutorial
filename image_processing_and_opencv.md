@@ -46,7 +46,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    target_link_libraries(dfollow ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
    ```
 
-1. また、package.xmlも修正します。ROS16.04ではOpenCV3を使用しますが、互換性を保つためにopencv2と指定します。
+1. また、package.xmlも修正します。Ubuntu 16.04ではOpenCV 3を使用しますが、互換性を保つために`opencv2`と指定します。
 
    ```xml
    <build_depend>opencv2</build_depend>
@@ -105,17 +105,24 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
    ```shell
    # １つ目のターミナル
+   $ cd ~/block_finder_ws/
+   $ source devel/setup.bash
    $ roslaunch rsj_2017_block_finder usb_cam_calib.launch
    ```
 
    ```shell
    # ２つ目のターミナル
+   $ cd ~/block_finder_ws/
+   $ source devel/setup.bash
    $ rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.0285 image:=/camera/image_raw camera:=/camera
    ```
 
 1. カメラの位置や姿勢を動かします。（あるいはチェッカーボードを上下左右や遠近に移動したり傾けたりします。）
+
 1. X, Y, Sizeが全て右端まで伸びたらCALIBRATEボタンを押します。（※数分かかる場合があります。）
+
 1. チェッカーボードの直線が画面上でも直線になっていることを確認します。
+
 1. COMMITボタンを押します。（`~/.ros/camera_info/elecom_ucam.yaml`が作成されます。）
 
 
@@ -129,23 +136,25 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    CMakeLists.txt  config  launch  package.xml  readme.md  src
    ```
 
-1. ディレクトリ`launch`の中にはblock_finder.launchとblock_finder_w_stp.launchがあります。ここでは後者のファイルを確認します。後者のlaunchファイルでは4つのノードを起動します。配信（publish）と購読（listen）の関係性を以下に示します。
+1. ディレクトリ`launch`の中には`block_findee.launch`と`block_finder_w_stp.launch`があります。ここでは後者のファイルを確認します。後者の`launch`ファイルでは4つのノードを起動します。配信（publish）と購読（subscribe）の関係性を以下に示します。
 
-   > <?xml version="1.0"?>
-   > <launch>
-   >   <node pkg="usb_cam" type="usb_cam_node" name="camera" output="screen">
-   >     <param name="camera_name" value="elecom_ucam"/>
-   >     <param name="camera_frame_id" value="camera_link"/>
-   >     <param name="video_device" value="/dev/video0"/>
-   >     <param name="image_width" value="640"/>
-   >     <param name="image_height" value="480"/>
-   >     <param name="pixel_format" value="yuyv"/>
-   >     <param name="io_method" value="mmap"/>
-   >   </node>
-   >   <node pkg="tf" type="static_transform_publisher" name="camera_transform_publisher" args="0 0 0 0 0 0 1 /world /camera_link 1"/>
-   >   <node pkg="rsj_2017_block_finder" type="block_finder" name="block_finder" args="$(arg method)" output="screen"/>
-   >   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find rsj_2017_block_finder)/config/rsj_2017_block_finder.rviz"/>
-   > </launch>
+   ```xml
+   <?xml version="1.0"?>
+   <launch>
+     <node pkg="usb_cam" type="usb_cam_node" name="camera" output="screen">
+       <param name="camera_name" value="elecom_ucam"/>
+       <param name="camera_frame_id" value="camera_link"/>
+       <param name="video_device" value="/dev/video0"/>
+       <param name="image_width" value="640"/>
+       <param name="image_height" value="480"/>
+       <param name="pixel_format" value="yuyv"/>
+       <param name="io_method" value="mmap"/>
+     </node>
+     <node pkg="tf" type="static_transform_publisher" name="camera_transform_publisher" args="0 0 0 0 0 0 1 /world /camera_link 1"/>
+     <node pkg="rsj_2017_block_finder" type="block_finder" name="block_finder" args="$(arg method)" output="screen"/>
+     <node pkg="rviz" type="rviz" name="rviz" args="-d $(find rsj_2017_block_finder)/config/rsj_2017_block_finder.rviz"/>
+   </launch>
+   ```
 
    `camera`
    : 画像メッセージを配信します。
@@ -161,19 +170,23 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
 ## 画像処理プログラムの概要
 
-カメラを接続し、カメラのデバイス番号を確認します。デバイス番号が0以外の場合はlaunchファイルを修正してください。
+カメラを接続し、カメラのデバイス番号を確認します。デバイス番号が0以外の場合は`launch`ファイルを修正してください。
 
 チェッカーボードを机の上に置いたあと、下記のコマンドで実行します。カラー画像、グレー画像、RVizの３つの画面が開きます。チェッカーボード上に黄色の四角形が表示されていれば正常に起動しています。
 
 ```shell
+$ cd ~/block_finder_ws/
+$ source devel/setup.bash
 $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
 ```
 
 ![Block Finder GUI](images/block_finder_area.png)
 
-チェッカーボードが見つかると、ターミナルに「Camera座標系からBoard座標系までの変換ベクトル」が表示されます。３番目の値（Ｚ軸の値）の正負を置き換えた値をstatic_transform_publisherの３番目の値にすると結果が確認しやすくなります。例えば、次のとおりに設定します。
+チェッカーボードが見つかると、ターミナルに「Camera座標系からBoard座標系までの変換ベクトル」が表示されます。３番目の値（Ｚ軸の値）の正負を置き換えた値を`static_transform_publisher`の３番目の値にすると結果が確認しやすくなります。例えば、次のとおりに設定します。
 
-> args="0 0 -0.478 0 0 0 1 /world /camera_link 1"
+```xml
+args="0 0 -0.478 0 0 0 1 /world /camera_link 1"
+```
 
 次に、チェッカーボードの上に厚紙を置いたりチェッカーボードを退かしたりします。
 
@@ -189,7 +202,7 @@ $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
 
 ブロックを検出するための画像処理について見ていきます。
 
-まず、関数`GaussianBlur`で平滑化を行います。平滑化を行うことで、後述の２値化処理が安定します。第３引数ではフィルタのサイズを指定することができ、cv::Size(5, 5)やcv::Size(13, 13)などと、正の奇数で指定します。
+まず、関数`GaussianBlur`で平滑化を行います。平滑化を行うことで、後述の２値化処理が安定します。第３引数ではフィルタのサイズを指定することができ、`cv::Size(5, 5)`や`cv::Size(13, 13)`などと、正の奇数で指定します。
 
 それでは、実際に値を変更してみましょう。値を変更し、ファイルを上書きしたら、下記のとおりコンパイルし、実行します。
 
@@ -205,8 +218,10 @@ $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
 
 - `CV_CHAIN_APPROX_NONE`
   : 全ての点を保存します。
+
 - `CV_CHAIN_APPROX_SIMPLE`
   : 端点のみを保存します。つまり、輪郭を表現する点群を圧縮します。
+
 - `CV_CHAIN_APPROX_TC89_L1`
   : Teh-Chinアルゴリズムで、NONEとSIMPLEの中間に当たる。
 

@@ -765,6 +765,7 @@ $ catkin_make
 実行する前にマニピュレータのサーボコントローラを起動することが必要です。1つ目の端末に下記を実行してマニピュレータのグリッパーサーボコントローラを起動します。
 
 ```shell
+$ source devel/setup.bash
 $ roslaunch servo_control dynamixel_test.launch
 ... logging to /home/geoff/.ros/log/619c447c-396a-11e7-b868-d8cb8ae35bff/roslaunch-alnilam-1790.log
 Checking log directory for disk usage. This may take awhile.
@@ -781,6 +782,8 @@ SUMMARY
 2つ目の端末に下記を実行します。
 
 ```shell
+$ cd ~/catkin_ws/
+$ source devel/setup.bash
 $ rosrun servo_control servo_status
 [ INFO] [1494855697.336794278]: --- Servo status ---
 [ INFO] [1494855697.336922059]: Name: finger_joint
@@ -802,6 +805,8 @@ $ rosrun servo_control servo_status
 3つ目の端末に下記を実行すると、`servo_status`の端末で数字の変更が見えます。
 
 ```shell
+$ cd ~/catkin_ws/
+$ source devel/setup.bash
 $ rosrun servo_control set_servo_pos 0
 [ INFO] [1494851539.189274395]: Setting servo position to 0.000000
 [Ctrl+cで止める]

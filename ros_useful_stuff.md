@@ -315,6 +315,8 @@ $ sudo apt-get install ros-kinetic-effort-controllers
 以下の実行でCRANE+のシミュレーションを起動します。
 
 ```shell
+$ cd ~/crane_plus_ws/
+$ source devel/setup.bash
 $ roslaunch crane_plus_simulation simulation.launch
 ```
 
