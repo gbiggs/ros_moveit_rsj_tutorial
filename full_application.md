@@ -32,27 +32,25 @@ $ catkin_init_workspace
 
 ```shell
 $ cd ~/rsj_2017_application_ws/src
-$ cp -r ~/crane_plus_ws/src/pick_and_placer .
+$ cp -r ~/crane_plus_ws/src/rsj_2017_pick_and_placer .
 $ cp -r ~/block_finder_ws/src/rsj_2017_block_finder .
 ```
 
 自分で作ったノードの代わりに、本セミナーに用意されたノードの利用も可能です。パッケージごとのクローンするためのコマンドは下記の通りです。
 
-- `pick_and_placer`　（マニピュレータ制御ノード）
+- `rsj_2017_pick_and_placer`　（マニピュレータ制御ノード）
 : ```shell
   $ cd ~/rsj_2017_application_ws/src
   $ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer.git
   $ cd rsj_2017_pick_and_placer
   $ git checkout full_application_version
   ```
-  _注意：パッケージ名が自分製パッケージと異なります。下記の説明で`pick_and_placer`と書いているところに`rsj_2017_pick_and_placer`を利用してください。_
 
-- `block_finder`　（ブロックを見つける画像処理ノード）
+- `rsj_2017_block_finder`　（ブロックを見つける画像処理ノード）
 : ```shell
   $ cd ~/rsj_2017_application_ws/src
   $ git clone https://github.com/Suzuki1984/rsj_2017_block_finder
   ```
-  _注意：パッケージ名が自分製パッケージと異なります。下記の説明で`block_finder`と書いているところに`rsj_2017_block_finder`を利用してください。_
 
 他の必要なパッケージもワークスペースに入れます.
 
@@ -239,7 +237,7 @@ _必ずこの情報を保存してください。これからの手順に必要�
 
 ```shell
 $ cd ~/rsj_2017_application_ws/src
-$ catkin_create_pkg rsj_2017_application pick_and_placer rsj_2017_block_finder \
+$ catkin_create_pkg rsj_2017_application rsj_2017_pick_and_placer rsj_2017_block_finder \
     crane_plus_description crane_plus_hardware usb_cam
 Created file rsj_2017_application/package.xml
 Created file rsj_2017_application/CMakeLists.txt
@@ -389,7 +387,7 @@ __注意：上記の中の`/dev/video0`を必要におおじて自分のハー�
 ハードウェアを起動したので、つぎにピック・アンド・プレースのノードを起動します。下記をラウンチファイルに追加します。
 
 ```xml
-  <node name="pickandplace" pkg="pick_and_placer" type="pick_and_placer" output="screen">
+  <node name="pickandplace" pkg="rsj_2017_pick_and_placer" type="pick_and_placer" output="screen">
     <remap from="/block" to="/block_finder/pose"/>
   </node>
 ```

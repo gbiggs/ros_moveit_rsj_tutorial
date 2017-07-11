@@ -234,13 +234,13 @@ MoveIt!を利用するために、主にノードからアプリケーション�
 
 ```shell
 $ cd ~/crane_plus_ws/src/
-$ catkin_create_pkg pick_and_placer roscpp moveit_core moveit_ros_planning_interface moveit_visual_tools \
+$ catkin_create_pkg rsj_2017_pick_and_placer roscpp moveit_core moveit_ros_planning_interface moveit_visual_tools \
     moveit_msgs moveit_commander tf actionlib control_msgs geometry_msgs shape_msgs trajectory_msgs
-Created file pick_and_placer/CMakeLists.txt
-Created file pick_and_placer/package.xml
-Created folder pick_and_placer/include/pick_and_placer
-Created folder pick_and_placer/src
-Successfully created files in /home/username/crane_plus_ws/src/pick_and_placer.
+Created file rsj_2017_pick_and_placer/CMakeLists.txt
+Created file rsj_2017_pick_and_placer/package.xml
+Created folder rsj_2017_pick_and_placer/include/rsj_2017_pick_and_placer
+Created folder rsj_2017_pick_and_placer/src
+Successfully created files in /home/username/crane_plus_ws/src/rsj_2017_pick_and_placer.
     Please adjust the values in package.xml.
 ```
 
@@ -350,7 +350,7 @@ target_link_libraries(${PROJECT_NAME}_pick_and_placer
 
 なお、__必ず__{: style="color: red" } ファイルトップに`add_definitions(-std=c++11)`の行をアンコメントしてください。
 
-`pick_and_placer`パッケージ内の`src/`ディレクトリに`pick_and_placer.cpp`というファイルを作成します。そしてエディターで開き、以下のソースを入力します。
+`rsj_2017_pick_and_placer`パッケージ内の`src/`ディレクトリに`pick_and_placer.cpp`というファイルを作成します。そしてエディターで開き、以下のソースを入力します。
 
 ```cpp
 #include <ros/ros.h>
@@ -468,7 +468,7 @@ Build space: /home/username/crane_plus_ws/build
 Devel space: /home/username/crane_plus_ws/devel
 Install space: /home/username/crane_plus_ws/install
 （省略）
-[ 85%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/pick_and_placer/pick_and_placer
+[ 85%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/rsj_2017_pick_and_placer/pick_and_placer
 [ 85%] Built target pick_and_placer_pick_and_placer
 [100%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/
          crane_plus_camera_calibration/calibrate_camera_checkerboard
@@ -515,7 +515,7 @@ You can start planning now!
 ```shell
 $ cd ~/crane_plus_ws/
 $ source devel/setup.bash
-$ rosrun pick_and_placer pick_and_placer
+$ rosrun rsj_2017_pick_and_placer pick_and_placer
 [ INFO] [1495413039.031396268]: Loading robot model 'crane_plus'...
 [ INFO] [1495413039.031446316]: No root/virtual joint specified in SRDF. Assuming fixed joint
 [ INFO] [1495413040.033491742]: Ready to take commands for planning group arm.
@@ -644,12 +644,12 @@ Build space: /home/username/crane_plus_ws/build
 Devel space: /home/username/crane_plus_ws/devel
 Install space: /home/username/crane_plus_ws/install
 （省略）
-[ 85%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/pick_and_placer/pick_and_placer
+[ 85%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/rsj_2017_pick_and_placer/pick_and_placer
 [ 85%] Built target pick_and_placer_pick_and_placer
 [100%] Linking CXX executable /home/username/crane_plus_ws/devel/lib/
          crane_plus_camera_calibration/calibrate_camera_checkerboard
 [100%] Built target calibrate_camera_checkerboard
-$ rosrun  pick_and_placer pick_and_placer
+$ rosrun rsj_2017_pick_and_placer pick_and_placer
 [ INFO] [1495423076.668768146]: Loading robot model 'crane_plus'...
 [ INFO] [1495423076.668847786]: No root/virtual joint specified in SRDF. Assuming fixed joint
 [ INFO] [1495423077.846839325]: Ready to take commands for planning group arm.
@@ -1497,7 +1497,7 @@ class PickNPlacer {
 ```shell
 $ cd ~/crane_plus_ws/src/
 $ source devel/setup.bash
-$ rosrun pick_and_placer pick_and_placer _place_x:='0.1' _place_y:='-0.2'
+$ rosrun rsj_2017_pick_and_placer pick_and_placer _place_x:='0.1' _place_y:='-0.2'
 ```
 
 _パラメータ名の頭にアンダーバーを付けている理由は、パラメータはノードのネームスペース内であるからです。_
@@ -1505,7 +1505,7 @@ _パラメータ名の頭にアンダーバーを付けている理由は、パ�
 下記のように、パラメータをlaunchファイルに指定することも可能です。`<node>`タグ内のでノードのネームスペース内になります。
 
 ```xml
-  <node name="pickandplace" pkg="pick_and_placer" type="pick_and_placer" output="screen">
+  <node name="pickandplace" pkg="rsj_2017_pick_and_placer" type="pick_and_placer" output="screen">
     <param name="place_x" value="0.1"/>
     <param name="place_y" value="-0.2"/>
   </node>
