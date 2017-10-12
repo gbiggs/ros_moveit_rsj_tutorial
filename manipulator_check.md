@@ -55,11 +55,10 @@ date: 2017-06-17
 1. サーボドライバーのライブラリとヘッダーをコピーします。
 
    ```shell
-   $ cp -r ~/Downloads/DynamixelSDK/c/include/dynamixel_sdk* .
+   $ cp -r ~/Downloads/DynamixelSDK/c/include/dynamixel_sdk/ .
    $ cp ~/Downloads/DynamixelSDK/c/build/linux64/libdxl_x64_c.so .
    $ ls
-   CMakeLists.txt  dynamixel_sdk.h      dynamixel_sdk_windows  LICENSE    servo_check.c
-   dynamixel_sdk   dynamixel_sdk_linux  libdxl_x64_c.so        README.md
+   CMakeLists.txt  dynamixel_sdk  libdxl_x64_c.so  LICENSE  README.md  servo_check.c
    ```
 
 1. サーボ確認プログラムをコンパイルします。
