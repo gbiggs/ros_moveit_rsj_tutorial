@@ -711,7 +711,7 @@ void callback(const dynamixel_msgs::JointState::ConstPtr &msg) {
   ROS_INFO("Velocity: %f", msg->velocity);
   ROS_INFO("Load: %f", msg->load);
   ROS_INFO("Moving: %s", msg->is_moving ? "yes" : "no");
-  ROS_INFO("");
+  ROS_INFO(" ");
 }
 
 int main(int argc, char **argv) {
