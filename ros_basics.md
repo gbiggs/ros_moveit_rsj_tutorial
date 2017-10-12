@@ -498,7 +498,7 @@ add_dependencies(${PROJECT_NAME}_set_servo_pos ${${PROJECT_NAME}_EXPORTED_TARGET
 target_link_libraries(${PROJECT_NAME}_set_servo_pos ${catkin_LIBRARIES})
 ```
 
-なお、__必ず__{: style="color: red" } ファイルトップにある`add_definitions(-std=c++11)`の行をアンコメントしてください。
+なお、__必ず__{: style="color: red" } ファイルトップにある`add_compile_options(-std=c++11)`の行をアンコメントしてください。
 
 これでcatkinに`set_servo_pos`というノードのコンパイルを指定しました。
 
