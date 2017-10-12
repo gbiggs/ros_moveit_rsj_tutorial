@@ -423,12 +423,12 @@ $
 
 ```shell
 $ cd ~/catkin_ws/src
-$ catkin_create_pkg servo_control roscpp dynamixel_controllers dynamixel_msgs
-Created file servo_control/CMakeLists.txt
-Created file servo_control/package.xml
-Created folder servo_control/include/servo_control
-Created folder servo_control/src
-Successfully created files in /home/geoff/catkin_ws/src/servo_control. Please adjust the values in package.xml.
+$ catkin_create_pkg rsj_2017_servo_control roscpp dynamixel_controllers dynamixel_msgs
+Created file rsj_2017_servo_control/CMakeLists.txt
+Created file rsj_2017_servo_control/package.xml
+Created folder rsj_2017_servo_control/include/rsj_2017_servo_control
+Created folder rsj_2017_servo_control/src
+Successfully created files in /home/geoff/catkin_ws/src/rsj_2017_servo_control. Please adjust the values in package.xml.
 ```
 
 引数の１番目はパッケージ名です。２番目と３番目は依存パッケージの定義です。今回はC++で記述するため、`roscpp`に依存します。そしてDynamixelのサーボを利用するのでハードウェアとインターフェースする`dynamixel-controllers`に依存します。最後に、サーボコントローラにコマンドを送るためにDynamixel用のメッセージタイプの利用が必要ので、`dynamixel-msgs`に依存します。
@@ -436,7 +436,7 @@ Successfully created files in /home/geoff/catkin_ws/src/servo_control. Please ad
 生成されたパッケージの中身を確認します。
 
 ```shell
-$ cd servo_control/
+$ cd rsj_2017_servo_control/
 $ ls
 CMakeLists.txt  include  package.xml  src
 ```
@@ -473,13 +473,13 @@ CMakeLists.txt  include  package.xml  src
 
 #### CMakeLists.txtにノードを追加
 
-`servo_control`パッケージにある`CMakeLists.txt`（`~/catkin_ws/src/servo_control/CMakeLists.txt`）をエディターで開き、以下の通りになるようにソースを編集します。（5行目、12行目、17行目および20行目を追加しました。ファイル内の133行目ぐらいから始まります。catkinのバージョンにより編集する具体的な行目の変更があります。）
+`rsj_2017_servo_control`パッケージにある`CMakeLists.txt`（`~/catkin_ws/src/rsj_2017_servo_control/CMakeLists.txt`）をエディターで開き、以下の通りになるようにソースを編集します。（5行目、12行目、17行目および20行目を追加しました。ファイル内の133行目ぐらいから始まります。catkinのバージョンにより編集する具体的な行目の変更があります。）
 
 ```cmake
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/servo_control_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/rsj_2017_servo_control_node.cpp)
 add_executable(${PROJECT_NAME}_set_servo_pos src/set_servo_pos.cpp)
 
 ## Rename C++ executable without prefix
@@ -504,7 +504,7 @@ target_link_libraries(${PROJECT_NAME}_set_servo_pos ${catkin_LIBRARIES})
 
 #### ノードのソースの作成
 
-`servo_control`パッケージ内の`src/`ディレクトリに`set_servo_pos.cpp`というファイル（`~/catkin_ws/src/servo_control/src/set_servo_pos.cpp`）を作成します。そしてエディターで開き、以下のソースを入力します。
+`rsj_2017_servo_control`パッケージ内の`src/`ディレクトリに`set_servo_pos.cpp`というファイル（`~/catkin_ws/src/rsj_2017_servo_control/src/set_servo_pos.cpp`）を作成します。そしてエディターで開き、以下のソースを入力します。
 
 ```c++
 #include <ros/ros.h>
@@ -568,15 +568,15 @@ $ catkin_make
 
 マニピュレータのサーボコントローラを起動することが必要です。
 
-`servo_controller`パッケージの中に以下のファイルを作成します。`~/catkin_ws/src/servo_control/config`と`~/catkin_ws/src/servo_control/launch`ディレクトリは作成した上でファイルを編集します。
+`rsj_2017_servo_control`パッケージの中に以下のファイルを作成します。`~/catkin_ws/src/rsj_2017_servo_control/config`と`~/catkin_ws/src/rsj_2017_servo_control/launch`ディレクトリは作成した上でファイルを編集します。
 
 ```shell
-$ cd ~/catkin_ws/src/servo_control
+$ cd ~/catkin_ws/src/rsj_2017_servo_control
 $ mkdir config
 $ mkdir launch
 ```
 
-`~/catkin_ws/src/servo_control/config/dynamixel_test.yaml`:
+`~/catkin_ws/src/rsj_2017_servo_control/config/dynamixel_test.yaml`:
 
 ```yaml
 finger_servo_controller:
@@ -593,7 +593,7 @@ finger_servo_controller:
         max: 1023
 ```
 
-`~/catkin_ws/src/servo_control/launch/dynamixel_test.launch`:
+`~/catkin_ws/src/rsj_2017_servo_control/launch/dynamixel_test.launch`:
 
 ```xml
 <launch>
@@ -610,7 +610,7 @@ finger_servo_controller:
                     update_rate: 10
         </rosparam>
     </node>
-    <rosparam file="$(find servo_control)/config/dynamixel_test.yaml" command="load"/>
+    <rosparam file="$(find rsj_2017_servo_control)/config/dynamixel_test.yaml" command="load"/>
     <node name="finger_servo_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
           args="--manager=dynamixel_controller_manager
                 --port dxl_tty1
@@ -622,7 +622,7 @@ finger_servo_controller:
 1つ目の端末に以下を実行してマニピュレータのグリッパーサーボコントローラを起動します。
 
 ```shell
-$ roslaunch servo_control dynamixel_test.launch
+$ roslaunch rsj_2017_servo_control dynamixel_test.launch
 ... logging to /home/geoff/.ros/log/619c447c-396a-11e7-b868-d8cb8ae35bff/roslaunch-alnilam-1790.log
 Checking log directory for disk usage. This may take awhile.
 Press Ctrl-C to interrupt
@@ -638,10 +638,10 @@ SUMMARY
 2つ目の端末に以下を実行します。
 
 ```shell
-$ rosrun servo_control set_servo_pos 0
+$ rosrun rsj_2017_servo_control set_servo_pos 0
 [ INFO] [1494851539.189274395]: Setting servo position to 0.000000
 [Ctrl+cで止める]
-$ rosrun servo_control set_servo_pos -0.5
+$ rosrun rsj_2017_servo_control set_servo_pos -0.5
 [ INFO] [1494851548.085785357]: Setting servo position to -0.500000
 [Ctrl+cで止める]
 ```
@@ -654,20 +654,20 @@ _このソースは以下のURLでダウンロード可能です。_
 
 ## サーボの状態を確認
 
-もう一つのノードを作成し、サーボの現在状況を端末で表示します。上記と同じ手順で`servo_status`というノードを`servo_control`パッケージに追加します。
+もう一つのノードを作成し、サーボの現在状況を端末で表示します。上記と同じ手順で`servo_status`というノードを`rsj_2017_servo_control`パッケージに追加します。
 
 ### ノードを作成
 
 #### CMakeLists.txtにノードを追加
 
-`~/catkin_ws/src/servo_control/CMakeLists.txt`を編集して、新しいノードのコンパイル方法をしていします。ファイルをエディターで開き以下の通りになるように編集します。
+`~/catkin_ws/src/rsj_2017_servo_control/CMakeLists.txt`を編集して、新しいノードのコンパイル方法をしていします。ファイルをエディターで開き以下の通りになるように編集します。
 （6行目、14行目、20行目および24行目を追加しました。）
 
 ```cmake
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/servo_control_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/rsj_2017_servo_control_node.cpp)
 add_executable(${PROJECT_NAME}_set_servo_pos src/set_servo_pos.cpp)
 add_executable(${PROJECT_NAME}_servo_status src/servo_status.cpp)
 
@@ -692,7 +692,7 @@ target_link_libraries(${PROJECT_NAME}_servo_status ${catkin_LIBRARIES})
 
 #### ノードのソースの作成
 
-`servo_control`パッケージ内の`src/`ディレクトリに`servo_status.cpp`というファイルを作成します。エディターで`~/catkin_ws/src/servo_control/src/servo_status.cpp`を開き（作成）、以下のソースを入力します。
+`rsj_2017_servo_control`パッケージ内の`src/`ディレクトリに`servo_status.cpp`というファイルを作成します。エディターで`~/catkin_ws/src/rsj_2017_servo_control/src/servo_status.cpp`を開き（作成）、以下のソースを入力します。
 
 ```c++
 #include <ros/ros.h>
@@ -766,7 +766,7 @@ $ catkin_make
 
 ```shell
 $ source devel/setup.bash
-$ roslaunch servo_control dynamixel_test.launch
+$ roslaunch rsj_2017_servo_control dynamixel_test.launch
 ... logging to /home/geoff/.ros/log/619c447c-396a-11e7-b868-d8cb8ae35bff/roslaunch-alnilam-1790.log
 Checking log directory for disk usage. This may take awhile.
 Press Ctrl-C to interrupt
@@ -784,7 +784,7 @@ SUMMARY
 ```shell
 $ cd ~/catkin_ws/
 $ source devel/setup.bash
-$ rosrun servo_control servo_status
+$ rosrun rsj_2017_servo_control servo_status
 [ INFO] [1494855697.336794278]: --- Servo status ---
 [ INFO] [1494855697.336922059]: Name: finger_joint
 [ INFO] [1494855697.336968787]: ID: 5
@@ -807,10 +807,10 @@ $ rosrun servo_control servo_status
 ```shell
 $ cd ~/catkin_ws/
 $ source devel/setup.bash
-$ rosrun servo_control set_servo_pos 0
+$ rosrun rsj_2017_servo_control set_servo_pos 0
 [ INFO] [1494851539.189274395]: Setting servo position to 0.000000
 [Ctrl+cで止める]
-$ rosrun servo_control set_servo_pos -0.5
+$ rosrun rsj_2017_servo_control set_servo_pos -0.5
 [ INFO] [1494851548.085785357]: Setting servo position to -0.500000
 [Ctrl+cで止める]
 ```
