@@ -244,21 +244,9 @@ Successfully created files in /home/username/crane_plus_ws/src/rsj_2017_pick_and
     Please adjust the values in package.xml.
 ```
 
-パッケージ内の`CMakeLists.txt`にある`find_package`コマンドは以下の用に編集し依存関係パッケージを利用します。
+パッケージ内の`CMakeLists.txt`にある`find_package`コマンドを見つけて（10行目ぐらいにあります。）、そのしたに下記を追加します。
 
 ```cmake
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  moveit_core
-  moveit_ros_planning
-  moveit_ros_planning_interface
-  moveit_visual_tools
-  control_msgs
-  geometry_msgs
-  shape_msgs
-  actionlib
-)
-
 find_package(Boost REQUIRED
   system
   filesystem
