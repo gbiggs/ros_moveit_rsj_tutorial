@@ -255,18 +255,26 @@ find_package(Boost REQUIRED
 )
 ```
 
-`CMakeLists.txt`の`catkin_package`コマンドにも追加します。
+`CMakeLists.txt`の`catkin_package`コマンド（120行目ぐらいにあります。）にある`CATKIN_DEPENDS`行をアンコメントします。編集後は下記のようになります。
 
 ```cmake
 catkin_package(
+#  INCLUDE_DIRS include
+#  LIBRARIES rsj_2017_pick_and_placer
   CATKIN_DEPENDS
-    roscpp
+    actionlib
     control_msgs
     geometry_msgs
-    shape_msgs
+    moveit_commander
     moveit_core
+    moveit_msgs
     moveit_ros_planning_interface
-    actionlib
+    moveit_visual_tools
+    roscpp
+    shape_msgs
+    tf
+    trajectory_msgs
+#  DEPENDS system_lib
 )
 ```
 
