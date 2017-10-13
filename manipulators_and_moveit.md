@@ -1247,7 +1247,7 @@ int main(int argc, char **argv) {
 ノードをテストするために、ブロックの位置を送信します。このために`rostopic`は利用できます。例えば上記のソースのようにトピックの名は`block`であれば、端末で以下を実行するとノードに位置情報が送信できます。
 
 ```shell
-$ rostopic pub -1 /block geometry_msgs/Pose2D "{x: 0.1, y: 0.0}"
+$ rostopic pub -1 /block geometry_msgs/Pose2D "{x: 0.2, y: 0.0}"
 ```
 
 __注意：変更し始める前に、ソースのバックアップを作りましょう。__{: style="color: red" }
