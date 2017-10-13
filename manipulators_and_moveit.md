@@ -244,35 +244,6 @@ Successfully created files in /home/username/crane_plus_ws/src/rsj_2017_pick_and
     Please adjust the values in package.xml.
 ```
 
-パッケージ内の`package.xml`の依存関係は以下のようになるように編集します。
-
-```xml
-  <buildtool_depend>catkin</buildtool_depend>
-
-  <build_depend>roscpp</build_depend>
-  <build_depend>moveit_core</build_depend>
-  <build_depend>moveit_ros_planning_interface</build_depend>
-  <build_depend>moveit_visual_tools</build_depend>
-  <build_depend>control_msgs</build_depend>
-  <build_depend>actionlib</build_depend>
-  <build_depend>geometry_msgs</build_depend>
-  <build_depend>shape_msgs</build_depend>
-
-  <run_depend>roscpp</run_depend>
-  <run_depend>rospy</run_depend>
-  <run_depend>moveit_core</run_depend>
-  <run_depend>moveit_ros_planning_interface</run_depend>
-  <run_depend>moveit_visual_tools</run_depend>
-  <run_depend>tf</run_depend>
-  <run_depend>geometry_msgs</run_depend>
-  <run_depend>shape_msgs</run_depend>
-  <run_depend>control_msgs</run_depend>
-  <run_depend>actionlib</run_depend>
-  <run_depend>trajectory_msgs</run_depend>
-  <run_depend>moveit_msgs</run_depend>
-  <run_depend>moveit_commander</run_depend>
-```
-
 パッケージ内の`CMakeLists.txt`にある`find_package`コマンドは以下の用に編集し依存関係パッケージを利用します。
 
 ```cmake
