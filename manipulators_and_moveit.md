@@ -315,7 +315,7 @@ target_link_libraries(${PROJECT_NAME}_pick_and_placer
 )
 ```
 
-なお、__必ず__{: style="color: red" } ファイルトップに`add_definitions(-std=c++11)`の行をアンコメントしてください。
+なお、__必ず__{: style="color: red" } ファイルトップに`add_compile_options(-std=c++11)`の行をアンコメントしてください。
 
 `rsj_2017_pick_and_placer`パッケージ内の`src/`ディレクトリに`pick_and_placer.cpp`というファイルを作成します。そしてエディターで開き、以下のソースを入力します。
 
