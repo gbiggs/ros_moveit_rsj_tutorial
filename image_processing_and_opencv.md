@@ -11,7 +11,7 @@ date: 2017-06-18
 {:toc}
 
 
-## OpenCV
+## OpenCVの概要
 
 OpenCV（Open Source Computer Vision Library）は無料の画像処理ライブラリーです。Linuxの他、WindowsやMacOSでも利用することができ、現在、多くの画像処理研究で利用されています。例えば、OpenCVを利用することで、従来手法との精度比較を簡単に行うことができます。
 
@@ -34,7 +34,15 @@ ROSでOpenCVを利用するときの注意点としてはバージョン管理�
    sudo apt-get install libopencv-dev
    ```
 
-1. 次に、OpenCVと正しくmakeできるよう、OpenCVを利用するROSパッケージでは下記のとおりCMakeLists.txtを修正します。
+1. 本セミナーではROSパッケージ「`cv_bridge`」を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、Image MessageをIplImageへ変換し、OpenCVを用いて処理を施し、Image Messageへ戻すという一連の処理を記述することができます。（※IplはIntel Image Processing Libraryの略で、OpenCV 1.xで使用されている型になります。そのため、本セミナーではIplImageをOpenCV 2.x以降で使用されている型「`Mat`」へ変換し、画像処理を行います。）
+
+   ```shell
+   sudo apt-get install ros-kinetic-cv-camera
+   ```
+
+本セミナーで必要となる準備は以上となりますが、実際には下記のとおり設定を変更する必要もあります。
+
+1. OpenCVと正しくmakeできるよう、OpenCVを利用するROSパッケージでは下記のとおりCMakeLists.txtを修正します。
 
    ```cmake
    find_package(OpenCV REQUIRED)
@@ -48,7 +56,7 @@ ROSでOpenCVを利用するときの注意点としてはバージョン管理�
    target_link_libraries(dfollow ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
    ```
 
-1. また、package.xmlも修正します。通常、Ubuntu 16.04ではOpenCV 3.xを使用しますが、互換性を保つために`opencv2`と指定します。
+1. ROSパッケージを管理するためのpackage.xmlも修正します。通常、Ubuntu 16.04ではOpenCV 3.xを使用しますが、互換性を保つために`opencv2`と指定します。
 
    ```xml
    <build_depend>opencv2</build_depend>
@@ -58,11 +66,6 @@ ROSでOpenCVを利用するときの注意点としてはバージョン管理�
    <run_depend>opencv2</run_depend>
    ```
 
-1. 本セミナーではROSパッケージ「`cv_bridge`」を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、Image MessageをIplImageへ変換し、OpenCVを用いて処理を施し、Image Messageへ戻すという一連の処理を記述することができます。（※IplはIntel Image Processing Libraryの略で、OpenCV 1.xで使用されている型になります。そのため、本セミナーではIplImageをOpenCV 2.x以降で使用されている型「`Mat`」へ変換し、画像処理を行います。）
-
-   ```shell
-   sudo apt-get install ros-kinetic-cv-camera
-   ```
 
 ## 画像処理パッケージの設定
 
@@ -75,14 +78,14 @@ ROSでOpenCVを利用するときの注意点としてはバージョン管理�
    CMakeLists.txt  rsj_2017_block_finder
    ```
 
-1. 次に、コンパイルします。コンパイル結果が[100%]と表示されたことを確認します。
+1. 次に、ビルドします。ビルド結果が[100%]と表示されたことを確認します。
 
    ```shell
    $ cd ~/block_finder_ws/
    $ catkin_make
    ```
 
-1. ワークスペース内のROSパッケージが利用できるよう、環境変数を再読み込みします。
+1. ワークスペース内のROSパッケージが利用できるよう、環境を設定します。
 
    ```shell
    $ source devel/setup.bash
@@ -121,14 +124,17 @@ ROSでOpenCVを利用するときの注意点としてはバージョン管理�
 
 1. チェッカーボードを平らな机の上に固定します。そして、カメラを手で持ち、位置や姿勢を動かします。
 
-1. X, Y, Sizeが全て右端まで伸びたらCALIBRATEボタンを押します。（※数分かかる場合があります。）
+1. XやYは左右や前後に動かすことで、Sizeは上下に動かすことで、Skewは斜めから撮影することで、少しずつバーが伸びていきます。
 
-1. チェッカーボードの直線が画面上でも直線になっていることを確認します。
+1. 全てのバーが緑色になったらCALIBRATEボタンを押します。ボタンを押したあと、処理に数分かかる場合がありますので、ボタンを連打しないように注意してください。
 
-1. COMMITボタンを押します。（`~/.ros/camera_info/elecom_ucam.yaml`が作成されます。）
+__サンプル数が多いと、Segmentation faultなどを発生し、キャリブレーションに失敗することがあります。少ないサンプルでバーを緑色にするようにしましょう。__
 
+1. チェッカーボードを撮影し、頂点や直線が正しく表示されていることを確認します。
 
-（あるいはチェッカーボードを上下左右や遠近に移動したり傾けたりします。）
+1. COMMITボタンを押します。YAMLファイルが「`~/.ros/camera_info/elecom_ucam.yaml`」に作成されます。
+
+本セミナーではカメラを動かすことができました。しかし、カメラが備え付けられているなど、カメラを動かせない場合もキャリブレーションを行う必要があります。その場合は、大きめのチェッカーボードを平らな板に貼り付け、人間が上下左右や遠近に移動したり、カメラに対して傾けたりしてキャリブレーションを行います。
 
 ## 基礎編
 
@@ -138,9 +144,12 @@ ROSでOpenCVを利用するときの注意点としてはバージョン管理�
    $ cd ~/block_finder_ws/src/rsj_2017_block_finder
    $ ls
    CMakeLists.txt  config  launch  package.xml  readme.md  src
+   $ cd launch
+   $ ls
+   block_finder.launch  block_finder_w_stp.launch  usb_cam_calib.launch
    ```
 
-1. ディレクトリ`launch`の中には`block_findee.launch`と`block_finder_w_stp.launch`があります。ここでは後者のファイルを確認します。後者の`launch`ファイルでは4つのノードを起動します。配信（publish）と購読（subscribe）の関係性を以下に示します。
+1. ディレクトリ`launch`の中には`block_finder.launch`と`block_finder_w_stp.launch`があります。ここでは後者のファイルを確認します。後者の`launch`ファイルでは4つのノードを起動します。配信（publish）と購読（subscribe）の関係性を以下に示します。
 
    ```xml
    <?xml version="1.0"?>
@@ -172,11 +181,16 @@ ROSでOpenCVを利用するときの注意点としてはバージョン管理�
    `rviz`
    : World座標系、Camera座標系、ブロックの位置を表示します。
 
-## 画像処理プログラムの概要
 
-カメラを接続し、カメラのデバイス番号を確認します。デバイス番号が0以外の場合は`launch`ファイルを修正してください。
+### 画像処理プログラムの概要
 
-チェッカーボードを机の上に置いたあと、下記のコマンドで実行します。カラー画像、グレー画像、RVizの３つの画面が開きます。チェッカーボード上に黄色の四角形が表示されていれば正常に起動しています。
+カメラを接続し、カメラのデバイス番号を確認します。デバイス番号が0以外の場合は適宜、`launch`ファイルを修正してください。
+
+チェッカーボードを机の上に固定します。
+
+カメラは三脚に取り付け、チェッカーボードの四隅が撮影できるようにします。このとき、できる限り上から覗くようにすると、ブロックの位置を精度良く推定することができます。
+
+そして、下記のコマンドで実行します。カラー画像、グレー画像、RVizの３つの画面が開きます。チェッカーボード上に黄色の四角形が表示されれば正常に起動しています。
 
 ```shell
 $ cd ~/block_finder_ws/
@@ -186,29 +200,34 @@ $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
 
 ![Block Finder GUI](images/block_finder_area.png)
 
-チェッカーボードが見つかると、ターミナルに「Camera座標系からBoard座標系までの変換ベクトル」が表示されます。３番目の値（Ｚ軸の値）の正負を置き換えた値を`static_transform_publisher`の３番目の値にすると結果が確認しやすくなります。例えば、次のとおりに設定します。
+   【発展】チェッカーボードが見つかると、ターミナルに「Camera座標系からBoard座標系までの変換ベクトル」が表示されます。3番目の値（Z軸の値）の正負を置き換えた値を`static_transform_publisher`の3番目の値に設定すると、RViz上で結果が確認しやすくなります。例えば、次のとおりに設定します。
 
-```xml
-args="0 0 -0.478 0 0 0 1 /world /camera_link 1"
-```
+   ```xml
+   args="0 0 -0.478 0 0 0 1 /world /camera_link 1"
+   ```
 
-次に、チェッカーボードの上に厚紙を置いたりチェッカーボードを退かしたりします。
+次に、チェッカーボードの上に厚紙を置きます。
 
-そして、黄色の四角形の中に収まるようにブロックを置きます。
+そして、黄色の四角形の中に収まるようにブロックを1つ置きます。
 
-ここでRVizを確認しましょう。TFは座標系を表示し、R色がX軸、G色がY軸、B色がZ軸を表します。「Global Options」→「Fixed Frame」で基準とするFrameを切り替えることができます。 また、「Grid」→「Reference Frame」で、Gridを表示する平面を指定することができます。表示の設定を変更し、現在の設定を保存したい場合はRVizの「File」→「Save Config」で行える。なお、PointStampedはHeaderとPointが組み合わさったメッセージで、Headerで位置データを取得した時刻、Pointで位置データを表現することができます。
+ここで、RVizを確認してみましょう。TFは座標系を意味し、R色がX軸、G色がY軸、B色がZ軸を表します。
+
+また、PointStampedはHeaderとPointが組み合わさったメッセージ型で、Headerで位置データを取得した時刻、Pointで位置データを表現することができます。本セミナーではこの型を利用してブロックの位置を表示しています。実物のブロックを移動すると、RViz上のPointが移動することを確認してみましょう。
 
 ![Block Finder GUI](images/block_finder_tf.png)
 
-ここでは、上述のとおり、World座標系からCamera座標系までの変換ベクトルを適当に与えています。最後のセクションではROSパッケージ`crane_plus_camera_calibration`を利用して同ベクトルを求め、マニピュレーターがブロックを正しく把持できるようにします。
+プログラムは「`Ctrl`」キー＋「`c`」キーで終了することができます。
 
-## 画像処理法
+このセクションでは、上述のとおり、World座標系からCamera座標系までの変換ベクトルを適当に与えています。最後のセクションではROSパッケージ「`crane_plus_camera_calibration`」を利用して同ベクトルを求め、マニピュレーターがブロックを正しく把持できるようにします。
 
-ブロックを検出するための画像処理について見ていきます。
 
-まず、関数`GaussianBlur`で平滑化を行います。平滑化を行うことで、後述の２値化処理が安定します。第３引数ではフィルタのサイズを指定することができ、`cv::Size(5, 5)`や`cv::Size(13, 13)`などと、正の奇数で指定します。
+### 画像処理法
 
-それでは、実際に値を変更してみましょう。値を変更し、ファイルを上書きしたら、下記のとおりコンパイルし、実行します。
+ブロックを検出するための画像処理について説明します。
+
+まず、関数`GaussianBlur`で平滑化を行います。平滑化を行うことで、後述の2値化処理が安定します。この関数の第3引数ではフィルタのサイズを指定することができ、`cv::Size(5, 5)`や`cv::Size(13, 13)`などと、正の奇数で指定します。
+
+それでは、実際に値を変更してみましょう。値を変更し、ファイルを上書きしたら、下記のとおりビルドし、実行します。
 
    ```shell
    $ cd ~/block_finder_ws/
@@ -216,9 +235,9 @@ args="0 0 -0.478 0 0 0 1 /world /camera_link 1"
    $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
    ```
 
-次に、関数`threshold`で２値化します。第３引数が閾値となり、この閾値を境に各ピクセルに０と１の値を与えていきます。本セミナーではトラックバーを使用して動的に変更できるようにしてあります。トラックバーを直接ドラッグするほか、トラックバーの左右をクリックすることで５刻みで値を増減することもできます。
+次に、関数`threshold`で2値化します。第3引数が閾値となり、この閾値を境に各ピクセルに０と１の値を与えていきます。本セミナーではトラックバーを使用して動作中に値を変更できるようにしてあります。トラックバーを直接ドラッグするほか、トラックバーの左右をクリックすることで5刻みで値を増減することもできます。
 
-そして、関数`findContours`を使用してブロックを認識します。第３引数では近似手法を指定することができ、現在はCV_CHAIN_APPROX_NONEとなっています。CV_CHAIN_APPROX_SIMPLEやCV_CHAIN_APPROX_TC89_L1に変更し、結果の違いを確認してみてください。
+そして、関数`findContours`を使用してブロックを検出します。第3引数では近似手法を指定することができ、現在はCV_CHAIN_APPROX_NONEとなっています。CV_CHAIN_APPROX_SIMPLEやCV_CHAIN_APPROX_TC89_L1に変更し、結果の違いを確認してみてください。
 
 - `CV_CHAIN_APPROX_NONE`
   : 全ての点を保存します。
@@ -229,51 +248,48 @@ args="0 0 -0.478 0 0 0 1 /world /camera_link 1"
 - `CV_CHAIN_APPROX_TC89_L1`
   : Teh-Chinアルゴリズムで、NONEとSIMPLEの中間に当たる。
 
-## 画像の表示
 
-OpenCVでは関数`inshow`を使用して画像を表示します。関数`imshow`のあとに関数`waitKey`を呼び出することで、画像が表示されます。関数`waitKey`は一定時間キー入力を待つ関数ですが、ここではスリープ関数のような意味を持ちます。なお、繰り返し処理でない画像処理の場合、０として指定することで、キー入力が行われるまで画像を表示しておくことができます。
+### 画像の表示
 
-なお、ウィンドウの名前は関数`namedWindow`で、ウィンドウの位置は関数`moveWindow`で指定することができます。
+OpenCVでは関数`inshow`を使用して画像を表示します。関数`imshow`のあとに関数`waitKey`を呼び出することで、画像が表示されます。関数`waitKey`は一定時間キー入力を待つ関数ですが、ここではスリープ関数のような意味を持ちます。（※なお、繰り返し処理を行わない画像処理の場合、0と指定することで、キー入力が行われるまで画像を表示しておくことができます。）
 
-デストラクタ`~BlockFinder`の中に関数`destroyWindow`を記述しておくことで、メモリの開放忘れを予防することができます。関数`destroyAllWindows`もあります。
+ウィンドウの名前は関数`namedWindow`で、ウィンドウの位置は関数`moveWindow`で指定することができます。
 
-## ブロック位置の出力
+デストラクタ`~BlockFinder`の中に関数`destroyWindow`を記述しておくことで、メモリの開放忘れを予防することができます。全てのウィンドウを破棄する関数`destroyAllWindows`もあります。
 
-２次元画像上でブロックの位置を認識したあとは、下図のとおりWorld座標系での位置へ変換し、Publishする。
+### ブロック位置の出力
+
+2次元画像上でブロックの位置を推定したあとは、下図のとおりWorld座標系での位置へ変換し、Publishします。
 
 ![Block Finder GUI](images/block_finder_transform.png)
 
-OpenCVの関数`projectPoints`を利用することで、２次元画像上の位置とボードの左上を原点とした３次元空間（target_frame）上の位置の対応関係を得ることができる。
+OpenCVの関数`projectPoints`を利用することで、2次元画像上の位置とボードの左上を原点とした3次元空間（target_frame）上の位置の対応関係を得ることができる。
 
-次に、tfの関数`transformPoint`を利用することで、ボード座標系（target_frame）の位置を、Camera座標系（camera_frame）を経由して、World座標系（fixed_frame）の位置へ変換する。
+次に、tfの関数`transformPoint`を利用することで、ボード座標系（target_frame）の位置を、Camera座標系（camera_frame）を経由して、World座標系（fixed_frame）の位置へと変換することができる。
 
-最終的にPublishされている３次元座標値をコマンド`rostopic echo`を使用して確認します。別のターミナルを開いて、下記のとおり実行します。
-
+最終的にPublishされている3次元座標値をコマンド`rostopic echo`を使用して確認します。別のターミナルを開いて、下記のとおり実行します。
 
 ```shell
 $ rostopic echo /block_finder/pose
 ```
 
-なお、２次元画像上の位置は下記のとおり実行することで確認できます。
-
+なお、2次元画像上の位置は下記のとおり実行することで確認できます。
 
 ```shell
 $ rostopic echo /block_finder/pose_image
 ```
 
-また、ブロック領域の面積を下記のとおり実行することで確認できます。このプログラムでは、大きすぎる場合や小さすぎる場合はPublishしないようにしています。
+ちなみに、ブロック領域の面積を下記のとおり実行することで確認できます。このプログラムでは、面積が大きすぎる場合や小さすぎる場合はPublishしないようにしています。
 
 ```shell
 $ rostopic echo /block_finder/block_size_max
 ```
 
-`Ctrl`キー＋`c`キーで終了します。
-
 ## 発展編
 
-基本編で使用した輪郭検出処理では、チェッカーボードの四角形をスポンジと誤認識してしまいます。そのため、チェッカーボードの上でもスポンジを検出できるように改良します。
+基本編で使用した画像処理（輪郭検出法）では、チェッカーボードの四角形をスポンジと誤認識してしまいます。そのため、チェッカーボードの上でもスポンジを検出できるように改良します。
 
-## 背景差分法
+   ### 背景差分法
 
    本セミナーでは背景差分（特に動的背景差分）を利用します。OpenCVでは下記の手法が実装されています。
 
@@ -289,7 +305,7 @@ $ rostopic echo /block_finder/block_size_max
 
    OpenCVはバージョンが変わると、記述方法や機能が大幅に変更されます。例えば、2から3へバージョンが変わったときは、KNNなどが追加されましたが、GMGなどはcontribへ移動されました。注意してください。
 
-## 混合正規分布法
+### 混合正規分布法
 
    `createBackgroundSubtractorMOG2`は下記のとおり３つの引数を指定することができます。
 
