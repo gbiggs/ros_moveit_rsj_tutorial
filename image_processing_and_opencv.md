@@ -289,75 +289,75 @@ $ rostopic echo /block_finder/block_size_max
 
 基本編で使用した画像処理（輪郭検出法）では、チェッカーボードの四角形をスポンジと誤認識してしまいます。そのため、チェッカーボードの上でもスポンジを検出できるように改良します。
 
-   ### 背景差分法
+### 背景差分法
 
-   本セミナーでは背景差分（特に動的背景差分）を利用します。OpenCVでは下記の手法が実装されています。
+本セミナーでは背景差分（動的背景差分）を利用します。OpenCVには下記の手法が実装されています。
 
-   - 混合正規分布法（MoG：Mixture of Gaussian Distribution）
-       - `createBackgroundSubtractorMOG2`
-   - k近傍法（kNN：k-nearest neighbor）
-       - `createBackgroundSubtractorKNN`
+- 混合正規分布法（MoG：Mixture of Gaussian Distribution）
+   - `createBackgroundSubtractorMOG2`
+- k近傍法（kNN：k-nearest neighbor）
+   - `createBackgroundSubtractorKNN`
 
-   また、OpenCVにはopencv_contribという追加モジュール群が存在します。このモジュールにもインストールすることで下記の手法も使用することができます。
+また、OpenCVにはopencv_contribという追加モジュール群が存在します。このモジュールをインストールすることで下記の手法も使用することができます。
 
-   - ベイズ推定法（GMG: Godbehere、Matsukawa、Goldberg）
-       - `createBackgroundSubtractorGMG`
+- ベイズ推定法（GMG: Godbehere、Matsukawa、Goldberg）
+   - `createBackgroundSubtractorGMG`
 
-   OpenCVはバージョンが変わると、記述方法や機能が大幅に変更されます。例えば、2から3へバージョンが変わったときは、KNNなどが追加されましたが、GMGなどはcontribへ移動されました。注意してください。
+OpenCVはバージョンが変わると、記述方法や機能が大幅に変更されます。例えば、2から3へバージョンが変わったときは、kNNなどが追加されましたが、GMGなどはcontribへ移動されました。注意してください。
 
 ### 混合正規分布法
 
-   `createBackgroundSubtractorMOG2`は下記のとおり３つの引数を指定することができます。
+混合正規分布法の関数`createBackgroundSubtractorMOG2`では、下記のとおり３つの引数を指定することができます。
 
-   ```c++
-   Ptr<BackgroundSubtractorMOG2> cv::createBackgroundSubtractorMOG2(int history=500, double varThreshold=16, bool detectShadows=true)
-   ```
+```c++
+Ptr<BackgroundSubtractorMOG2> cv::createBackgroundSubtractorMOG2(int history=500, double varThreshold=16, bool detectShadows=true)
+```
 
-   第１引数では、過去何フレームまでを分布推定（モデル推定）に利用するかを指定することができる。
+第1引数では、過去何フレームまでを分布推定（モデル推定）に利用するかを指定することができます。
 
-   第２引数では、各ピクセルが背景モデルに含まれるかどうかを判断するための閾値を指定することができる。
+第2引数では、各ピクセルが背景モデルに含まれるかどうかを判断するための閾値を指定することができます。
 
-   第３引数では、影の影響を考慮するかどうかを指定することができる。trueにすると計算速度が若干低下するが、精度を向上することができる。
+第3引数では、影の影響を考慮するかどうかを指定することができます。trueにすると計算速度が若干低下しますが、精度を向上することができます。
 
-   それでは、下記の部分を修正し、結果の違いを確認してみましょう。
+それでは混合正規分布法を試してみましょう。
 
-   ```c++
-   pMOG2 = cv::createBackgroundSubtractorMOG2();
-   ```
+下記のとおり、`roslaunch`を実行するときに`method:=2`と指定し、実行してください。これにより、ROSパラメーター`method`が`2`に上書きされた状態でプログラムを実行することができます。
 
-   ```c++
-   pMOG2 = cv::createBackgroundSubtractorMOG2(1000);
-   ```
+```shell
+$ cd ~/block_finder_ws/
+$ catkin_make
+$ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=2
+```
 
-   ```c++
-   pMOG2 = cv::createBackgroundSubtractorMOG2(1000, 8);
-   ```
+下記のように、色々な値を設定し、結果の違いを確認してみましょう。
 
-   `roslaunch`を実行するときに`method:=2`と変更し、実行してください。これにより、ROSパラメータ`method`が`2`に上書きされた状態でプログラムを実行することができます。
+```c++
+条件A
+pMOG2 = cv::createBackgroundSubtractorMOG2();
+条件B
+pMOG2 = cv::createBackgroundSubtractorMOG2(1000);
+条件C
+pMOG2 = cv::createBackgroundSubtractorMOG2(1000, 8);
+```
 
-   ```shell
-   $ cd ~/block_finder_ws/
-   $ catkin_make
-   $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=2
-   ```
 
 ## 参考情報
 
-OpenCVには多くのサンプルプログラムが用意されており、研究初期の検討段階において、様々な手法を試すことができます。そして、同サンプルプログラムをROSノード化したROSパッケージ`opencv_apps`があります。（→[Wiki](http://wiki.ros.org/opencv_apps)）
+OpenCVには多くのサンプルプログラムが用意されており、研究開発の初期段階において、様々な手法を試すことができます。そして、同サンプルプログラムをROSノード化したROSパッケージ「`opencv_apps`」があります。（→[Wiki](http://wiki.ros.org/opencv_apps)）
 
-1. インストールは下記のとおり行います。
+1. インストールします。
 
    ```shell
    $ sudo apt-get install ros-kinetic-opencv-apps
    ```
 
-1. 画像内から円形を抽出するサンプルプログラムは下記のとおり実行します。
+1. 例えば、画像内から円形を抽出するサンプルプログラムは下記のとおり実行できます。
 
    ```shell
    $ roslaunch opencv_apps hough_circles.launch image:=/usb_cam_node/image_raw
    ```
 
-1. 画像内から人間の顔を抽出するサンプルプログラムは下記のとおり実行します。
+1. また、画像内から人間の顔を抽出するサンプルプログラムは下記のとおり実行できます。
 
    ```shell
    $ roslaunch opencv_apps face_detection.launch image:=/usb_cam_node/image_raw
