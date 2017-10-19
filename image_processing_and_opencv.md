@@ -24,7 +24,7 @@ ROSでOpenCVを利用するときの注意点としてはバージョン管理�
 |14.04 (Indigo Igloo)|2.4.8|
 
 
-## OpenCVの設定
+## OpenCVの準備
 
 1. まず、OpenCVをインストールします。
 
@@ -67,7 +67,7 @@ ROSでOpenCVを利用するときの注意点としてはバージョン管理�
    ```
 
 
-## 画像処理パッケージの設定
+## 画像処理パッケージの準備
 
 1. セミナー用画像処理のROSパッケージをダウンロードします。ディレクトリ`rsj_2017_block_finder`が作成されたことを確認します。
 
@@ -136,7 +136,7 @@ __サンプル数が多いと、Segmentation faultなどを発生し、キャリ
 
 本セミナーではカメラを動かすことができました。しかし、カメラが備え付けられているなど、カメラを動かせない場合もキャリブレーションを行う必要があります。その場合は、大きめのチェッカーボードを平らな板に貼り付け、人間が上下左右や遠近に移動したり、カメラに対して傾けたりしてキャリブレーションを行います。
 
-## 基礎編
+## ブロック位置推定（基礎編）
 
 1. まず、セミナー用画像処理パッケージの内容を確認します。
 
@@ -285,7 +285,7 @@ $ rostopic echo /block_finder/pose_image
 $ rostopic echo /block_finder/block_size_max
 ```
 
-## 発展編
+## ブロック位置推定（発展編）
 
 基本編で使用した画像処理（輪郭検出法）では、チェッカーボードの四角形をスポンジと誤認識してしまいます。そのため、チェッカーボードの上でもスポンジを検出できるように改良します。
 
@@ -345,22 +345,22 @@ pMOG2 = cv::createBackgroundSubtractorMOG2(1000, 8);
 
 OpenCVには多くのサンプルプログラムが用意されており、研究開発の初期段階において、様々な手法を試すことができます。そして、同サンプルプログラムをROSノード化したROSパッケージ「`opencv_apps`」があります。（→[Wiki](http://wiki.ros.org/opencv_apps)）
 
-1. インストールします。
+インストールは下記のとおり行います。
 
-   ```shell
-   $ sudo apt-get install ros-kinetic-opencv-apps
-   ```
+```shell
+$ sudo apt-get install ros-kinetic-opencv-apps
+```
 
-1. 例えば、画像内から円形を抽出するサンプルプログラムは下記のとおり実行できます。
+例えば、画像内から円形を抽出するサンプルプログラムは下記のとおり実行できます。
 
-   ```shell
-   $ roslaunch opencv_apps hough_circles.launch image:=/usb_cam_node/image_raw
-   ```
+```shell
+$ roslaunch opencv_apps hough_circles.launch image:=/usb_cam_node/image_raw
+```
 
-1. また、画像内から人間の顔を抽出するサンプルプログラムは下記のとおり実行できます。
+また、画像内から人間の顔を抽出するサンプルプログラムは下記のとおり実行できます。
 
-   ```shell
-   $ roslaunch opencv_apps face_detection.launch image:=/usb_cam_node/image_raw
-   ```
+```shell
+$ roslaunch opencv_apps face_detection.launch image:=/usb_cam_node/image_raw
+```
 
 以上
