@@ -3,24 +3,26 @@ title: 画像処理とOpenCVの利用
 date: 2017-06-18
 ---
 
-- Table of contents
-{:toc}
-
 本セクションでは、前セクションで取得した画像を処理する方法について説明します。特にOpenCVを用いて処理する方法について説明します。
 
 本セクションでは、画像に基づきブロックを見つけ、その位置を出力する一連の処理について説明します。
 
+- Table of contents
+{:toc}
+
+
 ## OpenCV
 
-OpenCV（Open Source Computer Vision Library）は無料の画像処理ライブラリーです。Linuxの他、WindowsやMacOSでも利用することができ、現在、多くの画像処理研究で利用されてます。例えば、OpenCVを利用することで、従来手法との精度比較を簡単に行うことができます。
+OpenCV（Open Source Computer Vision Library）は無料の画像処理ライブラリーです。Linuxの他、WindowsやMacOSでも利用することができ、現在、多くの画像処理研究で利用されています。例えば、OpenCVを利用することで、従来手法との精度比較を簡単に行うことができます。
 
-ROSでOpenCVを利用するときの注意点としては、バージョン管理があります。基本的に、使用するROSがリリースされたときの最新バージョンのOpenCVを使用することになります。ROSのバージョンとOpenCVのバージョンの対応表をまとめておきます。本セミナーはROS16.04を使用しているため、OpenCV3.2を利用することになります。
+ROSでOpenCVを利用するときの注意点としてはバージョン管理があります。基本的に、使用中のROSがリリースされたときの最新バージョンのOpenCVを使用することになります。ROSのバージョンとOpenCVのバージョンの対応を下表にまとめておきます。本セミナーではROS 16.04を使用しているため、OpenCV 3.1を利用することになります。
 
 |ROSのバージョン|OpenCVのバージョン|
 |17.04 (Lunar Loggerhead)|3.2.0|
-|16.04 (Kinetic Kame)|3.1.0|
+|16.04 (Kinetic Kame)|3.1.0 [online documentation](https://docs.opencv.org/3.1.0/)|
 |15.04 (Jade Turtle)|2.4.11|
 |14.04 (Indigo Igloo)|2.4.8|
+
 
 ## OpenCVの設定
 
@@ -32,7 +34,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    sudo apt-get install libopencv-dev
    ```
 
-1. 次に、OpenCVと正しくmakeできるように、OpenCVを利用するパッケージでは下記のとおりCMakeLists.txtを修正します。
+1. 次に、OpenCVと正しくmakeできるよう、OpenCVを利用するROSパッケージでは下記のとおりCMakeLists.txtを修正します。
 
    ```cmake
    find_package(OpenCV REQUIRED)
@@ -46,7 +48,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    target_link_libraries(dfollow ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
    ```
 
-1. また、package.xmlも修正します。Ubuntu 16.04ではOpenCV 3を使用しますが、互換性を保つために`opencv2`と指定します。
+1. また、package.xmlも修正します。通常、Ubuntu 16.04ではOpenCV 3.xを使用しますが、互換性を保つために`opencv2`と指定します。
 
    ```xml
    <build_depend>opencv2</build_depend>
@@ -56,7 +58,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    <run_depend>opencv2</run_depend>
    ```
 
-1. 本セミナーではパッケージ`cv_bridge`を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、IplImageへ変換し、処理を施し、Image Messageへ戻すという一連の処理を記述することができます。（※IplはIntel Image Processing Libraryの略で、OpenCV1で使用されている型になります。そのため、本セミナーではIplImageをOpenCV2以降で使用されている型`Mat`へ変換し、画像処理を行います。）
+1. 本セミナーではROSパッケージ「`cv_bridge`」を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、Image MessageをIplImageへ変換し、OpenCVを用いて処理を施し、Image Messageへ戻すという一連の処理を記述することができます。（※IplはIntel Image Processing Libraryの略で、OpenCV 1.xで使用されている型になります。そのため、本セミナーではIplImageをOpenCV 2.x以降で使用されている型「`Mat`」へ変換し、画像処理を行います。）
 
    ```shell
    sudo apt-get install ros-kinetic-cv-camera
@@ -64,7 +66,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
 ## 画像処理パッケージの設定
 
-1. セミナー用画像処理のROSパッケージをダウンロードします。ディレクトリ`rsj_2017_block_finder`が存在することを確認します。
+1. セミナー用画像処理のROSパッケージをダウンロードします。ディレクトリ`rsj_2017_block_finder`が作成されたことを確認します。
 
    ```shell
    $ cd ~/block_finder_ws/src
@@ -73,35 +75,35 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    CMakeLists.txt  rsj_2017_block_finder
    ```
 
-1. コンパイルします。エラーが出ず、[100%]となることを確認します。
+1. 次に、コンパイルします。コンパイル結果が[100%]と表示されたことを確認します。
 
    ```shell
    $ cd ~/block_finder_ws/
    $ catkin_make
    ```
 
-1. ワークスペース内のROSパッケージが利用できるようにワークスペースをソースします。
+1. ワークスペース内のROSパッケージが利用できるよう、環境変数を再読み込みします。
 
    ```shell
    $ source devel/setup.bash
    ```
 
-これでセミナー用画像処理のパッケージ`rsj_2017_block_finder`が利用可能になりました。
+これでセミナー用画像処理のパッケージ「`rsj_2017_block_finder`」が利用可能になりました。
 
 
 ## カメラのキャリブレーション
 
 カメラの内部パラメーターを設定します。
 
-1. チェッカーボードの頂点の数と大きさを確認します。このとき、四角形の数を数えないように注意してください。また、長さの単位がメートルであることにも注意してください。
+1. チェッカーボードの頂点の数と大きさを確認します。このとき、四角形の数を数えないように注意してください。黒の四角形が繋がっている点を数えます。また、長さの単位がメートルであることにも注意してください。
 
-1. ROSパッケージ`camera_calibration`をインストールします。
+1. ROSパッケージ「`camera_calibration`」をインストールします。
 
    ```shell
    $ sudo apt-get install ros-kinetic-camera-calibration
    ```
 
-1. ROSパッケージ`camera_calibration`を実行します。デバイス番号が0以外の場合は`~/block_finder_ws/src/rsj_2017_block_finder/launch/usb_cam_calib.launch`を修正してください。
+1. 次に、同パッケージを実行します。デバイス番号が0以外の場合は`~/block_finder_ws/src/rsj_2017_block_finder/launch/usb_cam_calib.launch`を修正してください。
 
    ```shell
    # １つ目のターミナル
@@ -117,7 +119,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    $ rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.0285 image:=/camera/image_raw camera:=/camera
    ```
 
-1. カメラの位置や姿勢を動かします。（あるいはチェッカーボードを上下左右や遠近に移動したり傾けたりします。）
+1. チェッカーボードを平らな机の上に固定します。そして、カメラを手で持ち、位置や姿勢を動かします。
 
 1. X, Y, Sizeが全て右端まで伸びたらCALIBRATEボタンを押します。（※数分かかる場合があります。）
 
@@ -125,6 +127,8 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
 1. COMMITボタンを押します。（`~/.ros/camera_info/elecom_ucam.yaml`が作成されます。）
 
+
+（あるいはチェッカーボードを上下左右や遠近に移動したり傾けたりします。）
 
 ## 基礎編
 
