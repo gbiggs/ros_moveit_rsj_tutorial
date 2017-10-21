@@ -140,7 +140,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    block_finder.launch  block_finder_w_stp.launch  usb_cam_calib.launch
    ```
 
-1. ディレクトリーlaunchの中にはblock_finder.launchとblock_finder_w_stp.launchがあります。ここでは後者のファイルを確認してみます。後者のlaunchファイルでは4つのノードを起動します。配信（publish）と購読（subscribe）の関係性を以下に示します。
+1. ディレクトリーlaunchの中にはblock_finder.launchとblock_finder_w_stp.launchがあります。ここでは後者のファイルを確認してみます。後者のlaunchファイルでは4つのノードを起動します。publish（配信）とsubscribe（購読）の関係性を以下に示します。
 
    ```xml
    <?xml version="1.0"?>
@@ -164,13 +164,13 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    ```
 
    camera
-   : 画像メッセージを配信します。
+   : 画像メッセージをPublishします。
 
    camera_transform_publisher
-   : World座標系の原点から見たCamera座標系の原点の位置を適当に配信します。
+   : World座標系の原点から見たCamera座標系の原点の位置を適当にPublishします。
 
    block_finder
-   : 画像メッセージを購読し、処理し、World座標系におけるブロックの位置を配信します。
+   : 画像メッセージを購読し、処理し、World座標系におけるブロックの位置をPublishします。
 
    rviz
    : World座標系、Camera座標系、ブロックの位置を表示します。
@@ -194,7 +194,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
 1. チェッカーボードの上に厚紙を置きます。そして、黄色の四角形の中に収まるよう、厚紙の上にブロックを1つ置きます。
 
-1. ここで、配信されているトピックの値をROSツール「rostopic」を使用して確認してみます。別のターミナルを開いて、下記のとおり実行してみてください。ブロック領域の面積を確認することができます。なお、セミナー用の画像処理パッケージでは、面積が大きすぎる場合や小さすぎる場合はブロックの位置を配信しないようにしています。
+1. ここで、Publishされているトピックの値をROSツール「rostopic」を使用して確認してみます。別のターミナルを開いて、下記のとおり実行してみてください。ブロック領域の面積を確認することができます。なお、セミナー用の画像処理パッケージでは、面積が大きすぎる場合や小さすぎる場合はブロックの位置をPublishしないようにしています。
 
    ```shell
    # 新しいターミナル
@@ -203,7 +203,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
 1. 画像上の面積は、カメラの位置などによって変化します。そのため、launchファイル内のblock_area_min（下限値）とblock_area_max（上限値）を変更することで、ブロックの検出精度を向上してみましょう。なお、プログラムは「Ctrl」キー＋「c」キーで終了することができます。
 
-1. ブロックの位置をRVizで確認してみましょう。TFは座標系（フレーム）を表示することができますが、R色がX軸、G色がY軸、B色がZ軸を表します。また、PointStampedはHeaderとPointが組み合わさったメッセージ型で、Headerで位置データを取得した時刻、Pointで位置データを表現することができます。本セミナーでは、この型を利用してブロックの位置を配信しています。実物のブロックを移動させ、RViz上のPointStampedが移動することを確認してみましょう。
+1. ブロックの位置をRVizで確認してみましょう。TFは座標系（フレーム）を表示することができますが、R色がX軸、G色がY軸、B色がZ軸を表します。また、PointStampedはHeaderとPointが組み合わさったメッセージ型で、Headerで位置データを取得した時刻、Pointで位置データを表現することができます。本セミナーでは、この型を利用してブロックの位置をPublishしています。実物のブロックを移動させ、RViz上のPointStampedが移動することを確認してみましょう。
 
    ![Block Finder GUI](images/block_finder_tf.png)
 
@@ -214,20 +214,18 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
 ブロックを検出するための画像処理について説明します。
 
-まず、関数`GaussianBlur`で平滑化を行います。平滑化を行うことで、後述の2値化処理が安定します。この関数の第3引数ではフィルタのサイズを指定することができ、`cv::Size(5, 5)`や`cv::Size(13, 13)`などと、正の奇数で指定します。
+まず、関数「GaussianBlur」で平滑化を行います。平滑化を行うことで、後述の2値化処理の結果が安定します。この関数の第3引数ではフィルタのサイズを指定することができ、cv::Size(5, 5)やcv::Size(13, 13)など、正の奇数で指定します。
 
-次に、関数`threshold`で2値化します。第3引数が閾値となり、この閾値を境に各ピクセルに０と１の値を与えていきます。本セミナーではトラックバーを使用して動作中に値を変更できるようにしてあります。トラックバーを直接ドラッグするほか、トラックバーの左右をクリックすることで5刻みで値を増減することもできます。
+次に、関数「threshold」で2値化します。第3引数が閾値となり、この閾値を境に各ピクセルに０と１の値を与えていきます。本セミナーではGUI上のトラックバーを使用して動作中に値を変更できるようにしてあります。トラックバーを直接ドラッグするほか、トラックバーの左右をクリックすることで5刻みで値を増減することもできます。（※トラックバーの初期値を変更する場合は、cppファイルの値を更新し、catkin_makeでビルドする必要があります。）
 
-そして、関数`findContours`を使用してブロックを検出します。第3引数では近似手法を指定することができ、現在はCV_CHAIN_APPROX_NONEとなっています。その他には、CV_CHAIN_APPROX_SIMPLEやCV_CHAIN_APPROX_TC89_L1と設定することができます。
+そして、関数「findContours」を使用してブロックを検出します。第3引数では近似手法を指定することができ、現在はCV_CHAIN_APPROX_NONEとなっています。その他には、CV_CHAIN_APPROX_SIMPLEやCV_CHAIN_APPROX_TC89_L1と設定することができます。
 
 - `CV_CHAIN_APPROX_NONE`
   : 全ての点を保存します。
-
 - `CV_CHAIN_APPROX_SIMPLE`
   : 端点のみを保存します。つまり、輪郭を表現する点群を圧縮します。
-
 - `CV_CHAIN_APPROX_TC89_L1`
-  : Teh-Chinアルゴリズムで、NONEとSIMPLEの中間に当たる。
+  : Teh-Chinアルゴリズムに基づいて輪郭を表現する点群を選択します。NONEとSIMPLEの中間に当たります。
 
 それでは、実際に値を変更してみましょう。値を変更し、ファイルを上書きしたら、下記のとおりビルドし、実行します。
 
@@ -241,11 +239,9 @@ $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
 
 ### 画像の表示
 
-OpenCVでは関数`inshow`を使用して画像を表示します。関数`imshow`のあとに関数`waitKey`を呼び出することで、画像が表示されます。関数`waitKey`は一定時間キー入力を待つ関数ですが、ここではスリープ関数のような意味を持ちます。（※なお、繰り返し処理を行わない画像処理の場合、0と指定することで、キー入力が行われるまで画像を表示しておくことができます。）
+OpenCVでは、関数「inshow」を使用して画像を表示します。関数「imshow」のあとに関数「waitKey」を呼び出することで、画像が表示されます。関数「waitKey」は一定時間キー入力を待つ関数ですが、ここではスリープ関数のような意味を持ちます。（※なお、繰り返し処理を行わない画像処理の場合、引数を0と指定することで、キー入力が行われるまで画像を表示しておくことができます。）
 
-ウィンドウの名前は関数`namedWindow`で、ウィンドウの位置は関数`moveWindow`で指定することができます。
-
-デストラクタ`~BlockFinder`の中に関数`destroyWindow`を記述しておくことで、メモリの開放忘れを予防することができます。全てのウィンドウを破棄する関数`destroyAllWindows`もあります。
+ウィンドウの名前は関数「namedWindow」で、ウィンドウの位置は関数「moveWindow」で指定することができます。また、デストラクタ「~BlockFinder」の中に関数「destroyWindow」を記述しておくことで、メモリの開放忘れを予防することができます。全てのウィンドウを破棄する関数「destroyAllWindows」もあります。
 
 
 ### ブロック位置の出力
@@ -254,34 +250,35 @@ OpenCVでは関数`inshow`を使用して画像を表示します。関数`imsho
 
 ![Block Finder GUI](images/block_finder_transform.png)
 
-OpenCVの関数`projectPoints`を利用することで、2次元画像上の位置とボードの左上を原点とした3次元空間（target_frame）上の位置の対応関係を得ることができる。
+OpenCVの関数「projectPoints」を利用することで、2次元画像上の位置とチェッカーボードの左上を原点とした3次元空間「target_frame」上の位置の対応関係を得ることができます。
 
-次に、tfの関数`transformPoint`を利用することで、ボード座標系（target_frame）の位置を、Camera座標系（camera_frame）を経由して、World座標系（fixed_frame）の位置へと変換することができる。
+そして、tfの関数「transformPoint」を利用することで、ボード座標系「target_frame」の位置を、Camera座標系「camera_frame」を経由して、World座標系「fixed_frame」の位置へと変換することができます。
 
 
 ## ブロック位置推定（発展編）
 
-基本編で使用した画像処理（輪郭検出法）では、チェッカーボードの四角形をスポンジと誤認識してしまいます。そのため、チェッカーボードの上でもスポンジを検出できるように改良します。
+基本編で使用した画像処理（2値化処理）では、チェッカーボードの四角形をブロックとして誤認識してしまいます。そのため、発展編では、チェッカーボードの上でもスポンジを検出できるように改良します。
 
 ### 背景差分法
 
 本セミナーでは背景差分（動的背景差分）を利用します。OpenCVには下記の手法が実装されています。
 
 - 混合正規分布法（MoG：Mixture of Gaussian Distribution）
-   - `createBackgroundSubtractorMOG2`
+  - createBackgroundSubtractorMOG2
 - k近傍法（kNN：k-nearest neighbor）
-   - `createBackgroundSubtractorKNN`
+  - createBackgroundSubtractorKNN
 
 また、OpenCVにはopencv_contribという追加モジュール群が存在します。このモジュールをインストールすることで下記の手法も使用することができます。
 
 - ベイズ推定法（GMG: Godbehere、Matsukawa、Goldberg）
-   - `createBackgroundSubtractorGMG`
+  - createBackgroundSubtractorGMG
 
 OpenCVはバージョンが変わると、記述方法や機能が大幅に変更されます。例えば、2から3へバージョンが変わったときは、kNNなどが追加されましたが、GMGなどはcontribへ移動されました。注意してください。
 
+
 ### 混合正規分布法
 
-混合正規分布法の関数`createBackgroundSubtractorMOG2`では、下記のとおり３つの引数を指定することができます。
+混合正規分布法の関数「createBackgroundSubtractorMOG2」では、下記のとおり３つの引数を指定することができます。
 
 ```c++
 Ptr<BackgroundSubtractorMOG2> cv::createBackgroundSubtractorMOG2(int history=500, double varThreshold=16, bool detectShadows=true)
@@ -291,33 +288,31 @@ Ptr<BackgroundSubtractorMOG2> cv::createBackgroundSubtractorMOG2(int history=500
 
 第2引数では、各ピクセルが背景モデルに含まれるかどうかを判断するための閾値を指定することができます。
 
-第3引数では、影の影響を考慮するかどうかを指定することができます。trueにすると計算速度が若干低下しますが、精度を向上することができます。
+第3引数では、影の影響を考慮するかどうかを指定することができます。trueにすると計算速度が若干低下しますが、推定精度を向上することができます。
 
 それでは混合正規分布法を試してみましょう。
 
-下記のとおり、`roslaunch`を実行するときに`method:=2`と指定し、実行してください。これにより、ROSパラメーター`method`が`2`に上書きされた状態でプログラムを実行することができます。
+下記のとおり、roslaunchを実行するときにmethod:=2と指定してください。これにより、メンバー変数「method」が2に上書きされた状態でプログラムを実行することができます。
 
 ```shell
 $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=2
-# あるいは
-$ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=2 _block_area_min:=3000 _block_area_man:=9000
 ```
 
 下記のように、色々な値を設定し、結果の違いを確認してみましょう。C++ではプログラムを変更するたびにcatkin_makeする必要があります。
 
 ```c++
-【A】
+# Pattern A
 pMOG2 = cv::createBackgroundSubtractorMOG2();
-【B】
+# Pattern B
 pMOG2 = cv::createBackgroundSubtractorMOG2(1000);
-【C】
+# Pattern C
 pMOG2 = cv::createBackgroundSubtractorMOG2(1000, 8);
 ```
 
 
 ## 参考情報
 
-OpenCVには多くのサンプルプログラムが用意されており、研究開発の初期段階において、様々な手法を試すことができます。そして、同サンプルプログラムをROSノード化したROSパッケージ「`opencv_apps`」があります。（→[Wiki](http://wiki.ros.org/opencv_apps)）
+OpenCVには多くのサンプルプログラムが用意されており、研究開発の初期段階において、様々な手法を試すことができます。そして、同サンプルプログラムをROSノード化したROSパッケージ「opencv_apps」があります。（→[Wikiページ](http://wiki.ros.org/opencv_apps)）
 
 インストールは下記のとおり行います。
 
