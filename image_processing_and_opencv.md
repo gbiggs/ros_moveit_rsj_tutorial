@@ -209,7 +209,7 @@ $ rostopic echo /block_finder/block_size_max
 画像上の面積は、カメラの位置などによって変化します。上限と下限を下記のように設定することで、ブロックの検出精度を向上してみましょう。画像処理プログラムを再実行してみてください。なお、プログラムは「`Ctrl`」キー＋「`c`」キーで終了することができます。
 
 ```shell
-$ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1 _block_area_min:=3000 _block_area_min:=5000
+$ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1 _block_area_min:=3000 _block_area_man:=9000
 ```
 
 RVizを確認してみましょう。TFは座標系を意味し、R色がX軸、G色がY軸、B色がZ軸を表します。
@@ -311,7 +311,7 @@ Ptr<BackgroundSubtractorMOG2> cv::createBackgroundSubtractorMOG2(int history=500
 ```shell
 $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=2
 # あるいは
-$ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=2 _block_area_min:=3000 _block_area_min:=5000
+$ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=2 _block_area_min:=3000 _block_area_man:=9000
 ```
 
 下記のように、色々な値を設定し、結果の違いを確認してみましょう。C++ではプログラムを変更するたびにcatkin_makeする必要があります。
