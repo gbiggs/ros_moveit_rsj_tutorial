@@ -95,7 +95,9 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    $ sudo apt-get install ros-kinetic-camera-calibration
    ```
 
-1. 次に、同パッケージを実行します。デバイス番号が0以外の場合は~/block_finder_ws/src/rsj_2017_block_finder/launch/usb_cam_calib.launchのvideo_deviceの値を修正してください。
+1. チェッカーボードを平らな机の上に固定します。
+
+1. 同パッケージを実行します。デバイス番号が0以外の場合は~/block_finder_ws/src/rsj_2017_block_finder/launch/usb_cam_calib.launchのvideo_deviceの値を修正してください。
 
    ```shell
    # １つ目のターミナル
@@ -110,9 +112,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    $ rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.0285 image:=/camera/image_raw camera:=/camera
    ```
 
-1. チェッカーボードを平らな机の上に固定します。そして、カメラを手で持ち、位置や姿勢を動かします。
-
-1. XやYは左右や前後に動かすことで、Sizeは上下に動かすことで、Skewは斜めから撮影することで、少しずつバーが伸びていきます。
+1. カメラを手で持ち、位置や姿勢を動かします。XやYは左右や前後に動かすことで、Sizeは上下に動かすことで、Skewは斜めから撮影することで、少しずつバーが伸びていきます。
 
 1. 全てのバーが緑色になったらCALIBRATEボタンを押します。ボタンを押したあと、処理に数分かかる場合がありますので、ボタンを連打しないように注意してください。
 
@@ -120,16 +120,16 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
 
 1. チェッカーボードを撮影し、頂点や直線が正しく表示されていることを確認します。
 
-1. COMMITボタンを押します。YAMLファイルが「`~/.ros/camera_info/elecom_ucam.yaml`」に作成されます。
+1. COMMITボタンを押します。内部パラメーターが記述されたYAMLファイルが~/.ros/camera_info/elecom_ucam.yamlに作成されます。
 
-1. 2つ目のターミナルを閉じます。
+以上でキャリブレーションは完了です。
 
-本セミナーではカメラの位置や姿勢を動かすことができました。しかし、カメラが備え付けられているなど、カメラを動かせない場合もキャリブレーションを行う必要があります。その場合は、大きめのチェッカーボードを平らな板に貼り付け、人間が上下左右や遠近に移動したり、カメラに対して傾けたりしてキャリブレーションを行います。
+本セミナーではカメラの位置や姿勢を自由に動かすことができました。しかし、カメラが天井に固定されているなど、カメラを自由に動かせない場合でも、キャリブレーションを行う必要があります。その場合は、チェッカーボードを平らな板に貼り付け、人間が板を上下左右に動かしたり、カメラに対して傾けたりしてキャリブレーションを行います。
 
 
 ## ブロック位置推定（基礎編）
 
-1. まず、セミナー用画像処理パッケージの内容を確認します。
+1. まず、画像処理パッケージの内容を確認します。
 
    ```shell
    $ cd ~/block_finder_ws/src/rsj_2017_block_finder
@@ -140,7 +140,7 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
    block_finder.launch  block_finder_w_stp.launch  usb_cam_calib.launch
    ```
 
-1. ディレクトリ`launch`の中には`block_finder.launch`と`block_finder_w_stp.launch`があります。ここでは後者のファイルを確認します。後者の`launch`ファイルでは4つのノードを起動します。配信（publish）と購読（subscribe）の関係性を以下に示します。
+1. ディレクトリーlaunchの中にはblock_finder.launchとblock_finder_w_stp.launchがあります。ここでは後者のファイルを確認してみます。後者のlaunchファイルでは4つのノードを起動します。配信（publish）と購読（subscribe）の関係性を以下に示します。
 
    ```xml
    <?xml version="1.0"?>
@@ -154,69 +154,60 @@ ROSでOpenCVを利用するときの注意点としては、バージョン管�
        <param name="pixel_format" value="yuyv"/>
        <param name="io_method" value="mmap"/>
      </node>
-     <node pkg="tf" type="static_transform_publisher" name="camera_transform_publisher" args="0 0 0 0 0 0 1 /world /camera_link 1"/>
-     <node pkg="rsj_2017_block_finder" type="block_finder" name="block_finder" args="$(arg method)" output="screen"/>
+     <node pkg="tf" type="static_transform_publisher" name="camera_transform_publisher" args="0 0 -0.2 0 0 0 1 /world /camera_link 1"/>
+     <node pkg="rsj_2017_block_finder" type="block_finder" name="block_finder" args="$(arg method)" output="screen">
+       <param name="block_area_min" value="1000"/>
+       <param name="block_area_max" value="2000"/>
+     </node>
      <node pkg="rviz" type="rviz" name="rviz" args="-d $(find rsj_2017_block_finder)/config/rsj_2017_block_finder.rviz"/>
    </launch>
    ```
 
-   `camera`
+   camera
    : 画像メッセージを配信します。
 
-   `camera_transform_publisher`
-   : World座標系の原点から見たCamera座標系の原点の位置を配信します。
+   camera_transform_publisher
+   : World座標系の原点から見たCamera座標系の原点の位置を適当に配信します。
 
-   `block_finder`
+   block_finder
    : 画像メッセージを購読し、処理し、World座標系におけるブロックの位置を配信します。
 
-   `rviz`
+   rviz
    : World座標系、Camera座標系、ブロックの位置を表示します。
 
 
 ### 画像処理プログラムの概要
 
-カメラを接続し、カメラのデバイス番号を確認します。デバイス番号が0以外の場合は適宜、`launch`ファイルを修正してください。
+1. カメラを接続し、カメラのデバイス番号を確認します。（デバイス番号が0以外の場合は適宜、launchファイルを修正してください。）
 
-チェッカーボードを机の上に固定します。
+1. カメラを三脚に取り付け、チェッカーボードの四隅が撮影できるように設置します。このとき、できる限り上から覗くように設置すると、ブロックの位置を精度良く推定することができます。
 
-カメラは三脚に取り付け、チェッカーボードの四隅が撮影できるように設置します。このとき、できる限り上から覗くようにすると、ブロックの位置を精度良く推定することができます。
+1. 下記のコマンドで実行します。カラー画像、グレー画像、RVizの３つの画面が開きます。チェッカーボード上に黄色の四角形が表示されれば正常に起動しています。
 
-そして、下記のコマンドで実行します。カラー画像、グレー画像、RVizの３つの画面が開きます。チェッカーボード上に黄色の四角形が表示されれば正常に起動しています。
+   ```shell
+   $ cd ~/block_finder_ws/
+   $ source devel/setup.bash
+   $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
+   ```
 
-```shell
-$ cd ~/block_finder_ws/
-$ source devel/setup.bash
-$ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1
-```
+   ![Block Finder GUI](images/block_finder_area.png)
 
-![Block Finder GUI](images/block_finder_area.png)
+1. チェッカーボードの上に厚紙を置きます。そして、黄色の四角形の中に収まるよう、厚紙の上にブロックを1つ置きます。
 
-次に、チェッカーボードの上に厚紙を置きます。
+1. ここで、配信されているトピックの値をROSツール「rostopic」を使用して確認してみます。別のターミナルを開いて、下記のとおり実行してみてください。ブロック領域の面積を確認することができます。なお、セミナー用の画像処理パッケージでは、面積が大きすぎる場合や小さすぎる場合はブロックの位置を配信しないようにしています。
 
-そして、黄色の四角形の中に収まるようにブロックを1つ置きます。
+   ```shell
+   # 新しいターミナル
+   $ rostopic echo /block_finder/block_size_max
+   ```
 
-ここで、Publishされているトピックの値をツール`rostopic`を使用して確認してみます。別のターミナルを開いて、下記のとおり実行します。
+1. 画像上の面積は、カメラの位置などによって変化します。そのため、launchファイル内のblock_area_min（下限値）とblock_area_max（上限値）を変更することで、ブロックの検出精度を向上してみましょう。なお、プログラムは「Ctrl」キー＋「c」キーで終了することができます。
 
-ブロック領域の面積は下記のとおり実行することで確認できます。この画像処理プログラムでは、面積が大きすぎる場合や小さすぎる場合はPublishしないようにしています。
+1. ブロックの位置をRVizで確認してみましょう。TFは座標系（フレーム）を表示することができますが、R色がX軸、G色がY軸、B色がZ軸を表します。また、PointStampedはHeaderとPointが組み合わさったメッセージ型で、Headerで位置データを取得した時刻、Pointで位置データを表現することができます。本セミナーでは、この型を利用してブロックの位置を配信しています。実物のブロックを移動させ、RViz上のPointStampedが移動することを確認してみましょう。
 
-```shell
-# 新しいターミナル
-$ rostopic echo /block_finder/block_size_max
-```
+   ![Block Finder GUI](images/block_finder_tf.png)
 
-画像上の面積は、カメラの位置などによって変化します。上限と下限を下記のように設定することで、ブロックの検出精度を向上してみましょう。画像処理プログラムを再実行してみてください。なお、プログラムは「`Ctrl`」キー＋「`c`」キーで終了することができます。
-
-```shell
-$ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1 _block_area_min:=3000 _block_area_max:=9000
-```
-
-RVizを確認してみましょう。TFは座標系を意味し、R色がX軸、G色がY軸、B色がZ軸を表します。
-
-また、PointStampedはHeaderとPointが組み合わさったメッセージ型で、Headerで位置データを取得した時刻、Pointで位置データを表現することができます。本セミナーではこの型を利用してブロックの位置を表示しています。実物のブロックを移動させ、RViz上のPointStampedが移動することを確認してみましょう。
-
-![Block Finder GUI](images/block_finder_tf.png)
-
-このセクションでは、World座標系からCamera座標系までの変換ベクトルを適当に与えています。最後のセクションではROSパッケージ「`crane_plus_camera_calibration`」を利用して同ベクトルを求め、マニピュレーターがブロックを正しく把持できるようにします。
+このセクションでは、World座標系からCamera座標系までの変換ベクトルを適当に与えています。最後のセクションでは、ROSパッケージ「crane_plus_camera_calibration」を利用して同ベクトルを求め、マニピュレーターがブロックを正しく把持できるようにします。
 
 
 ### 画像処理法
