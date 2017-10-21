@@ -298,7 +298,7 @@ Ptr<BackgroundSubtractorMOG2> cv::createBackgroundSubtractorMOG2(int history=500
 $ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=2
 ```
 
-下記のように、色々な値を設定し、結果の違いを確認してみましょう。C++ではプログラムを変更するたびにcatkin_makeする必要があります。
+下記のように、色々な値を設定し、結果の違いを確認してみましょう。C++ではプログラムを変更するたびにビルド（catkin_make）する必要があります。
 
 ```c++
 # Pattern A
