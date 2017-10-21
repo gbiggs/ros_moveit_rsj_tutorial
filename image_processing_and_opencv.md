@@ -1,11 +1,9 @@
 ---
 title: 画像処理とOpenCVの利用
-date: 2017-06-18
+date: 2017-06-21
 ---
 
-本セクションでは、前セクションで取得した画像を処理する方法について説明します。特にOpenCVを用いて処理する方法について説明します。
-
-本セクションでは、画像に基づきブロックを見つけ、その位置を出力する一連の処理について説明します。
+本セクションでは、前セクションで取得した画像を処理する方法について説明します。特にOpenCVを用いて処理する方法について説明します。その後、ブロックを検出し、ブロックの位置を出力する一連の処理について説明します。
 
 - Table of contents
 {:toc}
@@ -15,7 +13,7 @@ date: 2017-06-18
 
 OpenCV（Open Source Computer Vision Library）は無料の画像処理ライブラリーです。Linuxの他、WindowsやMacOSでも利用することができ、現在、多くの画像処理研究で利用されています。例えば、OpenCVを利用することで、従来手法との精度比較を簡単に行うことができます。
 
-ROSでOpenCVを利用するときの注意点としてはバージョン管理があります。基本的に、使用中のROSがリリースされたときの最新バージョンのOpenCVを使用することになります。ROSのバージョンとOpenCVのバージョンの対応を下表にまとめておきます。本セミナーではROS 16.04を使用しているため、OpenCV 3.1を利用することになります。
+ROSでOpenCVを利用するときの注意点としては、バージョン管理があります。基本的に、使用中のROSがリリースされたときの最新バージョンのOpenCVを使用することになります。ROSのバージョンとOpenCVのバージョンの対応を下表にまとめておきます。本セミナーではROS 16.04を使用しているため、OpenCV 3.1を利用することになります。
 
 |ROSのバージョン|OpenCVのバージョン|
 |17.04 (Lunar Loggerhead)|3.2.0|
@@ -34,15 +32,15 @@ ROSでOpenCVを利用するときの注意点としてはバージョン管理�
    sudo apt-get install libopencv-dev
    ```
 
-1. 本セミナーではROSパッケージ「`cv_bridge`」を利用します。このパッケージはROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、Image MessageをIplImageへ変換し、OpenCVを用いて処理を施し、Image Messageへ戻すという一連の処理を記述することができます。（※IplはIntel Image Processing Libraryの略で、OpenCV 1.xで使用されている型になります。そのため、本セミナーではIplImageをOpenCV 2.x以降で使用されている型「`cv::Mat`」へ変換し、画像処理を行います。）
+1. 上記に加えて、本セミナーではROSパッケージ「`cv_bridge`」を利用します。このパッケージを用いることで、ROSの画像データ（Image Message）とOpenCVの画像データ（IplImage）を相互に変換することができます。つまり、Image MessageをIplImageへ変換し、OpenCVを用いて処理を施し、Image Messageへ戻すという一連の処理を記述することができます。（※IplはIntel Image Processing Libraryの略で、OpenCV 1.xで使用されている型になります。そのため、本セミナーではIplImageをOpenCV 2.x以降で使用されている型「`cv::Mat`」へ更に変換し、画像処理を行います。）
 
    ```shell
    sudo apt-get install ros-kinetic-cv-camera
    ```
 
-本セミナーで必要となる準備は以上となりますが、実際には下記のとおり設定を変更する必要もあります。
+本セミナーの実施に必要となる準備は以上となりますが、実際には下記のとおり設定を変更する必要もあります。（※本セミナーでは事前に設定してあります。）
 
-1. OpenCVと正しくmakeできるよう、OpenCVを利用するROSパッケージでは下記のとおりCMakeLists.txtを修正します。
+1. OpenCVと正しくコンパイルできるよう、OpenCVを利用するROSパッケージでは下記のとおりCMakeLists.txtを修正します。
 
    ```cmake
    find_package(OpenCV REQUIRED)
@@ -50,7 +48,7 @@ ROSでOpenCVを利用するときの注意点としてはバージョン管理�
    target_link_libraries(dfollow ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
    ```
 
-1. ROSパッケージを管理するためのpackage.xmlも修正します。通常、Ubuntu 16.04ではOpenCV 3.xを使用しますが、互換性を保つために`opencv2`と指定します。
+1. ROSパッケージを管理するためのpackage.xmlも修正します。通常、Ubuntu 16.04ではOpenCV 3.xを使用しますが、互換性を保つために敢えて`opencv2`と指定します。
 
    ```xml
    <build_depend>opencv2</build_depend>
@@ -60,7 +58,7 @@ ROSでOpenCVを利用するときの注意点としてはバージョン管理�
 
 ## 画像処理パッケージの準備
 
-1. セミナー用画像処理のROSパッケージをダウンロードします。ディレクトリ`rsj_2017_block_finder`が作成されたことを確認します。
+1. 画像処理用のROSパッケージをダウンロードします。ディレクトリ「`rsj_2017_block_finder`」が作成されたことを確認します。
 
    ```shell
    $ cd ~/block_finder_ws/src
@@ -82,14 +80,14 @@ ROSでOpenCVを利用するときの注意点としてはバージョン管理�
    $ source devel/setup.bash
    ```
 
-これでセミナー用画像処理のパッケージ「`rsj_2017_block_finder`」が利用可能になりました。
+これで画像処理パッケージ「`rsj_2017_block_finder`」が利用可能になりました。
 
 
 ## カメラキャリブレーション
 
-画像処理の前に、カメラの内部パラメーターを設定します。
+画像処理を行う前に、カメラの内部パラメーターを設定します。本セミナーには、ROSパッケージを利用してキャリブレーションを行います。
 
-1. チェッカーボードの頂点の数と大きさを確認します。このとき、四角形の数を数えないように注意してください。黒の四角形が繋がっている点を数えます。また、長さの単位がメートルであることにも注意してください。
+1. チェッカーボードの頂点の数と四角形の大きさ（1辺の長さ）を確認します。このとき、四角形の数を数えないように注意してください。黒の四角形が繋がっている点を数えます。また、長さの単位がメートルであることにも注意してください。
 
 1. ROSパッケージ「`camera_calibration`」をインストールします。
 
@@ -97,7 +95,7 @@ ROSでOpenCVを利用するときの注意点としてはバージョン管理�
    $ sudo apt-get install ros-kinetic-camera-calibration
    ```
 
-1. 次に、同パッケージを実行します。デバイス番号が0以外の場合は`~/block_finder_ws/src/rsj_2017_block_finder/launch/usb_cam_calib.launch`を修正してください。
+1. 次に、同パッケージを実行します。デバイス番号が0以外の場合は~/block_finder_ws/src/rsj_2017_block_finder/launch/usb_cam_calib.launchのvideo_deviceの値を修正してください。
 
    ```shell
    # １つ目のターミナル
@@ -209,7 +207,7 @@ $ rostopic echo /block_finder/block_size_max
 画像上の面積は、カメラの位置などによって変化します。上限と下限を下記のように設定することで、ブロックの検出精度を向上してみましょう。画像処理プログラムを再実行してみてください。なお、プログラムは「`Ctrl`」キー＋「`c`」キーで終了することができます。
 
 ```shell
-$ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1 _block_area_min:=3000 _block_area_man:=9000
+$ roslaunch rsj_2017_block_finder block_finder_w_stp.launch method:=1 _block_area_min:=3000 _block_area_max:=9000
 ```
 
 RVizを確認してみましょう。TFは座標系を意味し、R色がX軸、G色がY軸、B色がZ軸を表します。
