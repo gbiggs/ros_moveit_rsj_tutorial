@@ -1260,6 +1260,17 @@ _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/topic_picker>
 
+下記のように自分のワークスペースに入れて利用できます。
+
+```shell
+$ cd ~/crane_plus_ws/src
+$ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer
+$ git checkout topic_picker
+$ cd ~/crane_plus_ws
+$ catkin_make
+$ rosrun rsj_2017_pick_and_placer pick_and_placer
+```
+
 _編集されたC++ファイルは以下です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/topic_picker/src/pick_and_placer.cpp>
@@ -1386,6 +1397,17 @@ _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/pickandplace>
 
+下記のように自分のワークスペースに入れて利用できます。
+
+```shell
+$ cd ~/crane_plus_ws/src
+$ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer
+$ git checkout pickandplace
+$ cd ~/crane_plus_ws
+$ catkin_make
+$ rosrun rsj_2017_pick_and_placer pick_and_placer
+```
+
 _編集されたC++ファイルは以下です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/blob/pickandplace/src/pick_and_placer.cpp>
@@ -1495,6 +1517,17 @@ _パラメータ名の頭にアンダーバーを付けている理由は、パ�
 _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/parameterised>
+
+下記のように自分のワークスペースに入れて利用できます。
+
+```shell
+$ cd ~/crane_plus_ws/src
+$ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer
+$ git checkout parameterised
+$ cd ~/crane_plus_ws
+$ catkin_make
+$ rosrun rsj_2017_pick_and_placer pick_and_placer
+```
 
 _編集されたC++ファイルは以下です。_
 
@@ -1616,3 +1649,14 @@ _注意：MoveIt!は基本的に6DOF以上を持つマニピュレータ向き�
 _このソースは以下のURLでダウンロード可能です。_
 
 <https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/moveit_pick_place_plugin>
+
+下記のように自分のワークスペースに入れて利用できます。
+
+```shell
+$ cd ~/crane_plus_ws/src
+$ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer
+$ git checkout moveit_pick_place_plugin
+$ cd ~/crane_plus_ws
+$ catkin_make
+$ rosrun rsj_2017_pick_and_placer pick_and_placer
+```
