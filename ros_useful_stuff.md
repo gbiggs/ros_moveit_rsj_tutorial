@@ -322,6 +322,24 @@ $ roslaunch crane_plus_simulation simulation.launch
 
 ![Simulated CRANE+](images/crane_plus_gazebo.png)
 
+__VMWareでGazeboを利用する場合__、Gazeboは一瞬起動した後落ちて下記のエラーが表示されることがあります。
+
+```shell
+VMware: vmw_ioctl_command error Invalid argument.
+```
+
+原因はGazeboとVMWareのOpenGLドライバーの互換性に関する問題です。下記のコマンドで利用可能なOpenGLフィーチャに制限をかけるとGazeboは起動できます。
+
+```shell
+$ export SVGA_VGPU10=0
+```
+
+同端末でGazeboを起動します。または、以下のコマンドで端末を開いたときに自動的に設定を行うように設定します。(次に新たに開いた端末ウインドウから、設定が有効になります。)
+
+```shell
+$ echo "export SVGA_VGPU10=0" >> ~/.bashrc
+```
+
 Gazeboでカメラの制御は以下で行います。
 
 マウスをクリックとドラッグ
