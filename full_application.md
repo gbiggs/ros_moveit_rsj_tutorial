@@ -98,7 +98,7 @@ $ cd ~/rsj_2017_application_ws
 $ source devel/setup.bash
 $ rosrun usb_cam usb_cam_node __name:=camera _camera_name:="elecom_ucam" \
     _camera_frame_id:="camera_link" _video_device:="/dev/video0" _image_width:=640 \
-    _image_height480 _pixel_format:=yuyv _io_method:=mmap
+    _image_height:=480 _pixel_format:=yuyv _io_method:=mmap
 ```
 
 _注意：カメラのデバイス番号は０ではない場合は、[カメラの動作確認](camera_check.html)と同様に上記のコマンドの`/dev/video0`を`/dev/video1`等に変更してください。_{:style="color: red"}
@@ -142,7 +142,7 @@ $ cd ~/rsj_2017_application_ws
 $ source devel/setup.bash
 $ rosrun usb_cam usb_cam_node __name:=camera _camera_name:="elecom_ucam" \
     _camera_frame_id:="camera_link" _video_device:="/dev/video0" _image_width:=640 \
-    _image_height480 _pixel_format:=yuyv _io_method:=mmap
+    _image_height:=480 _pixel_format:=yuyv _io_method:=mmap
 ```
 
 _注意：カメラのデバイス番号は０ではない場合は、上記のコマンドの`/dev/video0`を`/dev/video1`等に変更してください。_{:style="color: red"}
