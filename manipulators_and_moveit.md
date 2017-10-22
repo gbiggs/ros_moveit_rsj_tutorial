@@ -527,7 +527,8 @@ _このソースは以下のURLでダウンロード可能です。_
 
 ```shell
 $ cd ~/crane_plus_ws/src
-$ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/named_pose
+$ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer
+$ git checkout named_pose
 $ cd ~/crane_plus_ws
 $ catkin_make
 $ rosrun rsj_2017_pick_and_placer pick_and_placer
@@ -673,7 +674,8 @@ _このソースは以下のURLでダウンロード可能です。_
 
 ```shell
 $ cd ~/crane_plus_ws/src
-$ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/specified_pose
+$ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer
+$ git checkout specified_pose
 $ cd ~/crane_plus_ws
 $ catkin_make
 $ rosrun rsj_2017_pick_and_placer pick_and_placer
@@ -828,7 +830,8 @@ _このソースは以下のURLでダウンロード可能です。_
 
 ```shell
 $ cd ~/crane_plus_ws/src
-$ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/open_gripper
+$ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer
+$ git checkout open_gripper
 $ cd ~/crane_plus_ws
 $ catkin_make
 $ rosrun rsj_2017_pick_and_placer pick_and_placer
@@ -1014,7 +1017,8 @@ _上述のソースは以下のURLでダウンロード可能です。_
 
 ```shell
 $ cd ~/crane_plus_ws/src
-$ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer/tree/picking
+$ git clone https://github.com/gbiggs/rsj_2017_pick_and_placer
+$ git checkout picking
 $ cd ~/crane_plus_ws
 $ catkin_make
 $ rosrun rsj_2017_pick_and_placer pick_and_placer
