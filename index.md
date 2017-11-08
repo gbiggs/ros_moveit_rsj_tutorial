@@ -1,56 +1,57 @@
 ---
-title: 日本ロボット学会　第106回（第２開催） ロボットの作り方 ～ROSを使用した画像処理とマニピュレータ制御～
+title: 日本ロボット学会　ロボットの作り方 ～ROSを使用した画像処理とマニピュレータ制御～
 ---
 
 # ロボットの作り方 ～ROSを使用した画像処理とマニピュレータ制御～
 
-## 当日の持ち物
+## セミナーに必要な物品の準備
 
-下記を*必ず*{: style="color: red"}ご用意し持参ください
+下記を*必ず*{: style="color: red"}ご用意してください
 
 - 実習に利用するノートPC
-  - Ubuntu Linux 16.04とROS Kineticを事前にインストールしてください
+  - Ubuntu LinuxとROSを事前にインストールしてください
   - インストール方法は以下の[事前準備](#事前準備)にご参考ください
   - ノートPCはUSBポートが2つ以上持つタイプまたはUSBハブをご用意ください
-
-可能であれば、以下も持参してください。
-
-- モバイルルーターなどのインターネット接続機器 (会場でもインターネット接続を用意しますが、速度が遅くなる可能性があるため、可能であれば持参をお願いします。)
-
-不明な点や、事前準備がうまく行かない点については、オーガナイザまでお問い合わせ下さい。
+- マニピュレータ
+  - RT Robot Shopが提供している[ロボットアーム CRANE+](http://www.rt-shop.jp/index.php?main_page=product_info&cPath=1348_1&products_id=2441)を利用します
+  - _注意_{: style="color: red"}：CRANE+の電源は別売りです。[12Vおよび５Aが可能な電源](http://www.rt-shop.jp/index.php?main_page=product_info&cPath=1000_1012_1131&products_id=595)が必要です。
+- マニピュレータとPCをつなげる[USB延長ケーブル](https://www.amazon.co.jp/gp/product/B007STDLM0/ref=oh_aui_detailpage_o02_s00)
+- カメラ
+  - [単純なウェブカメラで充分](https://www.amazon.co.jp/gp/product/B00UZNLIBW/ref=oh_aui_detailpage_o03_s00)
+- カメラを刺させる三脚
+  - 卓上であれば、６０ｃｍ程度の高さ以上が可能な三脚
+  - ウェブカメラを利用する場合、三脚の頭にウェブカメラが付けられる（ネジ、テープ等で）ことを確認してください
+  - 例：[Velbon EX-Macro](https://www.amazon.co.jp/gp/product/B00DL5RP5Y/ref=oh_aui_detailpage_o03_s00)
+- マニピュレータが持つ物品
+  - [激落ちのスポンジ](https://www.amazon.co.jp/gp/product/B005ZETITK/ref=oh_aui_detailpage_o00_s00)のような柔らかい物がおすすめです
+  - カメラ認識のために単純な明るい色がおすすめです
 
 ## 事前準備
 
 - [Ubuntu LinuxとROSのインストール](linux_and_ros_install.html)
 
-## スケジュール
+## セミナーテキスト
 
-### １日目（10/21）
+1. [Linuxの基本操作](linux_basics.html)|
 
-|10:00-11:00|講義１ 「ROS概論」　講師：Geoffrey BIGGS （産業技術総合研究所）|
-|11:00-11:30|[Linuxの基本操作](linux_basics.html)|
-|11:30-12:00|[講習環境の整備とマニピュレータの動作確認](manipulator_check.html)|
-|12:00-13:00|昼休み|
-|13:00-14:00|講義２ 「マニピュレータとTF概論」|
-|14:00-15:00|[ROSの基本操作](ros_basics.html)|
-|15:00-17:30|[マニピュレータ制御](manipulators_and_moveit.html)|
+1. [講習環境の整備とマニピュレータの動作確認](manipulator_check.html)|
 
-### ２日目（10/22）
+1. [ROSの基本操作](ros_basics.html)|
 
-|10:00-10:15|[カメラの動作確認](camera_check.html)|
-|10:15-12:00|[画像処理](image_processing_and_opencv.html)|
-|12:00-13:00|昼休み|
-|13:00-13:30|[ROSの便利機能](ros_useful_stuff.html)|
-|13:30-16:30|[画像処理とマニピュレーションの組み合わせ](full_application.html)|
-|16:30-17:00|課題と質疑|
+1. [マニピュレータ制御](manipulators_and_moveit.html)|
 
-スケジュールは、演習の進行に応じて多少変更する場合があります。
+1. [カメラの動作確認](camera_check.html)|
 
-## 交通案内
+1. [画像処理](image_processing_and_opencv.html)|
 
-- [アクセスマップ](/files/access.pdf)
+1. [ROSの便利機能](ros_useful_stuff.html)|
 
-## 昼食案内
+1. [画像処理とマニピュレーションの組み合わせ](full_application.html)|
 
-- [ランチマップ](/files/lunch.pdf)
+## 参考情報
 
+- [RSJロボット工学セミナー第１０６回の実施時のトップページ](index_20170617.html)
+- [ROS Japan UG （日本のユーザ会）](https://rosjp.connpass.com/)
+- [ROSのメッセージボード](https://discourse.ros.org/)
+- [ROS Answers](http://answers.ros.org/)（日本語でも大丈夫です。）
+- [Programming Robots with ROS](http://shop.oreilly.com/product/0636920024736.do)
