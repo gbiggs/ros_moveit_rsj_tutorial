@@ -2,6 +2,8 @@
 
 Tutorial text for using a manipulator with ROS, including some basic image recognition.
 
+https://gbiggs.github.io/ros_moveit_rsj_tutorial/
+
 The following parts were forked from https://github.com/at-wat/ROS-quick-start-up:
 
 - linux_and_ros_install.md
